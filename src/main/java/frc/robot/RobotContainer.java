@@ -21,7 +21,7 @@ import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdvHdg;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
-import frc.robot.subsystems.Secondary.IntakeSubsystem;
+import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -43,7 +43,7 @@ public class RobotContainer
                                                                                 "swerve/neo"));
 
   private final RotateSubsystem rotateSubsystem = new RotateSubsystem();
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();       
 
   // Applies deadbands and inverts controls because joysticks

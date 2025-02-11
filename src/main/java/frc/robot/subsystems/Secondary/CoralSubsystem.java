@@ -39,21 +39,34 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 // import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;                                                             
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;                                                             
 
 public class CoralSubsystem extends SubsystemBase {
 
-    private SparkFlex rotateMotor;
-    public AbsoluteEncoder rotateEncoder;
+    private SparkMax coralRotateMotor;
+    public AbsoluteEncoder coralRotateEncoder;
+    private SparkMax coralAdjustMotor;
+    public RelativeEncoder coralAdjustEncoder;
+    public SparkMax coralIntakeMotor;
     public SparkClosedLoopController  rotatePID;
-    private SparkFlexSim rotateMotorSim;
-    private SparkAbsoluteEncoderSim rotateEncoderSim;                              
-    private SparkFlexConfig rotateMtrCfg;
+    private SparkMaxSim coralRotateMotorSim;
+    private SparkMaxSim coralAdjustMotorSim;
+    private SparkMaxSim coralIntakeMotorSim;
+    private SparkAbsoluteEncoderSim coralRotateEncoderSim; 
+    private SparkRelativeEncoderSim coralAdjustEncoderSim;                            
+    private SparkMaxConfig coralRotateMotorCfg;
+    private SparkMaxConfig coralAdjustMotorCfg;
+    private SparkMaxConfig coralIntakeMotorCfg;
     // private AbsoluteEncoderConfig encCfg;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     
@@ -63,12 +76,16 @@ public class CoralSubsystem extends SubsystemBase {
     private double kOutputMax = 0.3;
 
     public CoralSubsystem() {
-        rotateMotor = new SparkFlex(Constants.ArmConstants.ARM_MOTOR_PORT, MotorType.kBrushless);
-        rotateMtrCfg = new SparkFlexConfig();
+        coralRotateMotor = new SparkMax(Constants.ArmConstants.CORAL_ROTATE_MOTOR_PORT, MotorType.kBrushless);
+        coralAdjustMotor = new SparkMax(Constants.ArmConstants.CORAL_ADJUST_MOTOR_PORT, MotorType.kBrushless);
+        coralIntakeMotor = new SparkMax(Constants.ArmConstants.CORAL_Intake_MOTOR_PORT, MotorType.kBrushless);
+        coralRotateMotorCfg = new SparkMaxConfig();
+        coralAdjustMotorCfg = new SparkMaxConfig();
+        coralIntakeMotorCfg = new SparkMaxConfig();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
 
-        rotatePID = rotateMotor.getClosedLoopController();
+        coralRotatePID = rotateMotor.getClosedLoopController();
 
         rotateEncoder = rotateMotor.getAbsoluteEncoder();
  

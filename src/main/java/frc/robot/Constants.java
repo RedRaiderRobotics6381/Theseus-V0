@@ -67,12 +67,14 @@ public final class Constants
   }
 
   public static class ArmConstants {
-    public static final int ARM_MOTOR_PORT = 12;
     public static final int CORAL_INTAKE_POS = 190;
     public static final int CORAL_MID_POS = 165;
     public static final int CORAL_HIGH_POS = 150;
     public static final int ALGAE_INTAKE_POS = 240;
     public static final int ALGAE_START_POS = 280;
+    public static final int CORAL_ROTATE_MOTOR_PORT = 0;
+    public static final int CORAL_ADJUST_MOTOR_PORT = 0;
+    public static final int CORAL_Intake_MOTOR_PORT = 0;
   }
 
   // public static class ServoConstants {
@@ -87,6 +89,9 @@ public final class Constants
   public static class IntakeConstants {
     public static int LEFT_INTAKE_MOTOR_PORT = 10;
     public static int RIGHT_INTAKE_MOTOR_PORT = 11;
+    public static int LEFT_INDEXER_MOTOR_PORT = 0;
+    public static int RIGHT_INDEXER_MOTOR_PORT = 0;
+
 
     public static double INTAKE_SPEED = 600;
     public static double OUTTAKE_SPEED = -500;

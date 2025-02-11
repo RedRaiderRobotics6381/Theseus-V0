@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
-import frc.robot.subsystems.Secondary.IntakeSubsystem;
+import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
 
 public class PositionIdentifierCmd extends Command {
 
     private final ElevatorSubsystem elevatorSubsystem;
     private final RotateSubsystem rotateSubsystem;
-    private final IntakeSubsystem intakeSubsystem;
+    private final AlgaeIntakeSubsystem intakeSubsystem;
     private final DoubleSupplier  oX, oY;
 
     /**
@@ -28,7 +28,7 @@ public class PositionIdentifierCmd extends Command {
      * @param oX A DoubleSupplier providing the X coordinate of the input stick which will be rounded to 45 degree increments.
      * @param oY A DoubleSupplier providing the Y coordinate of the input stick which will be rounded to 45 degree increments.
      */
-    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, RotateSubsystem rotateSubsystem, IntakeSubsystem intakeSubsystem, DoubleSupplier oX, DoubleSupplier oY){
+    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, RotateSubsystem rotateSubsystem, AlgaeIntakeSubsystem intakeSubsystem, DoubleSupplier oX, DoubleSupplier oY){
         
         this.elevatorSubsystem = elevatorSubsystem;
         this.rotateSubsystem = rotateSubsystem;
