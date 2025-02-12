@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -66,8 +66,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     
 
     public ElevatorSubsystem() {
-        elevMtrLdr = new SparkFlex(Constants.ElevatorConstants.LEFT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
-        elevMtrFlw = new SparkFlex(Constants.ElevatorConstants.RIGHT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
+        elevMtrLdr = new SparkFlex(ElevatorConstants.LEFT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
+        elevMtrFlw = new SparkFlex(ElevatorConstants.RIGHT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
 
         limitSwL = new DigitalInput(0);
 
@@ -184,28 +184,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     public Command START_POSE() {
         return this.run(
             () -> {
-                setElevatorHeight(Constants.ElevatorConstants.START_POSE);
+                setElevatorHeight(ElevatorConstants.START_POSE);
             });
     }
 
     public Command REEF_LOW_POSE() {
         return this.run(
             () -> {
-                setElevatorHeight(Constants.ElevatorConstants.REEF_LOW_POSE);
+                setElevatorHeight(ElevatorConstants.REEF_LOW_POSE);
             });
         }
 
     public Command REEF_MIDDLE_POSE() {
         return this.run(
             () -> {
-                setElevatorHeight(Constants.ElevatorConstants.REEF_MIDDLE_POSE);
+                setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE);
             });
         }
 
     public Command REEF_HIGH_POSE() {
         return this.run(
             () -> {
-                setElevatorHeight(Constants.ElevatorConstants.REEF_HIGH_POSE);
+                setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE);
             });
         }
 

@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 // import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.*;
 import frc.robot.Robot;
 
 public class AlgaeIntakeSubsystem extends SubsystemBase {
@@ -49,19 +49,19 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private SparkMaxConfig indexerFlwCfg;
   private SparkRelativeEncoderSim intakeEncLdrSim;
   private SparkRelativeEncoderSim intakeEncFlwSim;
-  private double kLdrP = 0.0003, kLdrI = 0.0, kLdrD = 0.0;
-  private double kFlwP = 0.0003, kFlwI = 0.0, kFlwD = 0.0;
+  // private double kLdrP = 0.0003, kLdrI = 0.0, kLdrD = 0.0;
+  // private double kFlwP = 0.0003, kFlwI = 0.0, kFlwD = 0.0;
   // private double kLdrFF = 0.0005, kFlwFF = 0.0005;
-  private double kLdrOutputMin = -1.0, kFlwOutputMin = -1.0;
-  private double kLdrOutputMax = 1.0, kFlwOutputMax = 1.0;
-  private double kLdrMaxRPM = 5676, kFlwMaxRPM = 5676;
-  private double kLdrMaxAccel = 10000, kFlwMaxAccel = 10000;
+  // private double kLdrOutputMin = -1.0, kFlwOutputMin = -1.0;
+  // private double kLdrOutputMax = 1.0, kFlwOutputMax = 1.0;
+  // private double kLdrMaxRPM = 5676, kFlwMaxRPM = 5676;
+  // private double kLdrMaxAccel = 10000, kFlwMaxAccel = 10000;
   
   public AlgaeIntakeSubsystem() {
-    intakeMtrLdr = new SparkFlex(Constants.IntakeConstants.LEFT_INTAKE_MOTOR_PORT, MotorType.kBrushless);
-    intakeMtrFlw = new SparkFlex(Constants.IntakeConstants.RIGHT_INTAKE_MOTOR_PORT, MotorType.kBrushless);
-    indexerMtrLdr = new SparkMax(Constants.IntakeConstants.LEFT_INDEXER_MOTOR_PORT, MotorType.kBrushless);
-    indexerMtrFlw = new SparkMax(Constants.IntakeConstants.RIGHT_INDEXER_MOTOR_PORT, MotorType.kBrushless);
+    intakeMtrLdr = new SparkFlex(AlgaeIntakeConstants.LEFT_INTAKE_MOTOR_PORT, MotorType.kBrushless);
+    intakeMtrFlw = new SparkFlex(AlgaeIntakeConstants.RIGHT_INTAKE_MOTOR_PORT, MotorType.kBrushless);
+    indexerMtrLdr = new SparkMax(AlgaeIntakeConstants.LEFT_INDEXER_MOTOR_PORT, MotorType.kBrushless);
+    indexerMtrFlw = new SparkMax(AlgaeIntakeConstants.RIGHT_INDEXER_MOTOR_PORT, MotorType.kBrushless);
     
     ldrCfg = new SparkFlexConfig();
     flwCfg = new SparkFlexConfig();
@@ -205,15 +205,18 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
             }
         }
       );
-  }}
+  }
 
-//   public Command StopCmd() {
-//     return this.runOnce(
-//         () -> {
-//             runIntake(Constants.IntakeConstants.STOP_SPEED);
-//         }
-//       );
-//   }}
+    // public Command StopCmd() {
+  //   return this.runOnce(
+  //       () -> {
+  //           runIntake(Constants.IntakeConstants.STOP_SPEED);
+  //       }
+  //     );
+  // }
+
+}
+
 
 
 

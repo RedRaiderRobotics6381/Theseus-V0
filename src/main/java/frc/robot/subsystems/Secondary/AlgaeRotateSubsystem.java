@@ -24,7 +24,7 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;                                                             
 
-public class RotateSubsystem extends SubsystemBase {
+public class AlgaeRotateSubsystem extends SubsystemBase {
 
     private SparkFlex rotateMotor;
     public AbsoluteEncoder rotateEncoder;
@@ -40,8 +40,8 @@ public class RotateSubsystem extends SubsystemBase {
     private double kOutputMin = -0.3;
     private double kOutputMax = 0.3;
 
-    public RotateSubsystem() {
-        rotateMotor = new SparkFlex(Constants.ArmConstants.ARM_MOTOR_PORT, MotorType.kBrushless);
+    public AlgaeRotateSubsystem() {
+        rotateMotor = new SparkFlex(Constants.AlgaeRotateConstants.ALGAE_ROTATE_MOTOR_PORT, MotorType.kBrushless);
         rotateMtrCfg = new SparkFlexConfig();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();

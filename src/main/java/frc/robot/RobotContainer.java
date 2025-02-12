@@ -22,7 +22,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdvHdg;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
-import frc.robot.subsystems.Secondary.RotateSubsystem;
+import frc.robot.subsystems.Secondary.AlgaeRotateSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -42,7 +42,7 @@ public class RobotContainer
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
-  private final RotateSubsystem rotateSubsystem = new RotateSubsystem();
+  private final AlgaeRotateSubsystem rotateSubsystem = new AlgaeRotateSubsystem();
   private final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();       
 
