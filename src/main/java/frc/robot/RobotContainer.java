@@ -19,10 +19,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
+// import frc.robot.commands.Secondary.ElevatorInitCmd;
+// import frc.robot.commands.Secondary.SliderInitCmd;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdvHdg;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.Secondary.AlgaeRotateSubsystem;
+import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -44,7 +47,8 @@ public class RobotContainer
 
   private final AlgaeRotateSubsystem rotateSubsystem = new AlgaeRotateSubsystem();
   private final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
-  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();       
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem();      
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
@@ -133,6 +137,16 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     return drivebase.getAutonomousCommand("New Auto");
+  }
+
+  public void initSlider(){
+    // new SliderInitCmd(coralSubsystem).schedule();
+    new CoralSubsystem().SliderInitCmd().schedule();
+  }
+
+  public void initElevator(){
+    // new ElevatorInitCmd(elevatorSubsystem).schedule();
+    new ElevatorSubsystem().ElevatorInitCmd().schedule();
   }
 
   public void setMotorBrake(boolean brake)

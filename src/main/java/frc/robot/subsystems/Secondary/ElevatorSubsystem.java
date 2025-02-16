@@ -62,6 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double kLdrMaxRPM = 100, kFlwMaxRPM = 100;
     private double kLdrMaxAccel = 50, kFlwMaxAccel = 50;
     public DigitalInput limitSwL;
+    private boolean elevatorInitialized;
     // public DigitalInput limitSwR;
     
 
@@ -208,6 +209,20 @@ public class ElevatorSubsystem extends SubsystemBase {
                 setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE);
             });
         }
+
+    public FunctionalCommand ElevatorInitCmd() {
+        return new FunctionalCommand(() -> elevatorInitialized = false,
+                                        () -> {if(!limitSwL.get()){
+                                                elevMtrLdr.set(-.125);
+                                            } else if(limitSwL.get()) {
+                                                elevMtrLdr.set(0);
+                                                elevEncLdr.setPosition(0);
+                                                elevatorInitialized = true;
+                                            }},
+                                        interrupted ->   elevMtrLdr.set(0),
+                                        () -> elevatorInitialized,
+                                        this);
+    }
 
     @Override
     public void simulationPeriodic() {
