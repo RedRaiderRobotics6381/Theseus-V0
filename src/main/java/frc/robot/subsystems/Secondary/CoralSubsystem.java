@@ -232,24 +232,42 @@ public class CoralSubsystem extends SubsystemBase {
                                      this);
     }
 
+    public FunctionalCommand setRotateAngleCmd(double pos) {
+        return new FunctionalCommand(
+            () -> {},
+            () -> coralSldrPID.setReference(pos, SparkMax.ControlType.kPosition),
+            interrupted -> {},
+            () -> (Math.abs(pos - coralAngEnc.getPosition()) <= 5.0) && (Math.abs(coralAngEnc.getVelocity()) <= 60.0),
+            this);
+    }
+
+    public FunctionalCommand setSliderPosition(double pos) {
+        return new FunctionalCommand(() -> {},
+            () -> coralSldrPID.setReference(pos, SparkMax.ControlType.kPosition),
+            interrupted -> {},
+            () -> (Math.abs(pos - coralSldrEnc.getPosition()) <= 5.0) && (Math.abs(coralSldrEnc.getVelocity()) <= 60.0),
+            this);
+    }
+
     
-    public void setRotateAngle(double angle) {
-        coralAngPID.setReference(angle, SparkMax.ControlType.kPosition);
-        // if (Robot.isSimulation()) {
-        //     coralRotatePID.setReference(angle, SparkMax.ControlType.kPosition);
-        // }
-    }
+    // public void setRotateAngle(double angle) {
+    //     coralAngPID.setReference(angle, SparkMax.ControlType.kPosition);
+    //     // if (Robot.isSimulation()) {
+    //     //     coralRotatePID.setReference(angle, SparkMax.ControlType.kPosition);
+    //     // }
+    // }
 
-    public void setSliderPosition(double position) {
-        coralSldrPID.setReference(position, SparkMax.ControlType.kPosition);
-        // if (Robot.isSimulation()) {
-        //     coralSliderPID.setReference(position, SparkMax.ControlType.kPosition);
-        // }
-    }
+    // public void setSliderPosition(double position) {
+    //     coralSldrPID.setReference(position, SparkMax.ControlType.kPosition);
+    //     // if (Robot.isSimulation()) {
+    //     //     coralSliderPID.setReference(position, SparkMax.ControlType.kPosition);
+    //     // }
+    // }
 
-    public void extend() {
-        pusherServo.set(1);
-    }
+
+    // public void extend() {
+    //     pusherServo.set(1);
+    // }
 
     @Override
     public void simulationPeriodic() {

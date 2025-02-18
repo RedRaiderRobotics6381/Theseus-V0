@@ -76,14 +76,10 @@ public final class Constants
     // public static final int ALGAE_Intake_MOTOR_PORT = 0;
   }
 
-  // public static class ServoConstants {
-
-  //   public static final int PINCHER_SERVO_PORT_1 = 1;
-  //   public static final int PINCHER_SERVO_PORT_2 = 2;
-  //   public static final int CLOSED_ANGLE = 90;
-  //   public static final int OPEN_ANGLE = 0;
-
-  // }
+  public static class ServoConstants {
+    public static final int SERVO_HUB_DEVICE_ID = 0;
+    public static final int CLIMBER_SERVO_PORT = 0;
+  }
 
   public static class AlgaeIntakeConstants {
     public static int LAUNCHER_LEADER_MOTOR_PORT = 21;
@@ -110,6 +106,10 @@ public final class Constants
     public static double CORAL_SLIDER_RIGHT_POSITION = 0;
     public static int BEAM_BREAK_SENSOR_PORT = 1;
     // public static int LIMIT_SWITCH_PORT = 0;
+  }
+
+  public static class ClimbConstants {
+    public static int CLIMBER_MOTOR_PORT = 0;
   }
 
   public static class AprilTagConstants {

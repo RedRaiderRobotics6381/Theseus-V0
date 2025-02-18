@@ -17,22 +17,31 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 // import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;                                                             
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.servohub.ServoChannel;
+import com.revrobotics.servohub.ServoChannel.ChannelId;
+import com.revrobotics.servohub.ServoHub;
 
-public class AlgaeRotateSubsystem extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
 
-    private SparkFlex rotateMotor;
-    public RelativeEncoder rotateEncoder;
-    public SparkClosedLoopController  rotatePID;
-    private SparkFlexSim rotateMotorSim;
-    private SparkAbsoluteEncoderSim rotateEncoderSim;                              
-    private SparkFlexConfig rotateMtrCfg;
+    public ServoHub servoHub;
+    public ServoChannel m_channel0;  
+    private SparkMax climbMotor;
+    public RelativeEncoder climbEncoder;
+    public SparkClosedLoopController  climbPID;
+    private SparkMaxSim climbMotorSim;
+    private SparkRelativeEncoderSim climbEncoderSim;                              
+    private SparkMaxConfig climbMtrCfg;
     // private AbsoluteEncoderConfig encCfg;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     
@@ -41,29 +50,31 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
     private double kOutputMin = -0.3;
     private double kOutputMax = 0.3;
 
-    public AlgaeRotateSubsystem() {
-        rotateMotor = new SparkFlex(Constants.AlgaeRotateConstants.ALGAE_ROTATE_MOTOR_PORT, MotorType.kBrushless);
-        rotateMtrCfg = new SparkFlexConfig();
+    public ClimberSubsystem() {
+        servoHub = new ServoHub(Constants.ServoConstants.SERVO_HUB_DEVICE_ID);
+        m_channel0 = servoHub.getServoChannel(ChannelId.kChannelId0);
+        climbMotor = new SparkMax(Constants.ClimbConstants.CLIMBER_MOTOR_PORT, MotorType.kBrushless);
+        climbMtrCfg = new SparkMaxConfig();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
 
-        rotatePID = rotateMotor.getClosedLoopController();
+        climbPID = climbMotor.getClosedLoopController();
 
-        rotateEncoder = rotateMotor.getEncoder();
+        climbEncoder = climbMotor.getEncoder();
  
-        rotateMtrCfg
+        climbMtrCfg
             .inverted(true)
             .voltageCompensation(12.0)
             .smartCurrentLimit(40)
             .idleMode(IdleMode.kBrake);
-        rotateMtrCfg
-            .absoluteEncoder
+        climbMtrCfg
+            .encoder
                 .positionConversionFactor(360);
-        rotateMtrCfg
+        climbMtrCfg
             .softLimit
                 .forwardSoftLimit(150.0) 
                 .reverseSoftLimit(290.0);
-        rotateMtrCfg
+        climbMtrCfg
             .closedLoop
                 .pidf(kP, kI, kD, kFF)
                 .outputRange(kOutputMin, kOutputMax)
@@ -73,70 +84,29 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
                 //     .maxAcceleration(kMaxAccel)
                 //     .maxVelocity(kMaxRPM)
                 //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
-        rotateMotor.configure(rotateMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        climbMotor.configure(climbMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
            
         // Add motors to the simulation
         if (Robot.isSimulation()) {
-            rotateMotorSim = new SparkFlexSim(rotateMotor, DCMotor.getNEO(1));
-            rotateEncoderSim = new SparkAbsoluteEncoderSim(rotateMotor);
-            rotateMotorSim.setPosition(190);
-            rotateEncoderSim.setPosition(190);
-            rotateMotorSim.setVelocity(0);
-            rotateEncoderSim.setVelocity(0);
+            climbMotorSim = new SparkMaxSim(climbMotor, DCMotor.getNEO(1));
+            climbEncoderSim = new SparkRelativeEncoderSim(climbMotor);
+            climbMotorSim.setPosition(190);
+            climbEncoderSim.setPosition(190);
+            climbMotorSim.setVelocity(0);
+            climbEncoderSim.setVelocity(0);
         }
     }
     
     // // An accessor method to set the speed (technically the output percentage) of the launch wheel
-    public void setAngle(double pos) {
-        rotatePID.setReference(pos, SparkFlex.ControlType.kPosition);
+    public void setClimbPosition(double pos) {
+        climbPID.setReference(pos, SparkFlex.ControlType.kPosition);
+        m_channel0.setPowered(true);
         if (Robot.isSimulation()) {
-            rotateMotorSim.setPosition(pos);
-            rotateEncoderSim.setPosition(pos);
+            climbMotorSim.setPosition(pos);
+            climbEncoderSim.setPosition(pos);
         }
     }
 
-    public FunctionalCommand RotatePosCmd(double pos) {
-        // return new FunctionalCommand(() -> {}, () -> setArm(pos), interrupted -> {}, () -> Math.abs(pos - rotateEncoder.getPosition()) <= 2.0, this);
-        return new FunctionalCommand(() -> {},
-                                     () -> setAngle(pos), interrupted -> {},
-                                     () -> (Math.abs(pos - rotateEncoder.getPosition()) <= 5.0) && (Math.abs(rotateEncoder.getVelocity()) <= 60.0),
-                                     this);
-    }
-
-    // public Command ForwardCmd() {
-    // return this.run(
-    //     () -> {
-    //         setArm(Constants.ArmConstants.CORAL_INTAKE_POS);
-    //     });
-    // }
-
-    // public Command MiddleCmd() {
-    // return this.run(
-    //     () -> {
-    //         setArm(Constants.ArmConstants.CORAL_MID_POS);
-    //     });
-    // }
-
-    // public Command UpCmd() {
-    //   return this.run(
-    //       () -> {
-    //           setArm(Constants.ArmConstants.CORAL_HIGH_POS);
-    //       });
-    //   }
-
-    // public Command AlgaeIntakeCmd () {
-    //     return this.run(
-    //         () -> {
-    //             setArm(Constants.ArmConstants.ALGAE_INTAKE_POS);
-    //         }); 
-    // }
-
-    // public Command AlgaeStartCmd () {
-    //     return this.run(
-    //         () -> {
-    //             setArm(Constants.ArmConstants.ALGAE_START_POS);
-    //         });
-    // }    
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
@@ -150,9 +120,9 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
     public void periodic() {
     // This method will be called once per scheduler run
     if (Robot.isSimulation()) {
-        SmartDashboard.putNumber("Arm Position", rotateEncoderSim.getPosition());
+        SmartDashboard.putNumber("Arm Position", climbEncoderSim.getPosition());
     } else {
-        SmartDashboard.putNumber("Arm Position", rotateEncoder.getPosition());
+        SmartDashboard.putNumber("Arm Position", climbEncoder.getPosition());
     }
     }
 }

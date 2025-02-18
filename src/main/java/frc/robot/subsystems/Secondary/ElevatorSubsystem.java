@@ -120,7 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         flwCfg
             .softLimit
                 .forwardSoftLimit(16.5) 
-                .reverseSoftLimit(-1.0); // -0.05
+                .reverseSoftLimit(-0.5); // -0.05
         flwCfg
             .closedLoop
                 .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
@@ -147,22 +147,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     
     // // An accessor method to set the speed (technically the output percentage) of the launch wheel
-    public void setElevatorHeight(double pos) {
-        // leaderElevatorL.set(speed);
-        elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-        if (Robot.isSimulation()) {
-            // leaderElevatorSim.setVelocity(speed);
-            // followerElevatorSim.setVelocity(speed);
-            // if (!limitSwL.get()) {
-            //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-            // }
-            // else {
-            //     elevMtrLdr.set(0);
-            // }
+    // public void setElevatorHeight(double pos) {
+    //     // leaderElevatorL.set(speed);
+    //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+    //     if (Robot.isSimulation()) {
+    //         // leaderElevatorSim.setVelocity(speed);
+    //         // followerElevatorSim.setVelocity(speed);
+    //         // if (!limitSwL.get()) {
+    //         //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+    //         // }
+    //         // else {
+    //         //     elevMtrLdr.set(0);
+    //         // }
 
-            elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-        }
-    }
+    //         elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+    //     }
+    // }
 
     public Command INIT_POSE() {
         return this.run(
@@ -179,36 +179,40 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public FunctionalCommand ElevatorHeightCmd(double height) {
-        return new FunctionalCommand(() -> {}, () -> setElevatorHeight(height), interrupted -> {}, () -> Math.abs(height - elevEncLdr.getPosition()) <= 0.125, this);
+        return new FunctionalCommand(() -> {},
+            () -> elevPIDLdr.setReference(height, SparkMax.ControlType.kPosition),
+            interrupted -> {},
+            () -> Math.abs(height - elevEncLdr.getPosition()) <= 0.125,
+            this);
     }
 
-    public Command START_POSE() {
-        return this.run(
-            () -> {
-                setElevatorHeight(ElevatorConstants.START_POSE);
-            });
-    }
+    // public Command START_POSE() {
+    //     return this.run(
+    //         () -> {
+    //             setElevatorHeight(ElevatorConstants.START_POSE);
+    //         });
+    // }
 
-    public Command REEF_LOW_POSE() {
-        return this.run(
-            () -> {
-                setElevatorHeight(ElevatorConstants.REEF_LOW_POSE);
-            });
-        }
+    // public Command REEF_LOW_POSE() {
+    //     return this.run(
+    //         () -> {
+    //             setElevatorHeight(ElevatorConstants.REEF_LOW_POSE);
+    //         });
+    //     }
 
-    public Command REEF_MIDDLE_POSE() {
-        return this.run(
-            () -> {
-                setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE);
-            });
-        }
+    // public Command REEF_MIDDLE_POSE() {
+    //     return this.run(
+    //         () -> {
+    //             setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE);
+    //         });
+    //     }
 
-    public Command REEF_HIGH_POSE() {
-        return this.run(
-            () -> {
-                setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE);
-            });
-        }
+    // public Command REEF_HIGH_POSE() {
+    //     return this.run(
+    //         () -> {
+    //             setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE);
+    //         });
+    //     }
 
     public FunctionalCommand ElevatorInitCmd() {
         return new FunctionalCommand(() -> elevatorInitialized = false,
