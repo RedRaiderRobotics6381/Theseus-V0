@@ -129,18 +129,18 @@ public final class Constants
   }
 // SubSystem	Description               Device                      Network     ID	
 // Power      Distribution Hub			    PDH                         Rio	        0			
-// Swerve	    Back Left - Drive	        Vortex - SparkFlex	        CANivore	  1			
-// Swerve	    Back Left - Angle	        Vortex - SparkFlex	        CANivore	  2			
-// Swerve	    Back Left - Steer         Encoder	CANcoder	          CANivore	  3			
-// Swerve	    Back Right - Drive        Vortex - SparkFlex	        CANivore	  4			
-// Swerve	    Back Right - Angle        Vortex - SparkFlex	        CANivore	  5			
-// Swerve	    Back Right - Steer        Encoder	CANcoder	          CANivore	  6			
-// Swerve	    Front Left - Drive        Vortex - SparkFlex	        CANivore	  7			
-// Swerve	    Front Left - Angle        Vortex - SparkFlex	        CANivore	  8			
-// Swerve	    Front Left - Steer        Encoder	CANcoder	          CANivore	  9			
-// Swerve	    Front Right - Drive     	Vortex - SparkFlex	        CANivore	  10			
-// Swerve	    Front Right - Angle       Vortex - SparkFlex	        CANivore	  11			
-// Swerve	    Front Right - Steer       Encoder	CANcoder	          CANivore	  12			
+// Swerve	    Front Left - Drive	        Vortex - SparkFlex	        CANivore	  1			
+// Swerve	    Front Left - Angle	        Vortex - SparkFlex	        CANivore	  2			
+// Swerve	    Front Left - Steer         Encoder	CANcoder	          CANivore	  3			
+// Swerve	    Front Right - Drive        Vortex - SparkFlex	        CANivore	  4			
+// Swerve	    Front Right - Angle        Vortex - SparkFlex	        CANivore	  5			
+// Swerve	    Front Right - Steer        Encoder	CANcoder	          CANivore	  6			
+// Swerve	    Back Right - Drive        Vortex - SparkFlex	        CANivore	  7			
+// Swerve	    Back Right - Angle        Vortex - SparkFlex	        CANivore	  8			
+// Swerve	    Back Right - Steer        Encoder	CANcoder	          CANivore	  9			
+// Swerve	    Back Left - Drive     	Vortex - SparkFlex	        CANivore	  10			
+// Swerve	    Back Left - Angle       Vortex - SparkFlex	        CANivore	  11			
+// Swerve	    Back Left - Steer       Encoder	CANcoder	          CANivore	  12			
 // Swerve	    IMU                     	Pegion 2	                  CANivore	  13			
 // Elevator 	Motor Right (Ldr)	        Vortex - SparkFlex	        Rio	        14			
 // Elevator 	Motor Left (Flwr)	        Vortex - SparkFlex	        Rio	        15			
@@ -160,7 +160,7 @@ public final class Constants
 // Algae	    Launch - Lower - Ldr	    Vortex - SparkFlex	        Rio	        21			
 // Algae	    Launch - Upper - Flwr	    Vortex - SparkFlex	        Rio	        22			
 // Algae	    Feeder - Lower - Ldr	    Neo550 - SparkMax	          Rio	        23			
-// Algae	    Feeder - Lower - Flwr	    Neo550 - SparkMax	          Rio	        24
+// Algae	    Feeder - Upper - Flwr	    Neo550 - SparkMax	          Rio	        24
 // LED        LED Strip	                Addressable LED Strip	      PWM	        2			
 
 
