@@ -96,7 +96,7 @@ public class CoralSubsystem extends SubsystemBase {
         coralSldrMtrCfg = new SparkMaxConfig();
         coralIndexMtrCfg = new SparkMaxConfig();
         coralSensor = new DigitalInput(CoralConstants.BEAM_BREAK_SENSOR_PORT);
-        coralLimitSwitch = new DigitalInput(CoralConstants.LIMIT_SWITCH_PORT);
+        // coralLimitSwitch = new DigitalInput(CoralConstants.LIMIT_SWITCH_PORT);
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
 
@@ -143,6 +143,9 @@ public class CoralSubsystem extends SubsystemBase {
             .softLimit
                 .forwardSoftLimit(150.0) 
                 .reverseSoftLimit(290.0);
+        coralSldrMtrCfg
+            .limitSwitch
+                .forwardLimitSwitchEnabled(true);
         coralSldrMtrCfg
             .closedLoop
                 .pidf(sldrkP, sldrkI, sldrkD, sldrkFF)

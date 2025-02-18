@@ -19,10 +19,11 @@ import swervelib.math.Matter;
 public final class Constants
 {
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+  public static final double ROBOT_MASS = Units.lbsToKilograms(105);
+  //TODO: Update the chassis weight and center of gravity location
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-  public static final double MAX_SPEED  = Units.feetToMeters(14.5);
+  public static final double MAX_SPEED  = Units.feetToMeters(14.5); // Max free speed of the MK4C with Neo Vortex motors and L1 gearing is 16.6 ft/s
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 //  public static final class AutonConstants
@@ -51,8 +52,9 @@ public final class Constants
     public static final double TURN_CONSTANT    = 6;
   }
   public static class ElevatorConstants {
-    public static final int LEFT_ELEVATOR_MOTOR_PORT = 9;
-    public static final int RIGHT_ELEVATOR_MOTOR_PORT = 13;
+    public static final int RIGHT_ELEVATOR_MOTOR_PORT = 14; //Leader
+    public static final int LEFT_ELEVATOR_MOTOR_PORT = 15; //Follower
+    
 
     public static final double START_POSE = 0;
     public static final double TROUGH_POSE = 1;
@@ -69,9 +71,9 @@ public final class Constants
   public static class AlgaeRotateConstants {
     public static final int ALGAE_INTAKE_POS = 240;
     public static final int ALGAE_START_POS = 280;
-    public static final int ALGAE_ROTATE_MOTOR_PORT = 0;
-    public static final int ALGAE_ADJUST_MOTOR_PORT = 0;
-    public static final int ALGAE_Intake_MOTOR_PORT = 0;
+    public static final int ALGAE_ROTATE_MOTOR_PORT = 20;
+    // public static final int ALGAE_ADJUST_MOTOR_PORT = 0;
+    // public static final int ALGAE_Intake_MOTOR_PORT = 0;
   }
 
   // public static class ServoConstants {
@@ -84,11 +86,11 @@ public final class Constants
   // }
 
   public static class AlgaeIntakeConstants {
-    public static int LEFT_INTAKE_MOTOR_PORT = 10;
-    public static int RIGHT_INTAKE_MOTOR_PORT = 11;
-    public static int LEFT_INDEXER_MOTOR_PORT = 0;
-    public static int RIGHT_INDEXER_MOTOR_PORT = 0;
-
+    public static int LAUNCHER_LEADER_MOTOR_PORT = 21;
+    public static int LAUNCHER_FOLLOWER_MOTOR_PORT = 22;
+    public static int FEEDER_LEADER_MOTOR_PORT = 23;
+    public static int FEEDER_FOLLOWER_MOTOR_PORT = 24;
+    
     public static double INTAKE_SPEED = 600;
     public static double OUTTAKE_SPEED = -500;
     public static double STOP_SPEED = 0;
@@ -96,9 +98,9 @@ public final class Constants
   }
 
   public static class CoralConstants {
-    public static int CORAL_SLIDER_MOTOR_PORT = 0;
-    public static int CORAL_ROTATE_MOTOR_PORT = 0;
-    public static int CORAL_HOLD_MOTOR_PORT = 0;
+    public static int CORAL_ROTATE_MOTOR_PORT = 17;
+    public static int CORAL_SLIDER_MOTOR_PORT = 18;
+    public static int CORAL_HOLD_MOTOR_PORT = 19;
     public static int SERVO_PORT = 0;
     public static double CORAL_HIGH_ANGLE = 0;
     public static double CORAL_LOW_ANGLE = 0;
@@ -106,8 +108,8 @@ public final class Constants
     public static double CORAL_SLIDER_LEFT_POSITION = 0;
     public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
     public static double CORAL_SLIDER_RIGHT_POSITION = 0;
-    public static int BEAM_BREAK_SENSOR_PORT = 0;
-    public static int LIMIT_SWITCH_PORT = 0;
+    public static int BEAM_BREAK_SENSOR_PORT = 1;
+    // public static int LIMIT_SWITCH_PORT = 0;
   }
 
   public static class AprilTagConstants {
