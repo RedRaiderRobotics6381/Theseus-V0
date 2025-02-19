@@ -20,9 +20,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DrivebaseConstants;
-import frc.robot.Constants.OperatorConstants;
-
+import frc.robot.Constants.*;
+import frc.robot.commands.Secondary.PositionIdentifierCmd;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdvHdg;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
@@ -48,10 +47,10 @@ public class RobotContainer
                                                                                 "swerve/neo"));
 
 
-  private final AlgaeRotateSubsystem rotateSubsystem = new AlgaeRotateSubsystem();
-  private final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
-  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final CoralSubsystem coralSubsystem = new CoralSubsystem();   
+  public final AlgaeRotateSubsystem rotateSubsystem = new AlgaeRotateSubsystem();
+  public final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
+  public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  public final CoralSubsystem coralSubsystem = new CoralSubsystem();   
   
   private final SendableChooser<Command> autoChooser;
 
@@ -132,6 +131,53 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
+      
+      engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE));
+      engineerXbox.leftBumper().whileTrue(intakeSubsystem.RunIntakeCmd());
+      engineerXbox.rightBumper().whileTrue(intakeSubsystem.RunOuttakeCmd());
+      engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
+                                                                      coralSubsystem, 
+                                                                      () -> engineerXbox.getLeftX(),
+                                                                      () -> engineerXbox.getLeftY()));
+    
+      engineerXbox.povLeft().onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
+            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
+            intakeSubsystem.RunIntakeCmd()
+        )
+        .andThen(
+            intakeSubsystem.RunHoldCmd()))
+        );
+
+      engineerXbox.povRight().onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
+            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
+            intakeSubsystem.RunIntakeCmd()
+        )
+        .andThen(
+            intakeSubsystem.RunHoldCmd()))
+        );
+
+      engineerXbox.povUp().onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_BARGE_POSE), 
+            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS)
+        )
+        .andThen(
+            intakeSubsystem.RunOuttakeCmd()))
+        );
+
+      engineerXbox.povDown().onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PROCESSOR_POSE), 
+            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS)
+        )
+        .andThen(
+            intakeSubsystem.RunOuttakeCmd()))
+        );
+      
     }
 
   }
@@ -149,12 +195,12 @@ public class RobotContainer
 
   public void initSlider(){
     // new SliderInitCmd(coralSubsystem).schedule();
-    new CoralSubsystem().SliderInitCmd().schedule();
+    coralSubsystem.SliderInitCmd().schedule();
   }
 
   public void initElevator(){
     // new ElevatorInitCmd(elevatorSubsystem).schedule();
-    new ElevatorSubsystem().ElevatorInitCmd().schedule();
+    elevatorSubsystem.ElevatorInitCmd().schedule();
   }
 
   public void setMotorBrake(boolean brake)

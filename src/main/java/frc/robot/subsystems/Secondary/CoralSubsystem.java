@@ -27,12 +27,14 @@ package frc.robot.subsystems.Secondary;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+//import com.revrobotics.CANDigitalInput;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -71,9 +73,8 @@ public class CoralSubsystem extends SubsystemBase {
     private SparkMaxConfig coralSldrMtrCfg;
     private SparkMaxConfig coralIndexMtrCfg;
     private DigitalInput coralSensor;
-    public DigitalInput coralLimitSwitch;
-    // private AbsoluteEncoderConfig encCfg;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
+    public SparkLimitSwitch coralLimitSwitch;
     
     private double angkP = 0.005, angkI = 0.0, angkD = 0.0;//p was 0.0005
     private double angkFF = 0.0;
@@ -96,7 +97,7 @@ public class CoralSubsystem extends SubsystemBase {
         coralSldrMtrCfg = new SparkMaxConfig();
         coralIndexMtrCfg = new SparkMaxConfig();
         coralSensor = new DigitalInput(CoralConstants.BEAM_BREAK_SENSOR_PORT);
-        // coralLimitSwitch = new DigitalInput(CoralConstants.LIMIT_SWITCH_PORT);
+        coralLimitSwitch = coralSldrMtr.getForwardLimitSwitch();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
 
@@ -181,9 +182,9 @@ public class CoralSubsystem extends SubsystemBase {
         }
     }
     
-    public void runIntakeCmd(double speed) {
-        coralIndexMtr.set(speed);
-    }
+    // public void runIntakeCmd(double speed) {
+    //     coralIndexMtr.set(speed);
+    // }
 
     /**
      * Creates a FunctionalCommand to initialize the slider mechanism.
@@ -200,10 +201,10 @@ public class CoralSubsystem extends SubsystemBase {
      */
     public FunctionalCommand SliderInitCmd() {
         return new FunctionalCommand(() -> sliderInitialized = false,
-                                     () -> {if(!coralLimitSwitch.get()){
+                                     () -> {if(!coralLimitSwitch.isPressed()) {
                                                 coralSldrMtr.set(-.125);
                                                 //I think this can just be an else statement
-                                            } else if(coralLimitSwitch.get()) {
+                                            } else if(coralLimitSwitch.isPressed()) {
                                                 coralSldrMtr.set(0);
                                                 coralIndexEnc.setPosition(0);
                                                 sliderInitialized = true;
@@ -224,11 +225,19 @@ public class CoralSubsystem extends SubsystemBase {
      * 
      * @return A new instance of FunctionalCommand for controlling the intake mechanism.
      */
-    public FunctionalCommand IntakeCmd() {
+    public FunctionalCommand IntakeCmd(double speed) {
         return new FunctionalCommand(() ->{},
-                                     () -> runIntakeCmd(0.1),
-                                     interrupted -> runIntakeCmd(0),
+                                     () -> coralIndexMtr.set(speed),
+                                     interrupted -> coralIndexMtr.set(0),
                                      () -> coralSensor.get(),
+                                     this);
+    }
+
+    public FunctionalCommand OuttakeCmd(double speed) {
+        return new FunctionalCommand(() ->{},
+                                     () -> coralIndexMtr.set(speed),
+                                     interrupted -> coralIndexMtr.set(0),
+                                     () -> !coralSensor.get(),
                                      this);
     }
 

@@ -185,12 +185,12 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   //     );
   // }
 
-  public Command RunIntakeCmd(double speed) {
+  public Command RunIntakeCmd() {
     return this.run(
         () -> {
             // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-            launcherMtrLdr.set(speed);
-            feederMtrLdr.set(speed);
+            launcherMtrLdr.set(0.15);
+            feederMtrLdr.set(0.15);
         }
       );
   }

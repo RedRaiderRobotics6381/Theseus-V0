@@ -52,8 +52,8 @@ public final class Constants
     public static final double TURN_CONSTANT    = 6;
   }
   public static class ElevatorConstants {
-    public static final int RIGHT_ELEVATOR_MOTOR_PORT = 14; //Leader
-    public static final int LEFT_ELEVATOR_MOTOR_PORT = 15; //Follower
+    public static final int RIGHT_ELEVATOR_MOTOR_PORT = 14;
+    public static final int LEFT_ELEVATOR_MOTOR_PORT = 15;
     
 
     public static final double START_POSE = 0;
@@ -61,7 +61,8 @@ public final class Constants
     public static final double REEF_LOW_POSE = 0.5;
     public static final double REEF_MIDDLE_POSE = 6.125;
     public static final double REEF_HIGH_POSE = 14.9; //14.75
-    public static final double ALGAE_SCORE_POSE = 0;
+    public static final double ALGAE_BARGE_POSE = 0;
+    public static final double ALGAE_PROCESSOR_POSE = 0; 
     public static final double ALGAE_PICKUP_HIGH_POSE = 6.125;
     public static final double ALGAE_PICKUP_LOW_POSE = 0;
     public static final double HUMAN_PLAYER_POSE = 0;
@@ -71,6 +72,8 @@ public final class Constants
   public static class AlgaeRotateConstants {
     public static final int ALGAE_INTAKE_POS = 240;
     public static final int ALGAE_START_POS = 280;
+    public static final int ALGAE_BARGE_POS = 0;
+    public static final int ALGAE_PROCESSOR_POS = 0;
     public static final int ALGAE_ROTATE_MOTOR_PORT = 20;
     // public static final int ALGAE_ADJUST_MOTOR_PORT = 0;
     // public static final int ALGAE_Intake_MOTOR_PORT = 0;

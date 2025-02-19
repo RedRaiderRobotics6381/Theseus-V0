@@ -21,10 +21,8 @@ public class Robot extends TimedRobot
 {
 
   private static Robot   instance;
-  private        Command m_autonomousCommand;
-
+  private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-
   private Timer disabledTimer;
 
   public Robot()
@@ -113,8 +111,8 @@ public class Robot extends TimedRobot
     }
     // m_robotContainer.initElevator();
     // m_robotContainer.initSlider();
-    new ElevatorSubsystem().ElevatorInitCmd().schedule();
-    new CoralSubsystem().SliderInitCmd().schedule();
+    m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
 
   }
 
@@ -142,8 +140,8 @@ public class Robot extends TimedRobot
     }
     // m_robotContainer.initElevator();
     // m_robotContainer.initSlider();
-    new ElevatorSubsystem().ElevatorInitCmd().schedule();
-    new CoralSubsystem().SliderInitCmd().schedule();
+    m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
   }
 
   /**

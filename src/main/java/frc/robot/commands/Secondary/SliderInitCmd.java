@@ -35,14 +35,14 @@ public void initialize() {
 // Called every time the scheduler runs while the command is scheduled.
 @Override
 public void execute() {
-  if(!coralSubsystem.coralLimitSwitch.get()){
+  if(!coralSubsystem.coralLimitSwitch.isPressed()) {
     coralSubsystem.coralIndexMtr.set(-.125);
     //I think this can just be an else statement
-  } else if(coralSubsystem.coralLimitSwitch.get()) {
+  } else if(coralSubsystem.coralLimitSwitch.isPressed()) {
     coralSubsystem.coralIndexMtr.set(0);
   }
   
-  if (coralSubsystem.coralLimitSwitch.get()){
+  if (coralSubsystem.coralLimitSwitch.isPressed()){
     sliderInitialized = true;
   }
 }
