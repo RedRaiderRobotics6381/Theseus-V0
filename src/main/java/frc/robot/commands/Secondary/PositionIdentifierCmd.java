@@ -98,8 +98,19 @@ public class PositionIdentifierCmd extends Command {
                 .andThen(
                     coralSubsystem.OuttakeCmd(-0.1)))
                 .schedule();
+       
+        } else if (snappedInputAngle == 225.0) { 
+            Commands.sequence(
+                Commands.parallel(
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
+                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
+                )
+                .andThen(
+                    coralSubsystem.OuttakeCmd(-0.1)))
+                .schedule();
             
-        } else if (snappedInputAngle == 45.0) { //if the 
+        } else if (snappedInputAngle == 45.0) {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
@@ -109,9 +120,8 @@ public class PositionIdentifierCmd extends Command {
                 .andThen(
                     coralSubsystem.OuttakeCmd(-0.1)))
                 .schedule();
-            // pose = Constants.ElevatorConstants.REEF_HIGH_POSE;
-            // rotatePose = Constants.ElevatorConstants.CORAL_HIGH_POS;
-        } else if (snappedInputAngle == 90.0) { //if the joystick is in the middle
+        
+        } else if (snappedInputAngle == 90.0) {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
@@ -121,7 +131,8 @@ public class PositionIdentifierCmd extends Command {
                 .andThen(
                     coralSubsystem.OuttakeCmd(-0.1)))
                 .schedule();
-        } else if (snappedInputAngle == 135.0) { //if the joystick is pushed down
+        
+        } else if (snappedInputAngle == 135.0) {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
@@ -131,16 +142,6 @@ public class PositionIdentifierCmd extends Command {
                 .andThen(
                     coralSubsystem.OuttakeCmd(-0.1)))
                 .schedule();
-        } else if (snappedInputAngle == 225.0) { 
-        Commands.sequence(
-            Commands.parallel(
-                elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
-                coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
-            )
-            .andThen(
-                coralSubsystem.OuttakeCmd(-0.1)))
-            .schedule();
         }
     
 
