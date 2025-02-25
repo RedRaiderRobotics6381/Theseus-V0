@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
-import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
-import frc.robot.subsystems.Secondary.AlgaeRotateSubsystem;
 import frc.robot.subsystems.Secondary.CoralSubsystem;
 
 public class PositionIdentifierCmd extends Command {
@@ -81,7 +79,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
                 )
                 .andThen(
@@ -92,7 +90,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
                 .andThen(
@@ -103,7 +101,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
                 .andThen(
@@ -114,7 +112,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
                 )
                 .andThen(
@@ -125,7 +123,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
                 .andThen(
@@ -136,7 +134,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                    coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
                 )
                 .andThen(

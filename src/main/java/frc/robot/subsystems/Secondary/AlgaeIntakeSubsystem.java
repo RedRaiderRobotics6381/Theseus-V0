@@ -34,7 +34,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private SparkFlex launcherMtrLdr;
   private SparkFlex launcherMtrFlw;
   private SparkMax feederMtrLdr;
-  private SparkMax feederMtrFlw;
+  //private SparkMax feederMtrFlw;
   private RelativeEncoder launcherEncLdr;
   private RelativeEncoder feederEncLdr;
 //   private RelativeEncoder intakeEncFlw;
@@ -43,15 +43,15 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private SparkFlexSim launcherMtrLdrSim;
   private SparkFlexSim launcherMtrFlwSim;
   private SparkMaxSim feederMtrLdrSim;
-  private SparkMaxSim feederMtrFlwSim;
+  //private SparkMaxSim feederMtrFlwSim;
   private SparkFlexConfig launcherLdrCfg;
   private SparkFlexConfig LauncherFlwCfg;
   private SparkMaxConfig feederLdrCfg;
-  private SparkMaxConfig feederFlwCfg;
+  //private SparkMaxConfig feederFlwCfg;
   private SparkRelativeEncoderSim launcherEncLdrSim;
   private SparkRelativeEncoderSim launcherEncFlwSim;
   private SparkRelativeEncoderSim feederEncLdrSim;
-  private SparkRelativeEncoderSim feederEncFlwSim;
+  //private SparkRelativeEncoderSim feederEncFlwSim;
 
   // private double kLdrP = 0.0003, kLdrI = 0.0, kLdrD = 0.0;
   // private double kFlwP = 0.0003, kFlwI = 0.0, kFlwD = 0.0;
@@ -64,13 +64,13 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   public AlgaeIntakeSubsystem() {
     launcherMtrLdr = new SparkFlex(AlgaeIntakeConstants.LAUNCHER_FOLLOWER_MOTOR_PORT, MotorType.kBrushless);
     launcherMtrFlw = new SparkFlex(AlgaeIntakeConstants.LAUNCHER_LEADER_MOTOR_PORT, MotorType.kBrushless);
-    feederMtrLdr = new SparkMax(AlgaeIntakeConstants.FEEDER_FOLLOWER_MOTOR_PORT, MotorType.kBrushless);
-    feederMtrFlw = new SparkMax(AlgaeIntakeConstants.FEEDER_LEADER_MOTOR_PORT, MotorType.kBrushless);
+    feederMtrLdr = new SparkMax(AlgaeIntakeConstants.FEEDER_LEADER_MOTOR_PORT, MotorType.kBrushless);
+    // feederMtrFlw = new SparkMax(AlgaeIntakeConstants.FEEDER_LEADER_MOTOR_PORT, MotorType.kBrushless);
     
     launcherLdrCfg = new SparkFlexConfig();
     LauncherFlwCfg = new SparkFlexConfig();
     feederLdrCfg = new SparkMaxConfig();
-    feederFlwCfg = new SparkMaxConfig();
+    //feederFlwCfg = new SparkMaxConfig();
     // SoftLimitConfig leaderSoftLimit = new SoftLimitConfig();
     // SoftLimitConfig followerSoftLimit = new SoftLimitConfig();
 
@@ -78,6 +78,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     // intakeFlwPID = intakeMtrFlw.getClosedLoopController();
 
     launcherEncLdr = launcherMtrLdr.getEncoder();
+    feederEncLdr = feederMtrLdr.getEncoder();
     // intakeEncFlw = intakeMtrFlw.getEncoder();
 
     launcherLdrCfg
@@ -117,22 +118,22 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     launcherMtrLdr.configure(launcherLdrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
-    feederFlwCfg
-        .follow(feederMtrLdr, true)
-        .voltageCompensation(12.0)
-        .smartCurrentLimit(80)
-        .idleMode(IdleMode.kBrake);
-    launcherMtrLdr.configure(launcherLdrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // feederFlwCfg
+    //     .follow(feederMtrLdr, true)
+    //     .voltageCompensation(12.0)
+    //     .smartCurrentLimit(80)
+    //     .idleMode(IdleMode.kBrake);
+    // launcherMtrLdr.configure(launcherLdrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
     if (Robot.isSimulation()) {
       launcherMtrLdrSim = new SparkFlexSim(launcherMtrLdr, DCMotor.getNEO(1));
       launcherMtrFlwSim = new SparkFlexSim(launcherMtrFlw, DCMotor.getNEO(1));
       feederMtrLdrSim = new SparkMaxSim(feederMtrLdr, DCMotor.getNEO(1));
-      feederMtrFlwSim = new SparkMaxSim(feederMtrFlw, DCMotor.getNEO(1));
+      // feederMtrFlwSim = new SparkMaxSim(feederMtrFlw, DCMotor.getNEO(1));
       launcherEncLdrSim = new SparkRelativeEncoderSim(launcherMtrLdr);
       launcherEncFlwSim = new SparkRelativeEncoderSim(launcherMtrFlw);
       feederEncLdrSim = new SparkRelativeEncoderSim(feederMtrLdr);
-      feederEncFlwSim = new SparkRelativeEncoderSim(feederMtrFlw);
+      // feederEncFlwSim = new SparkRelativeEncoderSim(feederMtrFlw);
       // leaderIntakeSim.setVelocity(0);
       // followerIntakeSim.setVelocity(0);
       // leaderEncoderSim.setVelocity(0);
@@ -149,7 +150,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
           launcherMtrLdrSim.iterate(launcherEncLdrSim.getVelocity(), launcherMtrLdrSim.getBusVoltage(),.005);
           launcherMtrFlwSim.iterate(launcherEncFlwSim.getVelocity(), launcherMtrFlwSim.getBusVoltage(),.005);
           feederMtrLdrSim.iterate(feederEncLdrSim.getVelocity(), feederMtrLdrSim.getBusVoltage(),.005);
-          feederMtrFlwSim.iterate(feederEncFlwSim.getVelocity(), feederMtrFlwSim.getBusVoltage(),.005);
+          //feederMtrFlwSim.iterate(feederEncFlwSim.getVelocity(), feederMtrFlwSim.getBusVoltage(),.005);
       }
   }
 

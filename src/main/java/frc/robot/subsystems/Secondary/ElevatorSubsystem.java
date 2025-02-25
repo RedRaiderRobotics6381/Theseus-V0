@@ -70,7 +70,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevMtrLdr = new SparkFlex(ElevatorConstants.LEFT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
         elevMtrFlw = new SparkFlex(ElevatorConstants.RIGHT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
 
-        limitSwL = new DigitalInput(0);
+        limitSwL = new DigitalInput(9);
 
         ldrCfg = new SparkFlexConfig();
         flwCfg = new SparkFlexConfig();

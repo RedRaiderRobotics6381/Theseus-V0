@@ -10,8 +10,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -28,6 +30,8 @@ import frc.robot.subsystems.Secondary.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.Secondary.AlgaeRotateSubsystem;
 import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
+
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -51,6 +55,12 @@ public class RobotContainer
   public final AlgaeIntakeSubsystem intakeSubsystem = new AlgaeIntakeSubsystem();
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   public final CoralSubsystem coralSubsystem = new CoralSubsystem();   
+
+  public boolean hdgModePressed = false; // Flag to track button state
+  private double headingX = 0;
+  private double headingY = 0;
+  private double heading = 0;
+  private Command currentDriveCmd = null;
   
   private final SendableChooser<Command> autoChooser;
 
@@ -64,19 +74,95 @@ public class RobotContainer
   // also in this mode the POV buttons are used to quickly face a direction
   // and a button will yaw the robot towards a target.
   // WARNING: default buttons are on the same buttons as the ones defined in configureBindings
-  Command AbsoluteDriveAdvHdg = new AbsoluteDriveAdvHdg(drivebase,
-                                                                    () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                  OperatorConstants.LEFT_Y_DEADBAND) *
-                                                                                                  DrivebaseConstants.Max_Speed_Multiplier,
-                                                                    () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                  OperatorConstants.LEFT_X_DEADBAND) *
-                                                                                                  DrivebaseConstants.Max_Speed_Multiplier,
-                                                                    () -> -MathUtil.applyDeadband(driverXbox.getRightX(),OperatorConstants.LEFT_X_DEADBAND),
-                                                                    () -> -MathUtil.applyDeadband(driverXbox.getRightY(),OperatorConstants.LEFT_Y_DEADBAND),
-                                                                    () -> MathUtil.applyDeadband(driverXbox.getLeftTriggerAxis(),OperatorConstants.LEFT_Y_DEADBAND),
-                                                                    () -> MathUtil.applyDeadband(driverXbox.getRightTriggerAxis(),OperatorConstants.LEFT_Y_DEADBAND),
-                                                                    () -> driverXbox.getHID().getPOV(),
-                                                                    driverXbox.rightStick());
+  // Command AbsoluteDriveAdvHdg = new AbsoluteDriveAdvHdg(drivebase,
+  //                                                                   () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
+  //                                                                                                 OperatorConstants.LEFT_Y_DEADBAND) *
+  //                                                                                                 DrivebaseConstants.Max_Speed_Multiplier,
+  //                                                                   () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
+  //                                                                                                 OperatorConstants.LEFT_X_DEADBAND) *
+  //                                                                                                 DrivebaseConstants.Max_Speed_Multiplier,
+  //                                                                   () -> -MathUtil.applyDeadband(driverXbox.getRightX(),OperatorConstants.LEFT_X_DEADBAND),
+  //                                                                   () -> -MathUtil.applyDeadband(driverXbox.getRightY(),OperatorConstants.LEFT_Y_DEADBAND),
+  //                                                                   () -> MathUtil.applyDeadband(driverXbox.getLeftTriggerAxis(),OperatorConstants.LEFT_Y_DEADBAND),
+  //                                                                   () -> MathUtil.applyDeadband(driverXbox.getRightTriggerAxis(),OperatorConstants.LEFT_Y_DEADBAND),
+  //                                                                   () -> driverXbox.getHID().getPOV(),
+  //                                                                   driverXbox.rightStick());
+
+  /**
+   * Converts driver input into a robot-centric ChassisSpeeds that is controlled by the left and right triggers.
+   */
+  SwerveInputStream driveRobotCentricSideShift = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                () -> 0,
+                                () -> driverXbox.getRightTriggerAxis() - driverXbox.getLeftTriggerAxis())
+                              .withControllerRotationAxis(() -> 0)
+                              .deadband(OperatorConstants.DEADBAND)
+                              .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
+                              .cubeTranslationControllerAxis(true)
+                              .cubeRotationControllerAxis(true)
+                              .headingWhile(false)
+                              .robotRelative(true)
+                              .allianceRelativeControl(false);
+
+  /**
+   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
+   */
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                                () -> -driverXbox.getLeftY(),
+                                                                () -> -driverXbox.getLeftX())
+                                                            .withControllerRotationAxis(() -> -driverXbox.getRightX())
+                                                            .deadband(OperatorConstants.DEADBAND)
+                                                            .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
+                                                            .scaleRotation(DrivebaseConstants.Max_Speed_Multiplier)
+                                                            .cubeTranslationControllerAxis(true)
+                                                            .cubeRotationControllerAxis(true)
+                                                            .headingWhile(false)
+                                                            .allianceRelativeControl(true);
+
+  /**
+   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
+   */
+  SwerveInputStream driveDirectAngleSnapped = driveAngularVelocity.copy().withControllerHeadingAxis(
+                                                                        () -> {
+                                                                          headingX = driverXbox.getRightX();
+                                                                          headingY = driverXbox.getRightY();
+                                                                          // angle = ((Math.toDegrees(Math.atan2(headingX, headingY)) + 360) % 360);
+                                                                          // snappedAngle = (Math.round(((Math.toDegrees(Math.atan2(headingX, headingY)) + 360) % 360) / 60.0) * 60.0);
+                                                                          if (driverXbox.getHID().getPOV() != -1) {
+                                                                            return Math.sin(Math.toRadians(-driverXbox.getHID().getPOV()));
+                                                                          } else {
+                                                                            if (Math.sqrt(Math.pow(headingX, 2) + Math.pow(headingY, 2)) > 0.2) {
+                                                                            return Math.sin(Math.toRadians((Math.round(((Math.toDegrees(Math.atan2(-driverXbox.getRightX(), -driverXbox.getRightY())) + 360) % 360) / 60.0) * 60.0)));
+                                                                          }
+                                                                          if(DriverStation.getAlliance().get() == Alliance.Blue){
+                                                                            return Math.sin(getSnappedAngle(drivebase.getHeading().getDegrees()));
+                                                                          }
+                                                                          else{
+                                                                            return Math.sin(getSnappedIdleAngle(drivebase.getHeading().getDegrees()));
+                                                                          }
+                                                                          }}
+                                                                        ,
+                                                                        () -> {
+                                                                          if (driverXbox.getHID().getPOV() != -1) {
+                                                                            return Math.cos(Math.toRadians(driverXbox.getHID().getPOV()));
+                                                                          } else {
+                                                                            if (Math.sqrt(Math.pow(headingX, 2) + Math.pow(headingY, 2)) > 0.2) {
+                                                                            return Math.cos(Math.toRadians((Math.round(((Math.toDegrees(Math.atan2(-driverXbox.getRightX(), -driverXbox.getRightY())) + 360) % 360) / 60.0) * 60.0)));
+                                                                          }
+                                                                          if(DriverStation.getAlliance().get() == Alliance.Blue){
+                                                                            return Math.cos(getSnappedAngle(drivebase.getHeading().getDegrees()));
+                                                                          }
+                                                                          else {
+                                                                            return Math.cos(getSnappedIdleAngle(drivebase.getHeading().getDegrees()));
+                                                                          }
+                                                                        }})
+                                                                      .headingWhile(true);
+
+  public double getSnappedAngle(double heading){
+    return Math.toRadians(Math.round((heading + 360) % 360));
+  }
+  public double getSnappedIdleAngle(double heading){
+    return Math.toRadians(Math.round((heading + 180) % 360));
+  }
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -85,10 +171,29 @@ public class RobotContainer
   {
     // Configure the trigger bindings
     autoChooser = AutoBuilder.buildAutoChooser();
+    
+    NamedCommands.registerCommand("AlgaeIntakeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_INTAKE_POS));
+    NamedCommands.registerCommand("AlgaeBargeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_BARGE_POS));
+    NamedCommands.registerCommand("AlgaeIntake", intakeSubsystem.RunIntakeCmd());
+    NamedCommands.registerCommand("AlgaeHold", intakeSubsystem.RunHoldCmd());
+    NamedCommands.registerCommand("AlgaeOuttake", intakeSubsystem.RunOuttakeCmd());
+    NamedCommands.registerCommand("CoralIntakePos", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_START_ANGLE));
+    NamedCommands.registerCommand("CoralHighOuttake", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
+    NamedCommands.registerCommand("ElevatorHigh", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants .REEF_HIGH_POSE));
+    // NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
+    // NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
+    // NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
+    NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd(0.15));
+    NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd(-0.15));
+    NamedCommands.registerCommand("ElevatorDown", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
+    NamedCommands.registerCommand("ElevatorBarge", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_BARGE_POSE));
+    NamedCommands.registerCommand("ElevatorHighAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_HIGH_POSE));
+    NamedCommands.registerCommand("ElevatorLowAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_LOW_POSE));
+    
     configureBindings();
+    
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-
+    
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
@@ -101,7 +206,11 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-    drivebase.setDefaultCommand(AbsoluteDriveAdvHdg);
+    Command driveFieldOrientedAngleSnapped  = drivebase.driveFieldOriented(driveDirectAngleSnapped);
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveRobotOrientedSideShift = drivebase.driveFieldOriented(driveRobotCentricSideShift);
+
+    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
 
     if (Robot.isSimulation())
@@ -110,8 +219,7 @@ public class RobotContainer
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
     }
     if (DriverStation.isTest())
-    {
-      drivebase.setDefaultCommand(AbsoluteDriveAdvHdg); // Overrides drive command above!
+    { // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
@@ -121,25 +229,86 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.b().whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              );
+
+      driverXbox.rightStick().onTrue(Commands.runOnce(() -> {
+        hdgModePressed = !hdgModePressed;
+        if (hdgModePressed){
+          heading = drivebase.getHeading().getDegrees();
+          driveFieldOrientedAngleSnapped.schedule();
+        }
+        else{
+          driveFieldOrientedAnglularVelocity.schedule();
+        }
+      }));
+
+      driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).onTrue(Commands.runOnce(() -> {
+        currentDriveCmd = drivebase.getCurrentCommand();
+        driveRobotOrientedSideShift.schedule();
+      }));
+
+      driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).onFalse(Commands.runOnce(() -> {
+        if (currentDriveCmd != drivebase.getCurrentCommand()){
+          currentDriveCmd.schedule();
+        }
+      }));
+      
+      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      // driverXbox.b().whileTrue(
+      //     drivebase.driveToPose(
+      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
+      //                         );
+
+      driverXbox.b().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
+                          Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                          new Transform2d(0.6604,   -.164338,
+                          Rotation2d.fromDegrees(180))))));
+
+      driverXbox.x().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
+                          Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                          new Transform2d(0.6604,   .164338,
+                          Rotation2d.fromDegrees(180))))));
+
+      driverXbox.y().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
+                          Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                          new Transform2d(0.5,   0.0,
+                          Rotation2d.fromDegrees(0.0))))));
+
+      driverXbox.a().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
+                          Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                          new Transform2d(1.0,   0.0,
+                          Rotation2d.fromDegrees(180.0))))));
+
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-      
-      engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE));
+
+      //engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE));
+      engineerXbox.a().onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+            coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE))
+        )
+        .andThen(
+            intakeSubsystem.RunIntakeCmd()));
+
       engineerXbox.leftBumper().whileTrue(intakeSubsystem.RunIntakeCmd());
       engineerXbox.rightBumper().whileTrue(intakeSubsystem.RunOuttakeCmd());
+
       engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
                                                                       coralSubsystem, 
                                                                       () -> engineerXbox.getLeftX(),
                                                                       () -> engineerXbox.getLeftY()));
-    
+
+
+      // engineerXbox.a().onTrue(Commands.sequence(
+      //   Commands.parallel(
+      //     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+      //     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+      //   .andThen(
+      //     intakeSubsystem.RunIntakeCmd()));
+
       engineerXbox.povLeft().onTrue(Commands.sequence(
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
@@ -193,15 +362,15 @@ public class RobotContainer
     return autoChooser.getSelected();
   }
 
-  public void initSlider(){
-    // new SliderInitCmd(coralSubsystem).schedule();
-    coralSubsystem.SliderInitCmd().schedule();
-  }
+  // public void initSlider(){
+  //   // new SliderInitCmd(coralSubsystem).schedule();
+  //   coralSubsystem.SliderInitCmd().schedule();
+  // }
 
-  public void initElevator(){
-    // new ElevatorInitCmd(elevatorSubsystem).schedule();
-    elevatorSubsystem.ElevatorInitCmd().schedule();
-  }
+  // public void initElevator(){
+  //   // new ElevatorInitCmd(elevatorSubsystem).schedule();
+  //   elevatorSubsystem.ElevatorInitCmd().schedule();
+  // }
 
   public void setMotorBrake(boolean brake)
   {

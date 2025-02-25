@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
+import com.ctre.phoenix6.hardware.CANrange;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -24,6 +28,9 @@ public class Robot extends TimedRobot
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Timer disabledTimer;
+  //public final CANrange canrange = new CANrange(1);
+
+  public final DigitalInput rangeSnsr = new DigitalInput(8);
 
   public Robot()
   {
@@ -72,6 +79,12 @@ public class Robot extends TimedRobot
     CommandScheduler.getInstance().run();
     // m_robotContainer.initSlider();
     // m_robotContainer.initElevator();
+    if (!rangeSnsr.get()){
+      SmartDashboard.putBoolean("In Range", true);
+    }
+    else {
+      SmartDashboard.putBoolean("In Range", false);
+    }
   }
 
   /**
@@ -112,7 +125,7 @@ public class Robot extends TimedRobot
     // m_robotContainer.initElevator();
     // m_robotContainer.initSlider();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
 
   }
 
@@ -140,8 +153,8 @@ public class Robot extends TimedRobot
     }
     // m_robotContainer.initElevator();
     // m_robotContainer.initSlider();
-    m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
   }
 
   /**

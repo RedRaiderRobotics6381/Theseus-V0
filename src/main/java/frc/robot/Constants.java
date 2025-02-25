@@ -88,7 +88,7 @@ public final class Constants
     public static int LAUNCHER_LEADER_MOTOR_PORT = 21;
     public static int LAUNCHER_FOLLOWER_MOTOR_PORT = 22;
     public static int FEEDER_LEADER_MOTOR_PORT = 23;
-    public static int FEEDER_FOLLOWER_MOTOR_PORT = 24;
+    // public static int FEEDER_FOLLOWER_MOTOR_PORT = 24;
     
     public static double INTAKE_SPEED = 600;
     public static double OUTTAKE_SPEED = -500;
@@ -98,22 +98,22 @@ public final class Constants
 
   public static class CoralConstants {
     public static int CORAL_ROTATE_MOTOR_PORT = 17;
-    public static int CORAL_SLIDER_MOTOR_PORT = 18;
+    // public static int CORAL_SLIDER_MOTOR_PORT = 18;
     public static int CORAL_HOLD_MOTOR_PORT = 19;
-    public static int SERVO_PORT = 0;
-    public static double CORAL_HIGH_ANGLE = 0;
-    public static double CORAL_LOW_ANGLE = 0;
-    public static double CORAL_HUMAN_PLAYER_ANGLE = 0;
-    public static double CORAL_SLIDER_LEFT_POSITION = 0;
-    public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
-    public static double CORAL_SLIDER_RIGHT_POSITION = 0;
-    public static int BEAM_BREAK_SENSOR_PORT = 1;
+    // public static int SERVO_PORT = 0;
+    public static double CORAL_HIGH_ANGLE = 295.0;
+    public static double CORAL_LOW_ANGLE = 300.0;
+    public static double CORAL_START_ANGLE = 325.0;
+    // public static double CORAL_SLIDER_LEFT_POSITION = 0;
+    // public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
+    // public static double CORAL_SLIDER_RIGHT_POSITION = 0;
+    public static int BEAM_BREAK_SENSOR_PORT = 0;
     // public static int LIMIT_SWITCH_PORT = 0;
   }
 
-  public static class ClimbConstants {
-    public static int CLIMBER_MOTOR_PORT = 0;
-  }
+  // public static class ClimbConstants {
+  //   public static int CLIMBER_MOTOR_PORT = 0;
+  // }
 
   public static class AprilTagConstants {
     public static int HumanPlayerLeft = 0; // 1 red, 13 blue
