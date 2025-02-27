@@ -7,6 +7,8 @@ package frc.robot.subsystems.Secondary;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DigitalGlitchFilter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -14,6 +16,7 @@ import frc.robot.Robot;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 // import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -24,6 +27,7 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;                                                             
+import com.revrobotics.spark.SparkLimitSwitch;
 
 public class AlgaeRotateSubsystem extends SubsystemBase {
 
@@ -33,10 +37,12 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
     private SparkFlexSim rotateMotorSim;
     private SparkAbsoluteEncoderSim rotateEncoderSim;                              
     private SparkFlexConfig rotateMtrCfg;
+    public SparkLimitSwitch algaeLimitSwitch;
+    //private CANDigitalInput algaeLimitSwitch;
     // private AbsoluteEncoderConfig encCfg;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     
-    private double kP = 0.005, kI = 0.0, kD = 0.0;//p was 0.0005
+    private double kP = 0.0005, kI = 0.0, kD = 0.0;//p was 0.0005
     private double kFF = 0.0;
     private double kOutputMin = -0.3;
     private double kOutputMax = 0.3;
@@ -46,6 +52,9 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
         rotateMtrCfg = new SparkFlexConfig();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
+        algaeLimitSwitch = rotateMotor.getForwardLimitSwitch();
+
+        
 
         rotatePID = rotateMotor.getClosedLoopController();
 
@@ -57,12 +66,15 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
             .smartCurrentLimit(40)
             .idleMode(IdleMode.kBrake);
         rotateMtrCfg
-            .absoluteEncoder
-                .positionConversionFactor(360);
+            .encoder
+            .positionConversionFactor(1);
         rotateMtrCfg
             .softLimit
                 .forwardSoftLimit(150.0) 
                 .reverseSoftLimit(290.0);
+        rotateMtrCfg
+            .limitSwitch
+                .forwardLimitSwitchEnabled(false);
         rotateMtrCfg
             .closedLoop
                 .pidf(kP, kI, kD, kFF)
@@ -73,6 +85,10 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
                 //     .maxAcceleration(kMaxAccel)
                 //     .maxVelocity(kMaxRPM)
                 //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+        rotateMtrCfg
+            .limitSwitch
+                .reverseLimitSwitchType(Type.kNormallyClosed)
+                .reverseLimitSwitchEnabled(true);
         rotateMotor.configure(rotateMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
            
         // Add motors to the simulation
@@ -153,6 +169,8 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Arm Position", rotateEncoderSim.getPosition());
     } else {
         SmartDashboard.putNumber("Arm Position", rotateEncoder.getPosition());
+
+        SmartDashboard.putBoolean("Algae Limit", algaeLimitSwitch.isPressed());
     }
     }
 }

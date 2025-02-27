@@ -101,9 +101,9 @@ public final class Constants
     // public static int CORAL_SLIDER_MOTOR_PORT = 18;
     public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_HIGH_ANGLE = 295.0;
-    public static double CORAL_LOW_ANGLE = 300.0;
-    public static double CORAL_START_ANGLE = 325.0;
+    public static double CORAL_HIGH_ANGLE = 305.0; // was 287.5
+    public static double CORAL_LOW_ANGLE = 295.0;
+    public static double CORAL_START_ANGLE = 330.0;
     // public static double CORAL_SLIDER_LEFT_POSITION = 0;
     // public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
     // public static double CORAL_SLIDER_RIGHT_POSITION = 0;

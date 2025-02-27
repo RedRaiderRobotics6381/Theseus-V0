@@ -54,11 +54,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
-    private double kLdrP = 0.5, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
-    private double kFlwP = 0.5, kFlwI = 0.0, kFlwD = 0.0;
+    private double kLdrP = 0.125, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
+    private double kFlwP = 0.125, kFlwI = 0.0, kFlwD = 0.0;
     private double kLdrFF = 0.0005, kFlwFF = 0.0005;
-    private double kLdrOutputMin = -1.0, kFlwOutputMin = -1.0;
-    private double kLdrOutputMax = 1.0, kFlwOutputMax = 1.0;
+    private double kLdrOutputMin = -0.25, kFlwOutputMin = -0.25;
+    private double kLdrOutputMax = 0.25, kFlwOutputMax = 0.25;
     private double kLdrMaxRPM = 100, kFlwMaxRPM = 100;
     private double kLdrMaxAccel = 50, kFlwMaxAccel = 50;
     public DigitalInput limitSwL;
@@ -88,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .idleMode(IdleMode.kBrake);
         ldrCfg
             .encoder
-                .positionConversionFactor(0.085240244); //confirm conversion factor
+                .positionConversionFactor(0.2); //confirm conversion factor
         ldrCfg
             .softLimit
                 .forwardSoftLimit(16.5) 
@@ -116,7 +116,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .idleMode(IdleMode.kBrake);
         flwCfg
             .encoder
-                .positionConversionFactor(.085240244); //confirm conversion factor
+                .positionConversionFactor(.2); //confirm conversion factor
         flwCfg
             .softLimit
                 .forwardSoftLimit(16.5) 
@@ -146,23 +146,23 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
     
-    // // An accessor method to set the speed (technically the output percentage) of the launch wheel
-    // public void setElevatorHeight(double pos) {
-    //     // leaderElevatorL.set(speed);
-    //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-    //     if (Robot.isSimulation()) {
-    //         // leaderElevatorSim.setVelocity(speed);
-    //         // followerElevatorSim.setVelocity(speed);
-    //         // if (!limitSwL.get()) {
-    //         //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-    //         // }
-    //         // else {
-    //         //     elevMtrLdr.set(0);
-    //         // }
+    // An accessor method to set the speed (technically the output percentage) of the launch wheel
+    public void setElevatorHeight(double pos) {
+        // leaderElevatorL.set(speed);
+        elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+        if (Robot.isSimulation()) {
+            // leaderElevatorSim.setVelocity(speed);
+            // followerElevatorSim.setVelocity(speed);
+            // if (!limitSwL.get()) {
+            //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+            // }
+            // else {
+            //     elevMtrLdr.set(0);
+            // }
 
-    //         elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-    //     }
-    // }
+            elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+        }
+    }
 
     public Command INIT_POSE() {
         return this.run(
@@ -180,7 +180,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public FunctionalCommand ElevatorHeightCmd(double height) {
         return new FunctionalCommand(() -> {},
-            () -> elevPIDLdr.setReference(height, SparkMax.ControlType.kPosition),
+            () -> setElevatorHeight(height),
             interrupted -> {},
             () -> Math.abs(height - elevEncLdr.getPosition()) <= 0.125,
             this);

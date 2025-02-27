@@ -75,77 +75,88 @@ public class PositionIdentifierCmd extends Command {
 
         SmartDashboard.putNumber("Engineer Snapped Angle", snappedInputAngle); // display the snapped angle on the SmartDashboard
     
-        if (snappedInputAngle == 315.0) { //if the joystick is pushed up and to the left
+        if (snappedInputAngle == 90) { //if the joystick is pushed up and to the left
+            Commands.sequence(
+                Commands.parallel(
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
+                )
+                .andThen(coralSubsystem.OuttakeCmd())
+                .andThen(
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+                .schedule();
+            
+        } else if (snappedInputAngle == 0) { 
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
                 )
+                .andThen(coralSubsystem.OuttakeCmd())
                 .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
-                .schedule();
-            
-        } else if (snappedInputAngle == 270.0) { 
-            Commands.sequence(
-                Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
-                )
-                .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
                 .schedule();
        
-        } else if (snappedInputAngle == 225.0) { 
-            Commands.sequence(
-                Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_LEFT_POSITION),
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
-                )
-                .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
-                .schedule();
-            
-        } else if (snappedInputAngle == 45.0) {
-            Commands.sequence(
-                Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
-                )
-                .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
-                .schedule();
-        
-        } else if (snappedInputAngle == 90.0) {
+        } else if (snappedInputAngle == 270) { 
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
+                .andThen(coralSubsystem.OuttakeCmd())
                 .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
                 .schedule();
+            } else if (snappedInputAngle == 180.0) { 
+                Commands.sequence(
+                    Commands.parallel(
+                        elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+                        coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)
+                    ))
+                    .schedule();
+           
+            
+        // } else if (snappedInputAngle == 45.0) {
+        //     Commands.sequence(
+        //         Commands.parallel(
+        //             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
+        //             // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+        //             coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
+        //         )
+        //         .andThen(
+        //             coralSubsystem.OuttakeCmd()))
+        //         .schedule();
         
-        } else if (snappedInputAngle == 135.0) {
-            Commands.sequence(
-                Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                    // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
-                )
-                .andThen(
-                    coralSubsystem.OuttakeCmd(-0.1)))
-                .schedule();
-        }
+        // } else if (snappedInputAngle == 90.0) {
+        //     Commands.sequence(
+        //         Commands.parallel(
+        //             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
+        //             // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+        //             coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
+        //         )
+        //         .andThen(
+        //             coralSubsystem.OuttakeCmd()))
+        //         .schedule();
+        
+        // } else if (snappedInputAngle == 135.0) {
+        //     Commands.sequence(
+        //         Commands.parallel(
+        //             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE+0.5), 
+        //             // coralSubsystem.setSliderPosition(CoralConstants.CORAL_SLIDER_RIGHT_POSITION),
+        //             coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
+        //         )
+        //         .andThen(
+        //             coralSubsystem.OuttakeCmd()))
+        //         .schedule();
+        // }
     
 
         // elevatorSubsystem.setElevatorHeight(pose);
         // if(Math.abs(pose - elevatorSubsystem.elevEncLdr.getPosition()) <= 0.125){
         //     rotateSubsystem.setArm(rotatePose);
         // }
-    }
+    }}
 }

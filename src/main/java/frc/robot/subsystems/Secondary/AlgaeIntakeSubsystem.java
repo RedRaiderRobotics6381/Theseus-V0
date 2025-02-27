@@ -85,7 +85,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
         .inverted(false)
         .voltageCompensation(12.0)
         .smartCurrentLimit(80)
-        .idleMode(IdleMode.kBrake);
+        .idleMode(IdleMode.kCoast);
         // .closedLoop
         //     .pid(kLdrP, kLdrI, kLdrD)
         //     .outputRange(kLdrOutputMin, kLdrOutputMax)
@@ -96,10 +96,10 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     launcherMtrLdr.configure(launcherLdrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     LauncherFlwCfg
-        .follow(launcherMtrLdr, true)
+        .follow(launcherMtrLdr, false)
         .voltageCompensation(12.0)
         .smartCurrentLimit(80)
-        .idleMode(IdleMode.kBrake);
+        .idleMode(IdleMode.kCoast);
         // .closedLoop
         //     .pid(kFlwP, kFlwI, kFlwD)
         //     .outputRange(kFlwOutputMin, kFlwOutputMax)
@@ -114,7 +114,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
         .inverted(false)
         .voltageCompensation(12.0)
         .smartCurrentLimit(80)
-        .idleMode(IdleMode.kBrake);
+        .idleMode(IdleMode.kCoast);
     launcherMtrLdr.configure(launcherLdrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
@@ -191,7 +191,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
         () -> {
             // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
             launcherMtrLdr.set(0.15);
-            feederMtrLdr.set(0.15);
+            feederMtrLdr.set(1.0);
         }
       );
   }
@@ -200,7 +200,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     return this.run(
         () -> {
             // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-            feederMtrLdr.set(0.1);
+            feederMtrLdr.set(0.25);
         }
       );
   }
@@ -210,8 +210,8 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
         () -> {
             // runIntake(Constants.IntakeConstants.OUTTAKE_SPEED);
             launcherMtrLdr.set(-0.15);
-            if (launcherMtrLdr.getEncoder().getVelocity() >= 500){
-                feederMtrLdr.set(-0.15);
+            if (launcherMtrLdr.getEncoder().getVelocity() >= 250){
+                feederMtrLdr.set(-1.0);
             }
         }
       );

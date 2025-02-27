@@ -33,12 +33,12 @@ public void initialize() {
 // Called every time the scheduler runs while the command is scheduled.
 @Override
 public void execute() {
-  if(!elevatorSubsystem.limitSwL.get()){
-    elevatorSubsystem.elevMtrLdr.set(-.125);
-    //I think this can just be an else statement
-  } else if(elevatorSubsystem.limitSwL.get()) {
-    elevatorSubsystem.elevMtrLdr.set(0);
-  }
+  // if(!elevatorSubsystem.limitSwL.get()){
+  //   elevatorSubsystem.elevMtrLdr.set(-.125);
+  //   //I think this can just be an else statement
+  // } else if(elevatorSubsystem.limitSwL.get()) {
+  //   elevatorSubsystem.elevMtrLdr.set(0);
+  // }
   
   if (elevatorSubsystem.limitSwL.get()){
     elevatorInitialized = true;
