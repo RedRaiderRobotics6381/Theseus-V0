@@ -167,7 +167,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public Command INIT_POSE() {
         return this.run(
             () -> {
-                if (!limitSwL.get()){
+                if (limitSwL.get()){
                     elevMtrLdr.set(.125);
                 }
                 else{
@@ -182,7 +182,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return new FunctionalCommand(() -> {},
             () -> setElevatorHeight(height),
             interrupted -> {},
-            () -> Math.abs(height - elevEncLdr.getPosition()) <= 0.125,
+            () -> Math.abs(height - elevEncLdr.getPosition()) <= 0.5,
             this);
     }
 
@@ -216,9 +216,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public FunctionalCommand ElevatorInitCmd() {
         return new FunctionalCommand(() -> elevatorInitialized = false,
-                                        () -> {if(!limitSwL.get()){
+                                        () -> {if(limitSwL.get()){
                                                 elevMtrLdr.set(-.125);
-                                            } else if(limitSwL.get()) {
+                                            } else if(!limitSwL.get()) {
                                                 elevMtrLdr.set(0);
                                                 elevEncLdr.setPosition(0);
                                                 elevatorInitialized = true;
@@ -248,7 +248,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
         SmartDashboard.putNumber("Elevator Position", elevEncLdr.getPosition());
         // SmartDashboard.putNumber("Elevator Follower Position", elevEncFlw.getPosition());
-        SmartDashboard.putBoolean("Elevator Limit Switch", limitSwL.get());
+        SmartDashboard.putBoolean("Elevator Limit Switch", !limitSwL.get());
        }
     }
 }

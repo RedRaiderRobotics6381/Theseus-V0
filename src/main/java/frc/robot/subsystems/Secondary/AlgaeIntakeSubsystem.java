@@ -187,11 +187,14 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   // }
 
   public Command RunIntakeCmd() {
-    return this.run(
+    return this.runEnd(
         () -> {
             // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-            launcherMtrLdr.set(0.15);
-            feederMtrLdr.set(1.0);
+            launcherMtrLdr.set(-0.075);
+            feederMtrLdr.set(-0.2);
+        }, ()-> {
+          launcherMtrLdr.set(-0.025);
+            feederMtrLdr.set(-0.1);
         }
       );
   }
@@ -206,13 +209,19 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   }
 
   public Command RunOuttakeCmd() {
-    return this.run(
+    return this.runEnd(
+
+
         () -> {
             // runIntake(Constants.IntakeConstants.OUTTAKE_SPEED);
-            launcherMtrLdr.set(-0.15);
-            if (launcherMtrLdr.getEncoder().getVelocity() >= 250){
-                feederMtrLdr.set(-1.0);
+            launcherMtrLdr.set(1.0);
+            if (launcherMtrLdr.getEncoder().getVelocity() >= 1750){
+                feederMtrLdr.set(0.33);
             }
+        }, () -> {
+          launcherMtrLdr.set(0.0);
+          feederMtrLdr.set(0.0);
+
         }
       );
   }

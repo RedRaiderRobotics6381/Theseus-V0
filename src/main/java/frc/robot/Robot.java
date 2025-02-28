@@ -28,9 +28,9 @@ public class Robot extends TimedRobot
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Timer disabledTimer;
-  //public final CANrange canrange = new CANrange(1);
+  public final CANrange canrange = new CANrange(29);
 
-  public final DigitalInput rangeSnsr = new DigitalInput(8);
+  //public final DigitalInput rangeSnsr = new DigitalInput(8);
 
   public Robot()
   {
@@ -79,12 +79,6 @@ public class Robot extends TimedRobot
     CommandScheduler.getInstance().run();
     // m_robotContainer.initSlider();
     // m_robotContainer.initElevator();
-    if (!rangeSnsr.get()){
-      SmartDashboard.putBoolean("In Range", true);
-    }
-    else {
-      SmartDashboard.putBoolean("In Range", false);
-    }
   }
 
   /**
@@ -106,6 +100,10 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
+    double distance = canrange.getDistance().getValueAsDouble();
+
+    boolean close = distance > 30.0;
+    SmartDashboard.getBoolean("canrange", close);
   }
 
   /**
@@ -155,6 +153,10 @@ public class Robot extends TimedRobot
     // m_robotContainer.initSlider();
     //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+
+    m_robotContainer.initCoralRotate();
+    m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
   }
 
   /**
@@ -163,6 +165,21 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+
+    m_robotContainer.spencerButtons();
+
+    if(!m_robotContainer.elevatorSubsystem.limitSwL.get()){
+      m_robotContainer.elevatorSubsystem.elevEncFlw.setPosition(0);
+      m_robotContainer.elevatorSubsystem.elevEncLdr.setPosition(0);
+    }
+
+    if(m_robotContainer.rotateSubsystem.algaeLimitSwitch.isPressed()){
+      m_robotContainer.rotateSubsystem.rotateEncoder.setPosition(0);
+    }
+
+
+
+    
   }
 
   @Override

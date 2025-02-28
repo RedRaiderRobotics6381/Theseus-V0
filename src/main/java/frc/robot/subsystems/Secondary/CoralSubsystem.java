@@ -58,6 +58,7 @@ public class CoralSubsystem extends SubsystemBase {
     private SparkMax coralAngMtr;
     public AbsoluteEncoder coralAngEnc;
     public SparkClosedLoopController  coralAngPID;
+    public SparkClosedLoopController coralIndexPID;
     // private SparkMax coralSldrMtr;
     // public RelativeEncoder coralSldrEnc;
     public SparkMax coralIndexMtr;
@@ -76,11 +77,16 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput coralSensor;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     public SparkLimitSwitch coralLimitSwitch;
+
+    private boolean coralAngleInitialized;
     
     private double angkP = 0.125, angkI = 0.0, angkD = 0.0;//p was 0.0005
+    private double indexkP = 0.125, indexkI = 0.0, indexkD = 0.0;//p was 0.0005
     private double angkFF = 0.0;
     private double angOutputMin = -0.5;
     private double angOutputMax = 0.005;
+    private double indexOutputMin = -1.0;
+    private double indexOutputMax = 1.0;
 
     // private double sldrkP = 0.005, sldrkI = 0.0, sldrkD = 0.0;//p was 0.0005
     // private double sldrkFF = 0.0;
@@ -106,6 +112,7 @@ public class CoralSubsystem extends SubsystemBase {
         coralAngEnc = coralAngMtr.getAbsoluteEncoder();
         // coralSldrPID = coralSldrMtr.getClosedLoopController();
         // coralSldrEnc = coralSldrMtr.getEncoder();
+        coralIndexPID = coralIndexMtr.getClosedLoopController();
         coralIndexEnc = coralIndexMtr.getEncoder();
 
         coralAngMtrCfg
@@ -118,7 +125,7 @@ public class CoralSubsystem extends SubsystemBase {
                 .positionConversionFactor(360);
         coralAngMtrCfg
             .softLimit
-                .forwardSoftLimit(338.0) //swapped
+                .forwardSoftLimit(339.0) //swapped
                 .reverseSoftLimit(285.0);
         coralAngMtrCfg
             .closedLoop
@@ -160,12 +167,45 @@ public class CoralSubsystem extends SubsystemBase {
         //         //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         // coralSldrMtr.configure(coralSldrMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+        // coralSldrMtrCfg
+        //     .inverted(true)
+        //     .voltageCompensation(12.0)
+        //     .smartCurrentLimit(40)
+        //     .idleMode(IdleMode.kBrake);
+        // coralSldrMtrCfg
+        //     .encoder
+        //         .positionConversionFactor(360);//TO DO change to inches
+        // coralSldrMtrCfg
+        //     .softLimit
+        //         .forwardSoftLimit(150.0) 
+        //         .reverseSoftLimit(290.0);
+        // coralSldrMtrCfg
+        //     .limitSwitch
+        //         .forwardLimitSwitchEnabled(true);
+        // coralSldrMtrCfg
+        //     .closedLoop
+        //         .pidf(sldrkP, sldrkI, sldrkD, sldrkFF)
+        //         .outputRange(sldrkOutputMin, sldrkOutputMax)
+        //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        //         // .maxMotion
+        //         //     .allowedClosedLoopError(2.0);   
+        //         //     .maxAcceleration(kMaxAccel)
+        //         //     .maxVelocity(kMaxRPM)
+        //         //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+        // coralSldrMtr.configure(coralSldrMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         
         coralIndexMtrCfg
             .inverted(true)
             .voltageCompensation(12.0)
             .smartCurrentLimit(40)
-            .idleMode(IdleMode.kCoast);
+            .idleMode(IdleMode.kBrake);
+      //  coralIndexMtrCfg
+          //  .closedLoop
+          //      .pid(indexkP, indexkI, indexkD)
+      //          .outputRange(sldrkOutputMin, sldrkOutputMax)
+       //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+
         coralIndexMtr.configure(coralIndexMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
            
         // Add motors to the simulation
@@ -228,8 +268,8 @@ public class CoralSubsystem extends SubsystemBase {
      */
     public FunctionalCommand IntakeCmd() {
         return new FunctionalCommand(() ->{},
-                                     () -> coralIndexMtr.set(0.075),
-                                     interrupted -> coralIndexMtr.set(-0.0075),
+                                     () -> coralIndexMtr.set(0.05),
+                                     interrupted -> coralIndexMtr.set(-0.05),
                                      () -> coralSensor.get(),
                                      this);
     }

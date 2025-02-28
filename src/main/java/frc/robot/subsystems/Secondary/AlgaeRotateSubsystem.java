@@ -38,11 +38,12 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
     private SparkAbsoluteEncoderSim rotateEncoderSim;                              
     private SparkFlexConfig rotateMtrCfg;
     public SparkLimitSwitch algaeLimitSwitch;
+    private boolean rotateInit = false;
     //private CANDigitalInput algaeLimitSwitch;
     // private AbsoluteEncoderConfig encCfg;
     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     
-    private double kP = 0.0005, kI = 0.0, kD = 0.0;//p was 0.0005
+    private double kP = 0.75, kI = 0.0, kD = 0.0;//p was 0.0005
     private double kFF = 0.0;
     private double kOutputMin = -0.3;
     private double kOutputMax = 0.3;
@@ -70,8 +71,8 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
             .positionConversionFactor(1);
         rotateMtrCfg
             .softLimit
-                .forwardSoftLimit(150.0) 
-                .reverseSoftLimit(290.0);
+                .forwardSoftLimit(0.0) 
+                .reverseSoftLimit(-32.0);
         rotateMtrCfg
             .limitSwitch
                 .forwardLimitSwitchEnabled(false);
@@ -87,8 +88,8 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
                 //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         rotateMtrCfg
             .limitSwitch
-                .reverseLimitSwitchType(Type.kNormallyClosed)
-                .reverseLimitSwitchEnabled(true);
+                .forwardLimitSwitchType(Type.kNormallyClosed)
+                .forwardLimitSwitchEnabled(true);
         rotateMotor.configure(rotateMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
            
         // Add motors to the simulation
@@ -119,6 +120,28 @@ public class AlgaeRotateSubsystem extends SubsystemBase {
                                      this);
     }
 
+    public FunctionalCommand RotateInitCmd() {
+        return new FunctionalCommand(() -> rotateInit = false,
+                                        () -> {if(!algaeLimitSwitch.isPressed()){
+                                                rotateMotor.set(.125);
+                                            } else if(algaeLimitSwitch.isPressed()) {
+                                                rotateMotor.set(0);
+                                                rotateEncoder.setPosition(0);
+                                                rotateInit = true;
+                                            }},
+                                        interrupted ->   rotateMotor.set(0),
+                                        () -> rotateInit,
+                                        this);
+    }
+    public FunctionalCommand RotateCmd() {
+        return new FunctionalCommand(() -> {},
+                                        () -> {
+                                                rotateMotor.set(-.125);
+                                            },
+                                        interrupted ->   rotateMotor.set(0),
+                                        () -> false,
+                                        this);
+    }
     // public Command ForwardCmd() {
     // return this.run(
     //     () -> {

@@ -53,7 +53,7 @@ public class Vision
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout                     = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2025ReefscapeAndyMark);
+      AprilTagFields.k2025ReefscapeWelded);
   /**
    * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
    */
@@ -338,20 +338,20 @@ public class Vision
     /**
      * Left Camera
      */
-    LEFT_CAM("Left",
-             new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(30)),
-             new Translation3d(Units.inchesToMeters(13.361522),
-                               Units.inchesToMeters(11.654985),
-                               Units.inchesToMeters(9.714338)),
+    LEFT_CAM("Right",
+             new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(-30)),
+             new Translation3d(Units.inchesToMeters(11.761),
+                               Units.inchesToMeters(10.599),
+                               Units.inchesToMeters(10.788)),
              VecBuilder.fill(2, 2, 4), VecBuilder.fill(0.25, 0.25, 0.5)), //VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
-    RIGHT_CAM("Right",
-              new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(-30)),
-              new Translation3d(Units.inchesToMeters(13.361522),
-                                Units.inchesToMeters(-11.654985),
-                                Units.inchesToMeters(9.714338)),
+    RIGHT_CAM("Left",
+              new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(30)),
+              new Translation3d(Units.inchesToMeters(11.761),
+                                Units.inchesToMeters(-10.599),
+                                Units.inchesToMeters(10.788)),
               VecBuilder.fill(2, 2, 4), VecBuilder.fill(0.25, 0.25, 0.5)); //VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
     //  * Center Camera

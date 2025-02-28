@@ -93,10 +93,10 @@ public class RobotContainer
    */
   SwerveInputStream driveRobotCentricSideShift = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                 () -> 0,
-                                () -> driverXbox.getRightTriggerAxis() - driverXbox.getLeftTriggerAxis())
+                                () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis())
                               .withControllerRotationAxis(() -> 0)
                               .deadband(OperatorConstants.DEADBAND)
-                              .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
+                              // .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
                               .cubeTranslationControllerAxis(true)
                               .cubeRotationControllerAxis(true)
                               .headingWhile(false)
@@ -112,7 +112,7 @@ public class RobotContainer
                                                             .withControllerRotationAxis(() -> -driverXbox.getRightX())
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
-                                                            .scaleRotation(DrivebaseConstants.Max_Speed_Multiplier)
+                                                            // .scaleRotation(DrivebaseConstants.Max_Speed_Multiplier)
                                                             .cubeTranslationControllerAxis(true)
                                                             .cubeRotationControllerAxis(true)
                                                             .headingWhile(false)
@@ -284,6 +284,8 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
 
+      // engineerXbox.b().whileTrue(rotateSubsystem.RotateCmd());
+
       //engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE));
       // engineerXbox.a().onTrue(Commands.sequence(
       //   Commands.parallel(
@@ -293,8 +295,8 @@ public class RobotContainer
       //   .andThen(
       //       intakeSubsystem.RunIntakeCmd()));
 
-      engineerXbox.leftBumper().whileTrue(intakeSubsystem.RunIntakeCmd());
-      engineerXbox.rightBumper().whileTrue(intakeSubsystem.RunOuttakeCmd());
+      // engineerXbox.leftBumper().whileTrue(intakeSubsystem.RunIntakeCmd());
+      // engineerXbox.rightBumper().whileTrue(intakeSubsystem.RunOuttakeCmd());
 
       engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
                                                                       coralSubsystem, 
@@ -337,9 +339,7 @@ public class RobotContainer
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
             intakeSubsystem.RunIntakeCmd()
         )
-        .andThen(
-            intakeSubsystem.RunHoldCmd()))
-        );
+        ));
 
       engineerXbox.povRight().onTrue(Commands.sequence(
         Commands.parallel(
@@ -347,27 +347,21 @@ public class RobotContainer
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
             intakeSubsystem.RunIntakeCmd()
         )
-        .andThen(
-            intakeSubsystem.RunHoldCmd()))
-        );
+        ));
 
       engineerXbox.povUp().onTrue(Commands.sequence(
         Commands.parallel(
-            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_BARGE_POSE), 
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS)
-        )
-        .andThen(
-            intakeSubsystem.RunOuttakeCmd()))
-        );
+        ), intakeSubsystem.RunOuttakeCmd()
+        ));
 
       engineerXbox.povDown().onTrue(Commands.sequence(
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PROCESSOR_POSE), 
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS)
         )
-        .andThen(
-            intakeSubsystem.RunOuttakeCmd()))
-        );
+        ));
       
 
         //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
@@ -377,24 +371,44 @@ public class RobotContainer
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE), coralSubsystem));
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE), coralSubsystem)); 
 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(Commands.run(() -> coralSubsystem.setRotateAngle(CoralConstants.CORAL_HIGH_ANGLE)));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(Commands.run(() -> coralSubsystem.setRotateAngle(CoralConstants.CORAL_LOW_ANGLE))); 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(Commands.run(() -> coralSubsystem.setRotateAngle(CoralConstants.CORAL_LOW_ANGLE))); 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(Commands.run(() -> coralSubsystem.setRotateAngle(CoralConstants.CORAL_START_ANGLE))); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)); 
 
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(Commands.run(() -> rotateSubsystem.setAngle(AlgaeRotateConstants.ALGAE_INTAKE_POS))); //Rotate arm to 175 degrees CORAL_MID_POS
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().negate().and(engineerXbox.x())).onTrue(Commands.run(() -> rotateSubsystem.setAngle(AlgaeRotateConstants.ALGAE_INTAKE_POS))); //Rotate arm to 175 degrees CORAL_MID_POS
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.y())).onTrue(Commands.run(() -> rotateSubsystem.setAngle(AlgaeRotateConstants.ALGAE_BARGE_POS))); //Rotate arm to 175 degrees CORAL_MID_POS
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().negate().and(engineerXbox.a())).onTrue(Commands.run(() -> rotateSubsystem.setAngle(AlgaeRotateConstants.ALGAE_PROCESSOR_POS))); //Rotate arm to 175 degrees CORAL_MID_POS
+        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
+        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
+        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.y())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS));
+        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.a())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS));
 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).onTrue(Commands.run(() -> coralSubsystem.IntakeCmd()));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.rightBumper())).onTrue(Commands.run(() -> coralSubsystem.OuttakeCmd())); 
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).onTrue(coralSubsystem.IntakeCmd());
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).onTrue(coralSubsystem.OuttakeCmd()); 
 
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.leftBumper())).onTrue(Commands.run(() -> intakeSubsystem.RunIntakeCmd()));
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().negate().and(engineerXbox.rightBumper())).onTrue(Commands.run(() -> intakeSubsystem.RunOuttakeCmd())); 
+        engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.leftBumper())).whileTrue(intakeSubsystem.RunIntakeCmd());
+        engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.rightBumper())).whileTrue(intakeSubsystem.RunOuttakeCmd()); 
     }
 
   }
+
+  public void spencerButtons(){
+
+    if (driverXbox.getHID().getRightBumperButton() == false && driverXbox.getHID().getLeftBumperButton() == false){
+      //System.out.println("HighSpd");
+      DrivebaseConstants.Max_Speed_Multiplier = 0.7;
+    }
+
+    if (driverXbox.getHID().getLeftBumperButton() == true && driverXbox.getHID().getRightBumper() == false){
+      //System.out.println("MedSpd");
+      DrivebaseConstants.Max_Speed_Multiplier = .5;
+    }
+
+    if (driverXbox.getHID().getRightBumperButton() == true && driverXbox.getHID().getLeftBumperButton() == false){
+      //System.out.println("LowSpd");
+      DrivebaseConstants.Max_Speed_Multiplier = .90;
+    }
+    
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -416,6 +430,10 @@ public class RobotContainer
   //   // new ElevatorInitCmd(elevatorSubsystem).schedule();
   //   elevatorSubsystem.ElevatorInitCmd().schedule();
   // }
+
+  public void initCoralRotate() {
+    coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE).schedule();
+  }
 
   public void setMotorBrake(boolean brake)
   {

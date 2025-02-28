@@ -81,10 +81,9 @@ public class PositionIdentifierCmd extends Command {
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
-                .andThen(coralSubsystem.OuttakeCmd())
-                .andThen(
+                ,coralSubsystem.OuttakeCmd(),
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE))
                 .schedule();
             
         } else if (snappedInputAngle == 0) { 
@@ -93,10 +92,7 @@ public class PositionIdentifierCmd extends Command {
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
                 )
-                .andThen(coralSubsystem.OuttakeCmd())
-                .andThen(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+                ,coralSubsystem.OuttakeCmd())
                 .schedule();
        
         } else if (snappedInputAngle == 270) { 
@@ -105,17 +101,19 @@ public class PositionIdentifierCmd extends Command {
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
                 )
-                .andThen(coralSubsystem.OuttakeCmd())
-                .andThen(
+                ,coralSubsystem.OuttakeCmd(),
+                Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
                 .schedule();
-            } else if (snappedInputAngle == 180.0) { 
-                Commands.sequence(
+            } else if (snappedInputAngle == 180.0) {
+                Commands.sequence( 
                     Commands.parallel(
                         elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                        coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)
-                    ))
+                        coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_OFF_ELEVATOR)
+                    ),
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)
+                    )
                     .schedule();
            
             
