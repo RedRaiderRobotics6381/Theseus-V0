@@ -183,10 +183,10 @@ public class RobotContainer
     // NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
     // NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
     // NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
-    // NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd(0.15));
-    // NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd(-0.15));
+    NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
+    NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
     NamedCommands.registerCommand("ElevatorDown", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-    NamedCommands.registerCommand("ElevatorBarge", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_BARGE_POSE));
+    NamedCommands.registerCommand("ElevatorBarge", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_HIGH_POSE));
     NamedCommands.registerCommand("ElevatorHighAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_HIGH_POSE));
     NamedCommands.registerCommand("ElevatorLowAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_LOW_POSE));
     
@@ -359,8 +359,9 @@ public class RobotContainer
       engineerXbox.povDown().onTrue(Commands.sequence(
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PROCESSOR_POSE), 
-            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS)
+            rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS)
         )
+        , intakeSubsystem.RunOuttakeCmd()
         ));
       
 
