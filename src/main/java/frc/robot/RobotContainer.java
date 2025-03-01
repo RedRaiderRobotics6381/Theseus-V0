@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -63,6 +64,7 @@ public class RobotContainer
   private Command currentDriveCmd = null;
   
   private final SendableChooser<Command> autoChooser;
+  private int count = 0;
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
@@ -96,7 +98,7 @@ public class RobotContainer
                                 () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis())
                               .withControllerRotationAxis(() -> 0)
                               .deadband(OperatorConstants.DEADBAND)
-                              // .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
+                              .scaleTranslation(0.5)
                               .cubeTranslationControllerAxis(true)
                               .cubeRotationControllerAxis(true)
                               .headingWhile(false)
@@ -221,35 +223,46 @@ public class RobotContainer
     if (DriverStation.isTest())
     { // Overrides drive command above!
 
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      // driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      // driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().onTrue(Commands.none());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      // driverXbox.leftBumper().onTrue(Commands.none());
+      // driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
 
-      driverXbox.rightStick().onTrue(Commands.runOnce(() -> {
-        hdgModePressed = !hdgModePressed;
-        if (hdgModePressed){
-          heading = drivebase.getHeading().getDegrees();
-          driveFieldOrientedAngleSnapped.schedule();
-        }
-        else{
-          driveFieldOrientedAnglularVelocity.schedule();
-        }
-      }));
+      // driverXbox.rightStick().onTrue(Commands.runOnce(() -> {
+      //   hdgModePressed = !hdgModePressed;
+      //   if (hdgModePressed){
+      //     heading = drivebase.getHeading().getDegrees();
+      //     driveFieldOrientedAngleSnapped.schedule();
+      //   }
+      //   else{
+      //     driveFieldOrientedAnglularVelocity.schedule();
+      //   }
+      // }));
 
       driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).onTrue(Commands.runOnce(() -> {
         currentDriveCmd = drivebase.getCurrentCommand();
         driveRobotOrientedSideShift.schedule();
-      }));
-
+         }));
+      // driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).whileTrue(Commands.run(() -> {
+      //   if(count == 0){
+      //   currentDriveCmd = drivebase.getCurrentCommand();
+      //   count = 1;
+      //   }
+      //   if(!coralSubsystem.close){
+      //   driveRobotOrientedSideShift.schedule();
+      //   }else{
+      //     driveFieldOrientedAnglularVelocity.schedule();
+      //   }
+      // }));
+      
       driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).onFalse(Commands.runOnce(() -> {
-        if (currentDriveCmd != drivebase.getCurrentCommand()){
-          currentDriveCmd.schedule();
-        }
+          // count = 0;
+          driveFieldOrientedAnglularVelocity.schedule();
+        
       }));
       
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -279,10 +292,10 @@ public class RobotContainer
                           new Transform2d(1.0,   0.0,
                           Rotation2d.fromDegrees(180.0))))));
 
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      // driverXbox.start().whileTrue(Commands.none());
+      // driverXbox.back().whileTrue(Commands.none());
+      // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // driverXbox.rightBumper().onTrue(Commands.none());
 
       // engineerXbox.b().whileTrue(rotateSubsystem.RotateCmd());
 
@@ -353,7 +366,7 @@ public class RobotContainer
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS)
-        ), intakeSubsystem.RunOuttakeCmd()
+        )
         ));
 
       engineerXbox.povDown().onTrue(Commands.sequence(
@@ -361,7 +374,6 @@ public class RobotContainer
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PROCESSOR_POSE), 
             rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS)
         )
-        , intakeSubsystem.RunOuttakeCmd()
         ));
       
 
@@ -393,23 +405,23 @@ public class RobotContainer
 
   public void spencerButtons(){
 
-    if (driverXbox.getHID().getRightBumperButton() == false && driverXbox.getHID().getLeftBumperButton() == false){
+    if (driverXbox.getHID().getRightBumper() == true && driverXbox.getHID().getLeftBumper() == true){
       //System.out.println("HighSpd");
-      DrivebaseConstants.Max_Speed_Multiplier = 0.7;
+      DrivebaseConstants.Max_Speed_Multiplier = 1;
     }
 
-    if (driverXbox.getHID().getLeftBumperButton() == true && driverXbox.getHID().getRightBumper() == false){
+    if (driverXbox.getHID().getRightBumper() == true && driverXbox.getHID().getLeftBumper() == false ||
+        driverXbox.getHID().getRightBumper() == false && driverXbox.getHID().getLeftBumper() == true){
       //System.out.println("MedSpd");
-      DrivebaseConstants.Max_Speed_Multiplier = .5;
+      DrivebaseConstants.Max_Speed_Multiplier = .875;
     }
 
-    if (driverXbox.getHID().getRightBumperButton() == true && driverXbox.getHID().getLeftBumperButton() == false){
+    if (driverXbox.getHID().getRightBumper() == false && driverXbox.getHID().getLeftBumper() == false){
       //System.out.println("LowSpd");
-      DrivebaseConstants.Max_Speed_Multiplier = .90;
+      DrivebaseConstants.Max_Speed_Multiplier = .75;
     }
     
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

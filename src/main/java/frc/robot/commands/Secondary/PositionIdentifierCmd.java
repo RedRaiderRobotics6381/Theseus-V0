@@ -75,38 +75,30 @@ public class PositionIdentifierCmd extends Command {
 
         SmartDashboard.putNumber("Engineer Snapped Angle", snappedInputAngle); // display the snapped angle on the SmartDashboard
     
-        if (snappedInputAngle == 90) { //if the joystick is pushed up and to the left
+        if (snappedInputAngle == 270) { //if the joystick is pushed up and to the left
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
-                )
-                ,coralSubsystem.OuttakeCmd(),
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE))
+                ))
                 .schedule();
             
-        } else if (snappedInputAngle == 0) { 
+        } else if (snappedInputAngle == 90) { 
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
-                )
-                ,coralSubsystem.OuttakeCmd())
+                ))
                 .schedule();
        
-        } else if (snappedInputAngle == 270) { 
+        } else if (snappedInputAngle == 0) { 
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
                     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
-                )
-                ,coralSubsystem.OuttakeCmd(),
-                Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+                ))
                 .schedule();
-            } else if (snappedInputAngle == 180.0) {
+            } else if (snappedInputAngle == 180) {
                 Commands.sequence( 
                     Commands.parallel(
                         elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 

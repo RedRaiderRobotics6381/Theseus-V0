@@ -28,7 +28,6 @@ public class Robot extends TimedRobot
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Timer disabledTimer;
-  public final CANrange canrange = new CANrange(29);
 
   //public final DigitalInput rangeSnsr = new DigitalInput(8);
 
@@ -100,10 +99,6 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
-    double distance = canrange.getDistance().getValueAsDouble();
-
-    boolean close = distance > 30.0;
-    SmartDashboard.getBoolean("canrange", close);
   }
 
   /**

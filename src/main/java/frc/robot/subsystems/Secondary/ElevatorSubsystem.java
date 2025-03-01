@@ -26,11 +26,15 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 // import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,6 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder elevEncFlw;
     public SparkClosedLoopController  elevPIDLdr;
     public SparkClosedLoopController  elevPIDFlw;
+
     private SparkFlexSim elevMtrLdrSim;
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
@@ -57,13 +62,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double kLdrP = 0.125, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
     private double kFlwP = 0.125, kFlwI = 0.0, kFlwD = 0.0;
     private double kLdrFF = 0.0005, kFlwFF = 0.0005;
-    private double kLdrOutputMin = -0.25, kFlwOutputMin = -0.25;
-    private double kLdrOutputMax = 0.25, kFlwOutputMax = 0.25;
-    private double kLdrMaxRPM = 100, kFlwMaxRPM = 100;
-    private double kLdrMaxAccel = 50, kFlwMaxAccel = 50;
+    private double kLdrOutputMin = -0.35, kFlwOutputMin = -0.35;
+    private double kLdrOutputMax = 0.35, kFlwOutputMax = 0.35;
+    private double kLdrMaxRPM = 4500, kFlwMaxRPM = 4500;
+    private double kLdrMaxAccel = 500, kFlwMaxAccel = 500;
     public DigitalInput limitSwL;
     private boolean elevatorInitialized;
+    private double pos;
     // public DigitalInput limitSwR;
+
+    // public ProfiledPIDController elevPIDLdr = new ProfiledPIDController(kLdrP, kLdrI, kFlwD, new Constraints(kLdrMaxRPM, kFlwMaxAccel));
+
+
+    
     
 
     public ElevatorSubsystem() {
@@ -85,7 +96,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             .inverted(true)
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
-            .idleMode(IdleMode.kBrake);
+            .idleMode(IdleMode.kBrake)
+            .closedLoopRampRate(0.1);
         ldrCfg
             .encoder
                 .positionConversionFactor(0.2); //confirm conversion factor
@@ -113,7 +125,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             .follow(elevMtrLdr, false)
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
-            .idleMode(IdleMode.kBrake);
+            .idleMode(IdleMode.kBrake)
+            .closedLoopRampRate(0.1);
         flwCfg
             .encoder
                 .positionConversionFactor(.2); //confirm conversion factor
@@ -147,9 +160,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     
     // An accessor method to set the speed (technically the output percentage) of the launch wheel
+
+    public void runElevator(){
+        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl);
+    }
+
     public void setElevatorHeight(double pos) {
         // leaderElevatorL.set(speed);
-        elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+        this.pos = pos;
+    
         if (Robot.isSimulation()) {
             // leaderElevatorSim.setVelocity(speed);
             // followerElevatorSim.setVelocity(speed);
@@ -160,7 +179,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             //     elevMtrLdr.set(0);
             // }
 
-            elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+            //elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
         }
     }
 
@@ -241,6 +260,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
+        runElevator();
     // This method will be called once per scheduler run
     if (Robot.isSimulation()) {
         SmartDashboard.putNumber("Elevator Position", elevEncLdrSim.getPosition());

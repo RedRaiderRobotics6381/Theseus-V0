@@ -215,8 +215,8 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
         () -> {
             // runIntake(Constants.IntakeConstants.OUTTAKE_SPEED);
             launcherMtrLdr.set(1.0);
-            if (launcherMtrLdr.getEncoder().getVelocity() >= 1750){
-                feederMtrLdr.set(0.33);
+            if (launcherMtrLdr.getEncoder().getVelocity() >= 2250){
+                feederMtrLdr.set(0.4);
             }
         }, () -> {
           launcherMtrLdr.set(0.0);

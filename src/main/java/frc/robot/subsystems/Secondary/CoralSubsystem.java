@@ -25,6 +25,7 @@
 
 package frc.robot.subsystems.Secondary;
 
+import com.ctre.phoenix6.hardware.CANrange;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 //import com.revrobotics.CANDigitalInput;
@@ -87,7 +88,11 @@ public class CoralSubsystem extends SubsystemBase {
     private double angOutputMax = 0.005;
     private double indexOutputMin = -1.0;
     private double indexOutputMax = 1.0;
+    public boolean close;
 
+    public final CANrange canrange = new CANrange(29);
+
+    
     // private double sldrkP = 0.005, sldrkI = 0.0, sldrkD = 0.0;//p was 0.0005
     // private double sldrkFF = 0.0;
     // private double sldrkOutputMin = 0.0;
@@ -104,6 +109,8 @@ public class CoralSubsystem extends SubsystemBase {
         //coralSldrMtrCfg = new SparkMaxConfig();
         coralIndexMtrCfg = new SparkMaxConfig();
         coralSensor = new DigitalInput(CoralConstants.BEAM_BREAK_SENSOR_PORT);
+
+
         // coralLimitSwitch = coralSldrMtr.getForwardLimitSwitch();
         // encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
@@ -268,7 +275,7 @@ public class CoralSubsystem extends SubsystemBase {
      */
     public FunctionalCommand IntakeCmd() {
         return new FunctionalCommand(() ->{},
-                                     () -> coralIndexMtr.set(0.05),
+                                     () -> coralIndexMtr.set(0.06),
                                      interrupted -> coralIndexMtr.set(-0.05),
                                      () -> coralSensor.get(),
                                      this);
@@ -354,6 +361,11 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Coral Holder Speed", coralIndexEnc.getVelocity());
 
         SmartDashboard.putBoolean("CoralSensor", coralSensor.get());
+
+        double distance = canrange.getDistance().getValueAsDouble();
+        close = distance < .43 && distance > .35;
+        SmartDashboard.putBoolean("canrange", close);
+        //SmartDashboard.putNumber("canrange distance", distance);
     }
 
     }

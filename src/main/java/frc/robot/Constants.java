@@ -38,7 +38,7 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
-    public static double Max_Speed_Multiplier = 0.75;
+    public static double Max_Speed_Multiplier = 1.0;
   }
 
   public static class OperatorConstants
@@ -70,9 +70,9 @@ public final class Constants
   }
 
   public static class AlgaeRotateConstants {
-    public static final int ALGAE_INTAKE_POS = -10;
+    public static final int ALGAE_INTAKE_POS = -15;
     public static final int ALGAE_START_POS = -0;
-    public static final int ALGAE_BARGE_POS = -25;
+    public static final int ALGAE_BARGE_POS = -28;
     public static final int ALGAE_PROCESSOR_POS = 0;
     public static final int ALGAE_ROTATE_MOTOR_PORT = 20;
     // public static final int ALGAE_ADJUST_MOTOR_PORT = 0;
@@ -104,7 +104,7 @@ public final class Constants
     public static double CORAL_HIGH_ANGLE = 305.0; // was 287.5
     public static double CORAL_LOW_ANGLE = 295.0;
     public static double CORAL_OFF_ELEVATOR = 330.0;
-    public static double CORAL_START_ANGLE = 337.0;
+    public static double CORAL_START_ANGLE = 335.0;
     // public static double CORAL_SLIDER_LEFT_POSITION = 0;
     // public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
     // public static double CORAL_SLIDER_RIGHT_POSITION = 0;
