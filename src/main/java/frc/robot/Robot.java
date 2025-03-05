@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Secondary.CoralSubsystem;
+// import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import com.ctre.phoenix6.hardware.CANrange;
 
@@ -149,9 +149,9 @@ public class Robot extends TimedRobot
     //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
 
-    m_robotContainer.initCoralRotate();
+    //m_robotContainer.initCoralRotate();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
+    //m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
   }
 
   /**
@@ -168,9 +168,9 @@ public class Robot extends TimedRobot
       m_robotContainer.elevatorSubsystem.elevEncLdr.setPosition(0);
     }
 
-    if(m_robotContainer.rotateSubsystem.algaeLimitSwitch.isPressed()){
-      m_robotContainer.rotateSubsystem.rotateEncoder.setPosition(0);
-    }
+    // if(m_robotContainer.rotateSubsystem.algaeLimitSwitch.isPressed()){
+    //   m_robotContainer.rotateSubsystem.rotateEncoder.setPosition(0);
+    // }
 
 
 

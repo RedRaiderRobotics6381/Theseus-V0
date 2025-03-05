@@ -26,15 +26,11 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 // import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -54,7 +50,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder elevEncFlw;
     public SparkClosedLoopController  elevPIDLdr;
     public SparkClosedLoopController  elevPIDFlw;
-
     private SparkFlexSim elevMtrLdrSim;
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
@@ -65,16 +60,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double kLdrOutputMin = -0.35, kFlwOutputMin = -0.35;
     private double kLdrOutputMax = 0.35, kFlwOutputMax = 0.35;
     private double kLdrMaxRPM = 4500, kFlwMaxRPM = 4500;
-    private double kLdrMaxAccel = 500, kFlwMaxAccel = 500;
+    private double kLdrMaxAccel = 5000, kFlwMaxAccel = 5000;
     public DigitalInput limitSwL;
     private boolean elevatorInitialized;
-    private double pos;
     // public DigitalInput limitSwR;
-
-    // public ProfiledPIDController elevPIDLdr = new ProfiledPIDController(kLdrP, kLdrI, kFlwD, new Constraints(kLdrMaxRPM, kFlwMaxAccel));
-
-
-    
     
 
     public ElevatorSubsystem() {
@@ -96,8 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .inverted(true)
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
-            .idleMode(IdleMode.kBrake)
-            .closedLoopRampRate(0.1);
+            .idleMode(IdleMode.kBrake);
         ldrCfg
             .encoder
                 .positionConversionFactor(0.2); //confirm conversion factor
@@ -111,8 +99,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         //     .reverseLimitSwitchEnabled(true);
         ldrCfg
             .closedLoop
-                .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
-                .outputRange(kLdrOutputMin, kLdrOutputMax)
+                // .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
+                .p(kLdrP)
+                .outputRange(-0.5, 0.5)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
                     .maxAcceleration(kLdrMaxAccel)
@@ -125,8 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .follow(elevMtrLdr, false)
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
-            .idleMode(IdleMode.kBrake)
-            .closedLoopRampRate(0.1);
+            .idleMode(IdleMode.kBrake);
         flwCfg
             .encoder
                 .positionConversionFactor(.2); //confirm conversion factor
@@ -136,8 +124,9 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .reverseSoftLimit(-0.5); // -0.05
         flwCfg
             .closedLoop
-                .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
-                .outputRange(kFlwOutputMin, kFlwOutputMax)
+                // .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
+                .p(kFlwP)
+                .outputRange(-0.5, 0.5)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
                     .maxAcceleration(kFlwMaxAccel)
@@ -160,15 +149,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     
     // An accessor method to set the speed (technically the output percentage) of the launch wheel
-
-    public void runElevator(){
-        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl);
-    }
-
     public void setElevatorHeight(double pos) {
         // leaderElevatorL.set(speed);
-        this.pos = pos;
-    
+        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl);
         if (Robot.isSimulation()) {
             // leaderElevatorSim.setVelocity(speed);
             // followerElevatorSim.setVelocity(speed);
@@ -179,7 +162,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             //     elevMtrLdr.set(0);
             // }
 
-            //elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+            elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
         }
     }
 
@@ -260,7 +243,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        runElevator();
     // This method will be called once per scheduler run
     if (Robot.isSimulation()) {
         SmartDashboard.putNumber("Elevator Position", elevEncLdrSim.getPosition());

@@ -1,199 +1,199 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-package frc.robot.subsystems.Secondary;
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
+// package frc.robot.subsystems.Secondary;
 
-// import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DigitalGlitchFilter;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import frc.robot.Robot;
+// // import edu.wpi.first.wpilibj2.command.Command;
+// import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.wpilibj.DigitalGlitchFilter;
+// import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import frc.robot.Constants;
+// import frc.robot.Robot;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.LimitSwitchConfig.Type;
-// import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.sim.SparkAbsoluteEncoderSim;
-import com.revrobotics.sim.SparkFlexSim;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;                                                             
-import com.revrobotics.spark.SparkLimitSwitch;
+// import com.revrobotics.spark.SparkBase.PersistMode;
+// import com.revrobotics.spark.SparkBase.ResetMode;
+// import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+// import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+// // import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+// import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+// import com.revrobotics.spark.config.SparkFlexConfig;
+// import com.revrobotics.spark.SparkLowLevel.MotorType;
+// import com.revrobotics.sim.SparkAbsoluteEncoderSim;
+// import com.revrobotics.sim.SparkFlexSim;
+// import com.revrobotics.AbsoluteEncoder;
+// import com.revrobotics.RelativeEncoder;
+// import com.revrobotics.spark.SparkClosedLoopController;
+// import com.revrobotics.spark.SparkFlex;                                                             
+// import com.revrobotics.spark.SparkLimitSwitch;
 
-public class AlgaeRotateSubsystem extends SubsystemBase {
+// public class AlgaeRotateSubsystem extends SubsystemBase {
 
-    private SparkFlex rotateMotor;
-    public RelativeEncoder rotateEncoder;
-    public SparkClosedLoopController  rotatePID;
-    private SparkFlexSim rotateMotorSim;
-    private SparkAbsoluteEncoderSim rotateEncoderSim;                              
-    private SparkFlexConfig rotateMtrCfg;
-    public SparkLimitSwitch algaeLimitSwitch;
-    private boolean rotateInit = false;
-    //private CANDigitalInput algaeLimitSwitch;
-    // private AbsoluteEncoderConfig encCfg;
-    // private SoftLimitConfig rotateMtrSftLmtCfg;.
+//     private SparkFlex rotateMotor;
+//     public RelativeEncoder rotateEncoder;
+//     public SparkClosedLoopController  rotatePID;
+//     private SparkFlexSim rotateMotorSim;
+//     private SparkAbsoluteEncoderSim rotateEncoderSim;                              
+//     private SparkFlexConfig rotateMtrCfg;
+//     public SparkLimitSwitch algaeLimitSwitch;
+//     private boolean rotateInit = false;
+//     //private CANDigitalInput algaeLimitSwitch;
+//     // private AbsoluteEncoderConfig encCfg;
+//     // private SoftLimitConfig rotateMtrSftLmtCfg;.
     
-    private double kP = 0.75, kI = 0.0, kD = 0.0;//p was 0.0005
-    private double kFF = 0.0;
-    private double kOutputMin = -0.3;
-    private double kOutputMax = 0.3;
+//     private double kP = 0.75, kI = 0.0, kD = 0.0;//p was 0.0005
+//     private double kFF = 0.0;
+//     private double kOutputMin = -0.3;
+//     private double kOutputMax = 0.3;
 
-    public AlgaeRotateSubsystem() {
-        rotateMotor = new SparkFlex(Constants.AlgaeRotateConstants.ALGAE_ROTATE_MOTOR_PORT, MotorType.kBrushless);
-        rotateMtrCfg = new SparkFlexConfig();
-        // encCfg = new AbsoluteEncoderConfig();
-        // rotateMtrSftLmtCfg = new SoftLimitConfig();
-        algaeLimitSwitch = rotateMotor.getForwardLimitSwitch();
+//     public AlgaeRotateSubsystem() {
+//         rotateMotor = new SparkFlex(Constants.AlgaeRotateConstants.ALGAE_ROTATE_MOTOR_PORT, MotorType.kBrushless);
+//         rotateMtrCfg = new SparkFlexConfig();
+//         // encCfg = new AbsoluteEncoderConfig();
+//         // rotateMtrSftLmtCfg = new SoftLimitConfig();
+//         algaeLimitSwitch = rotateMotor.getForwardLimitSwitch();
 
         
 
-        rotatePID = rotateMotor.getClosedLoopController();
+//         rotatePID = rotateMotor.getClosedLoopController();
 
-        rotateEncoder = rotateMotor.getEncoder();
+//         rotateEncoder = rotateMotor.getEncoder();
  
-        rotateMtrCfg
-            .inverted(true)
-            .voltageCompensation(12.0)
-            .smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake);
-        rotateMtrCfg
-            .encoder
-            .positionConversionFactor(1);
-        rotateMtrCfg
-            .softLimit
-                .forwardSoftLimit(0.0) 
-                .reverseSoftLimit(-32.0);
-        rotateMtrCfg
-            .limitSwitch
-                .forwardLimitSwitchEnabled(false);
-        rotateMtrCfg
-            .closedLoop
-                .pidf(kP, kI, kD, kFF)
-                .outputRange(kOutputMin, kOutputMax)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-                // .maxMotion
-                //     .allowedClosedLoopError(2.0);   
-                //     .maxAcceleration(kMaxAccel)
-                //     .maxVelocity(kMaxRPM)
-                //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
-        rotateMtrCfg
-            .limitSwitch
-                .forwardLimitSwitchType(Type.kNormallyClosed)
-                .forwardLimitSwitchEnabled(true);
-        rotateMotor.configure(rotateMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+//         rotateMtrCfg
+//             .inverted(true)
+//             .voltageCompensation(12.0)
+//             .smartCurrentLimit(40)
+//             .idleMode(IdleMode.kBrake);
+//         rotateMtrCfg
+//             .encoder
+//             .positionConversionFactor(1);
+//         rotateMtrCfg
+//             .softLimit
+//                 .forwardSoftLimit(0.0) 
+//                 .reverseSoftLimit(-32.0);
+//         rotateMtrCfg
+//             .limitSwitch
+//                 .forwardLimitSwitchEnabled(false);
+//         rotateMtrCfg
+//             .closedLoop
+//                 .pidf(kP, kI, kD, kFF)
+//                 .outputRange(kOutputMin, kOutputMax)
+//                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+//                 // .maxMotion
+//                 //     .allowedClosedLoopError(2.0);   
+//                 //     .maxAcceleration(kMaxAccel)
+//                 //     .maxVelocity(kMaxRPM)
+//                 //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+//         rotateMtrCfg
+//             .limitSwitch
+//                 .forwardLimitSwitchType(Type.kNormallyClosed)
+//                 .forwardLimitSwitchEnabled(true);
+//         rotateMotor.configure(rotateMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
            
-        // Add motors to the simulation
-        if (Robot.isSimulation()) {
-            rotateMotorSim = new SparkFlexSim(rotateMotor, DCMotor.getNEO(1));
-            rotateEncoderSim = new SparkAbsoluteEncoderSim(rotateMotor);
-            rotateMotorSim.setPosition(190);
-            rotateEncoderSim.setPosition(190);
-            rotateMotorSim.setVelocity(0);
-            rotateEncoderSim.setVelocity(0);
-        }
-    }
+//         // Add motors to the simulation
+//         if (Robot.isSimulation()) {
+//             rotateMotorSim = new SparkFlexSim(rotateMotor, DCMotor.getNEO(1));
+//             rotateEncoderSim = new SparkAbsoluteEncoderSim(rotateMotor);
+//             rotateMotorSim.setPosition(190);
+//             rotateEncoderSim.setPosition(190);
+//             rotateMotorSim.setVelocity(0);
+//             rotateEncoderSim.setVelocity(0);
+//         }
+//     }
     
-    // // An accessor method to set the speed (technically the output percentage) of the launch wheel
-    public void setAngle(double pos) {
-        rotatePID.setReference(pos, SparkFlex.ControlType.kPosition);
-        if (Robot.isSimulation()) {
-            rotateMotorSim.setPosition(pos);
-            rotateEncoderSim.setPosition(pos);
-        }
-    }
+//     // // An accessor method to set the speed (technically the output percentage) of the launch wheel
+//     public void setAngle(double pos) {
+//         rotatePID.setReference(pos, SparkFlex.ControlType.kPosition);
+//         if (Robot.isSimulation()) {
+//             rotateMotorSim.setPosition(pos);
+//             rotateEncoderSim.setPosition(pos);
+//         }
+//     }
 
-    public FunctionalCommand RotatePosCmd(double pos) {
-        // return new FunctionalCommand(() -> {}, () -> setArm(pos), interrupted -> {}, () -> Math.abs(pos - rotateEncoder.getPosition()) <= 2.0, this);
-        return new FunctionalCommand(() -> {},
-                                     () -> setAngle(pos), interrupted -> {},
-                                     () -> (Math.abs(pos - rotateEncoder.getPosition()) <= 5.0) && (Math.abs(rotateEncoder.getVelocity()) <= 60.0),
-                                     this);
-    }
+//     public FunctionalCommand RotatePosCmd(double pos) {
+//         // return new FunctionalCommand(() -> {}, () -> setArm(pos), interrupted -> {}, () -> Math.abs(pos - rotateEncoder.getPosition()) <= 2.0, this);
+//         return new FunctionalCommand(() -> {},
+//                                      () -> setAngle(pos), interrupted -> {},
+//                                      () -> (Math.abs(pos - rotateEncoder.getPosition()) <= 5.0) && (Math.abs(rotateEncoder.getVelocity()) <= 60.0),
+//                                      this);
+//     }
 
-    public FunctionalCommand RotateInitCmd() {
-        return new FunctionalCommand(() -> rotateInit = false,
-                                        () -> {if(!algaeLimitSwitch.isPressed()){
-                                                rotateMotor.set(.125);
-                                            } else if(algaeLimitSwitch.isPressed()) {
-                                                rotateMotor.set(0);
-                                                rotateEncoder.setPosition(0);
-                                                rotateInit = true;
-                                            }},
-                                        interrupted ->   rotateMotor.set(0),
-                                        () -> rotateInit,
-                                        this);
-    }
-    public FunctionalCommand RotateCmd() {
-        return new FunctionalCommand(() -> {},
-                                        () -> {
-                                                rotateMotor.set(-.125);
-                                            },
-                                        interrupted ->   rotateMotor.set(0),
-                                        () -> false,
-                                        this);
-    }
-    // public Command ForwardCmd() {
-    // return this.run(
-    //     () -> {
-    //         setArm(Constants.ArmConstants.CORAL_INTAKE_POS);
-    //     });
-    // }
+//     public FunctionalCommand RotateInitCmd() {
+//         return new FunctionalCommand(() -> rotateInit = false,
+//                                         () -> {if(!algaeLimitSwitch.isPressed()){
+//                                                 rotateMotor.set(.125);
+//                                             } else if(algaeLimitSwitch.isPressed()) {
+//                                                 rotateMotor.set(0);
+//                                                 rotateEncoder.setPosition(0);
+//                                                 rotateInit = true;
+//                                             }},
+//                                         interrupted ->   rotateMotor.set(0),
+//                                         () -> rotateInit,
+//                                         this);
+//     }
+//     public FunctionalCommand RotateCmd() {
+//         return new FunctionalCommand(() -> {},
+//                                         () -> {
+//                                                 rotateMotor.set(-.125);
+//                                             },
+//                                         interrupted ->   rotateMotor.set(0),
+//                                         () -> false,
+//                                         this);
+//     }
+//     // public Command ForwardCmd() {
+//     // return this.run(
+//     //     () -> {
+//     //         setArm(Constants.ArmConstants.CORAL_INTAKE_POS);
+//     //     });
+//     // }
 
-    // public Command MiddleCmd() {
-    // return this.run(
-    //     () -> {
-    //         setArm(Constants.ArmConstants.CORAL_MID_POS);
-    //     });
-    // }
+//     // public Command MiddleCmd() {
+//     // return this.run(
+//     //     () -> {
+//     //         setArm(Constants.ArmConstants.CORAL_MID_POS);
+//     //     });
+//     // }
 
-    // public Command UpCmd() {
-    //   return this.run(
-    //       () -> {
-    //           setArm(Constants.ArmConstants.CORAL_HIGH_POS);
-    //       });
-    //   }
+//     // public Command UpCmd() {
+//     //   return this.run(
+//     //       () -> {
+//     //           setArm(Constants.ArmConstants.CORAL_HIGH_POS);
+//     //       });
+//     //   }
 
-    // public Command AlgaeIntakeCmd () {
-    //     return this.run(
-    //         () -> {
-    //             setArm(Constants.ArmConstants.ALGAE_INTAKE_POS);
-    //         }); 
-    // }
+//     // public Command AlgaeIntakeCmd () {
+//     //     return this.run(
+//     //         () -> {
+//     //             setArm(Constants.ArmConstants.ALGAE_INTAKE_POS);
+//     //         }); 
+//     // }
 
-    // public Command AlgaeStartCmd () {
-    //     return this.run(
-    //         () -> {
-    //             setArm(Constants.ArmConstants.ALGAE_START_POS);
-    //         });
-    // }    
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-        if (Robot.isSimulation()) {
-            // rotateEncoderSim.setPosition(rotateMotorSim.getPosition());
-            // rotateMotorSim.iterate(rotateEncoderSim.getPosition(), rotateMotorSim.getBusVoltage(),.005);
-        }
-    }
+//     // public Command AlgaeStartCmd () {
+//     //     return this.run(
+//     //         () -> {
+//     //             setArm(Constants.ArmConstants.ALGAE_START_POS);
+//     //         });
+//     // }    
+//     @Override
+//     public void simulationPeriodic() {
+//         // This method will be called once per scheduler run during simulation
+//         if (Robot.isSimulation()) {
+//             // rotateEncoderSim.setPosition(rotateMotorSim.getPosition());
+//             // rotateMotorSim.iterate(rotateEncoderSim.getPosition(), rotateMotorSim.getBusVoltage(),.005);
+//         }
+//     }
     
-    @Override
-    public void periodic() {
-    // This method will be called once per scheduler run
-    if (Robot.isSimulation()) {
-        SmartDashboard.putNumber("Arm Position", rotateEncoderSim.getPosition());
-    } else {
-        SmartDashboard.putNumber("Arm Position", rotateEncoder.getPosition());
+//     @Override
+//     public void periodic() {
+//     // This method will be called once per scheduler run
+//     if (Robot.isSimulation()) {
+//         SmartDashboard.putNumber("Arm Position", rotateEncoderSim.getPosition());
+//     } else {
+//         SmartDashboard.putNumber("Arm Position", rotateEncoder.getPosition());
 
-        SmartDashboard.putBoolean("Algae Limit", algaeLimitSwitch.isPressed());
-    }
-    }
-}
+//         SmartDashboard.putBoolean("Algae Limit", algaeLimitSwitch.isPressed());
+//     }
+//     }
+// }

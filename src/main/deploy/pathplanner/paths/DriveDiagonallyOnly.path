@@ -3,43 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.0,
-        "y": 3.965061475409836
+        "x": 6.0,
+        "y": 7.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5,
-        "y": 3.965061475409836
+        "x": 7.148028637012931,
+        "y": 6.925194396211724
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DriveInPID"
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 3.965
+        "x": 8.0,
+        "y": 6.5
       },
       "prevControl": {
-        "x": 5.75,
-        "y": 3.965
+        "x": 7.009010083817786,
+        "y": 6.995084165153013
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }
