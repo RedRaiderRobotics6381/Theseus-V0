@@ -6,13 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.AprilTagConstants;
 // import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
+
+import java.util.Optional;
+
 import com.ctre.phoenix6.hardware.CANrange;
 
 
@@ -144,6 +149,8 @@ public class Robot extends TimedRobot
     {
       CommandScheduler.getInstance().cancelAll();
     }
+
+    setAprilTag();
     // m_robotContainer.initElevator();
     // m_robotContainer.initSlider();
     //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
@@ -160,8 +167,8 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-
     m_robotContainer.spencerButtons();
+    m_robotContainer.getSnappedAngleID();
 
     if(!m_robotContainer.elevatorSubsystem.limitSwL.get()){
       m_robotContainer.elevatorSubsystem.elevEncFlw.setPosition(0);
@@ -206,5 +213,43 @@ public class Robot extends TimedRobot
   @Override
   public void simulationPeriodic()
   {
+    m_robotContainer.getSnappedAngleID();
+    SmartDashboard.putNumber("Reef Tag ID", AprilTagConstants.ReefTagID);
+    System.out.println("Reef Tag ID: " + AprilTagConstants.ReefTagID);
   }
+  
+  void setAprilTag()
+  {
+    Optional<Alliance> allianceColor = DriverStation.getAlliance();
+    if (allianceColor.isPresent()) {
+      if (allianceColor.get() == Alliance.Red) {
+        AprilTagConstants.ReefTagID = 7;
+        AprilTagConstants.Reef0   = 7 ;
+        AprilTagConstants.Reef60  = 8 ;
+        AprilTagConstants.Reef120 = 9 ;
+        AprilTagConstants.Reef180 = 10;
+        AprilTagConstants.Reef240 = 11;
+        AprilTagConstants.Reef300 = 6 ;
+        AprilTagConstants.HumanPlayerLeft = 1;
+        AprilTagConstants.HumanPlayerRight = 2;
+        AprilTagConstants.Processor = 3;
+        AprilTagConstants.BargeFront = 5;
+        AprilTagConstants.BargeBack = 15;
+      }
+      else if (allianceColor.get() == Alliance.Blue) {
+        AprilTagConstants.ReefTagID = 18;
+        AprilTagConstants.Reef0    = 18;
+        AprilTagConstants.Reef60   = 19;
+        AprilTagConstants.Reef120  = 20;
+        AprilTagConstants.Reef180  = 21; 
+        AprilTagConstants.Reef240  = 22;
+        AprilTagConstants.Reef300  = 17;
+        AprilTagConstants.HumanPlayerLeft = 13;
+        AprilTagConstants.HumanPlayerRight = 12;
+        AprilTagConstants.Processor = 16;
+        AprilTagConstants.BargeFront = 14;
+        AprilTagConstants.BargeBack = 4;
+      }
+    }
+    }
 }

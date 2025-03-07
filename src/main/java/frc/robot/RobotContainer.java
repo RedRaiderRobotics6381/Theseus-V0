@@ -34,6 +34,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
 import java.io.File;
+import java.util.Optional;
+
 import swervelib.SwerveInputStream;
 
 /**
@@ -64,7 +66,10 @@ public class RobotContainer
   private Command currentDriveCmd = null;
   
   private final SendableChooser<Command> autoChooser;
-  private int count = 0;
+  //private int count = 0;
+
+  public double currentSnappedAngle = 0;
+  public double snappedAngle = 0; 
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
@@ -286,11 +291,11 @@ public class RobotContainer
 
       driverXbox.y().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                          new Transform2d(0.5,   0.0,
-                          Rotation2d.fromDegrees(0.0))))));
+                          new Transform2d(0.6604,   0.0,
+                          Rotation2d.fromDegrees(180))))));
 
       driverXbox.a().whileTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
-                          Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                          Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
                           new Transform2d(1.0,   0.0,
                           Rotation2d.fromDegrees(180.0))))));
 
@@ -397,10 +402,10 @@ public class RobotContainer
 
         //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.START_POSE))); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.REEF_LOW_POSE)));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE)));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(Commands.run(() -> elevatorSubsystem.setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE))); 
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
 
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
@@ -469,5 +474,44 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  void getSnappedAngleID(){
+    Rotation2d currentHeading = drivebase.getHeading();   
+    double angle = Math.toDegrees(Math.atan2(currentHeading.getCos(), currentHeading.getSin()))-270;
+    // Normalize to the range [0, 360)
+    angle = (angle + 360) % 360;
+
+    // Snap to the nearest 60-degree increment
+    snappedAngle = Math.round(angle / 60.0) * 60.0;
+    if (snappedAngle != currentSnappedAngle){
+      currentSnappedAngle = snappedAngle;
+      
+      // if (headingX != 0 || headingY != 0) {
+      //   headingX = Math.sin(Math.toRadians(snappedAngle));
+      //   headingY = Math.cos(Math.toRadians(snappedAngle));
+
+      Optional<Alliance> allianceColor = DriverStation.getAlliance();
+      if (allianceColor.isPresent()) {
+        if (allianceColor.get() == Alliance.Red) {
+          if(snappedAngle == 180.0){AprilTagConstants.ReefTagID = 7 ;};
+          if(snappedAngle == 240.0){AprilTagConstants.ReefTagID = 8 ;};
+          if(snappedAngle == 300.0){AprilTagConstants.ReefTagID = 9 ;};
+          if(snappedAngle == 0.0){AprilTagConstants.ReefTagID = 10;};
+          if(snappedAngle == 60.0){AprilTagConstants.ReefTagID = 11;};
+          if(snappedAngle == 120.0){AprilTagConstants.ReefTagID = 6 ;};
+        }
+        else if (allianceColor.get() == Alliance.Blue) {
+          if(snappedAngle ==   180.0){AprilTagConstants.ReefTagID = 18;};
+          if(snappedAngle ==   240.0){AprilTagConstants.ReefTagID = 19;};
+          if(snappedAngle ==   300){AprilTagConstants.ReefTagID = 20;};
+          if(snappedAngle ==   0.0){AprilTagConstants.ReefTagID = 21;};
+          if(snappedAngle ==   60.0){AprilTagConstants.ReefTagID = 22;};
+          if(snappedAngle ==   120.0){AprilTagConstants.ReefTagID = 17;};
+        }
+      }
+
+    }
+    //System.out.println("Snapped Angle: " + snappedAngle);
   }
 }

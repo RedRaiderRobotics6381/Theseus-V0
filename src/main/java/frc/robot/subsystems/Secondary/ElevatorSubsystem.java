@@ -54,13 +54,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
-    private double kLdrP = 0.125, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
+    private double kLdrP = 0.075, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
     private double kFlwP = 0.125, kFlwI = 0.0, kFlwD = 0.0;
     private double kLdrFF = 0.0005, kFlwFF = 0.0005;
     private double kLdrOutputMin = -0.35, kFlwOutputMin = -0.35;
     private double kLdrOutputMax = 0.35, kFlwOutputMax = 0.35;
-    private double kLdrMaxRPM = 4500, kFlwMaxRPM = 4500;
-    private double kLdrMaxAccel = 5000, kFlwMaxAccel = 5000;
+    private double kLdrMaxRPM = 2500, kFlwMaxRPM = 4500;
+    private double kLdrMaxAccel = 8000, kFlwMaxAccel = 5000;
     public DigitalInput limitSwL;
     private boolean elevatorInitialized;
     // public DigitalInput limitSwR;
@@ -88,11 +88,11 @@ public class ElevatorSubsystem extends SubsystemBase {
             .idleMode(IdleMode.kBrake);
         ldrCfg
             .encoder
-                .positionConversionFactor(0.2); //confirm conversion factor
-        ldrCfg
-            .softLimit
-                .forwardSoftLimit(16.5) 
-                .reverseSoftLimit(-1.0);
+                .positionConversionFactor(0.225); //confirm conversion factor
+        // ldrCfg
+        //     .softLimit
+        //         .forwardSoftLimit(16.5) 
+        //         .reverseSoftLimit(-0.5);
         // ldrCfg
         //     .limitSwitch
         //     .reverseLimitSwitchType(Type.kNormallyClosed)
@@ -101,12 +101,12 @@ public class ElevatorSubsystem extends SubsystemBase {
             .closedLoop
                 // .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
                 .p(kLdrP)
-                .outputRange(-0.5, 0.5)
+                .outputRange(-1.0, 1.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
                     .maxAcceleration(kLdrMaxAccel)
                     .maxVelocity(kLdrMaxRPM)
-                    .allowedClosedLoopError(0.125);
+                    .allowedClosedLoopError(0.5);
         elevMtrLdr.configure(ldrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
 
@@ -115,23 +115,23 @@ public class ElevatorSubsystem extends SubsystemBase {
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
             .idleMode(IdleMode.kBrake);
-        flwCfg
-            .encoder
-                .positionConversionFactor(.2); //confirm conversion factor
-        flwCfg
-            .softLimit
-                .forwardSoftLimit(16.5) 
-                .reverseSoftLimit(-0.5); // -0.05
-        flwCfg
-            .closedLoop
-                // .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
-                .p(kFlwP)
-                .outputRange(-0.5, 0.5)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .maxMotion
-                    .maxAcceleration(kFlwMaxAccel)
-                    .maxVelocity(kFlwMaxRPM)
-                    .allowedClosedLoopError(0.125);
+        // flwCfg
+        //     .encoder
+        //         .positionConversionFactor(.2); //confirm conversion factor
+        // flwCfg
+        //     .softLimit
+        //         .forwardSoftLimit(16.5) 
+        //         .reverseSoftLimit(-0.5); // -0.05
+        // flwCfg
+        //     .closedLoop
+        //         // .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
+        //         .p(kFlwP)
+        //         .outputRange(-0.5, 0.5)
+        //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        //         .maxMotion
+        //             .maxAcceleration(kFlwMaxAccel)
+        //             .maxVelocity(kFlwMaxRPM)
+        //             .allowedClosedLoopError(0.125);
         elevMtrFlw.configure(flwCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Add motors to the simulation
@@ -251,6 +251,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Position", elevEncLdr.getPosition());
         // SmartDashboard.putNumber("Elevator Follower Position", elevEncFlw.getPosition());
         SmartDashboard.putBoolean("Elevator Limit Switch", !limitSwL.get());
+
+        SmartDashboard.putNumber("Elevator Current", elevMtrLdr.getOutputCurrent());
+
+        SmartDashboard.putNumber("Elevator Speed", elevEncLdr.getVelocity());
        }
     }
 }
