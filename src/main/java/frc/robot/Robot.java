@@ -4,21 +4,22 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AprilTagConstants;
+// import frc.robot.Constants.DrivebaseConstants;
 // import frc.robot.subsystems.Secondary.CoralSubsystem;
-import frc.robot.subsystems.Secondary.ElevatorSubsystem;
+// import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.hardware.CANrange;
+// import com.ctre.phoenix6.hardware.CANrange;
 
 
 /**
@@ -167,13 +168,15 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-    m_robotContainer.spencerButtons();
-    m_robotContainer.getSnappedAngleID();
+    // m_robotContainer.spencerButtons();
+    // m_robotContainer.getSnappedAngleID();
 
     if(!m_robotContainer.elevatorSubsystem.limitSwL.get()){
       m_robotContainer.elevatorSubsystem.elevEncFlw.setPosition(0);
       m_robotContainer.elevatorSubsystem.elevEncLdr.setPosition(0);
     }
+
+    // System.out.println("Speed" + DrivebaseConstants.Max_Speed_Multiplier);
 
     // if(m_robotContainer.rotateSubsystem.algaeLimitSwitch.isPressed()){
     //   m_robotContainer.rotateSubsystem.rotateEncoder.setPosition(0);
@@ -213,9 +216,9 @@ public class Robot extends TimedRobot
   @Override
   public void simulationPeriodic()
   {
-    m_robotContainer.getSnappedAngleID();
-    SmartDashboard.putNumber("Reef Tag ID", AprilTagConstants.ReefTagID);
-    System.out.println("Reef Tag ID: " + AprilTagConstants.ReefTagID);
+    // m_robotContainer.getSnappedAngleID();
+    // SmartDashboard.putNumber("Reef Tag ID", AprilTagConstants.ReefTagID);
+    // System.out.println("Reef Tag ID: " + AprilTagConstants.ReefTagID);
   }
   
   void setAprilTag()

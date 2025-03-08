@@ -5,13 +5,13 @@
 /**
  * The elevator subsystem is driven by 2 neo vortex motors with sparkflex controllers. They will turn in the same
  * direction (not inverted). The leader motor will be the motor on the right side of the robot, and the follower motor
- * will be the motor on the left side of the robot. We will CANID the leader motor as 14 and the follower motor as 15.
- * The elevator has a limit switch at the bottom to prevent the elevator from going too low, thia limit
- * switch is connected to the digital input 0, and is used in a routine to set the elevator to the
+ * will be the motor on the left side of the robot. We assign CANID to the leader motor as 14 and the follower motor as 15.
+ * The elevator has a limit switch at the bottom to prevent the elevator from going too low, this limit
+ * switch is connected to the digital input 9, and is used in a routine to set the elevator to the
  * bottom position.
- * The gearbox ratio is 60:7 or 8.571428571428571:1, the pitch diameter of the 22 tooth driven sprocket is 1.751".
- * 1.751*pi = 5.500929" circumference, divided by the gearbox ratio of 8.571428571428571 gives us a ration of 0.64177501" per revolution.
- * Likely this ratio will change as the elevator is built and tested. 
+ * The gearbox ratio is 25:1, the pitch diameter of the driven sprocket is 1.92".
+ * 1.92*pi = 6.03185789489" circumference, divided by the gearbox ratio of 25 gives us a ratio of 0.24127431" per revolution.
+ * Likely this factor will change as the elevator is built and tested. 
  */
 package frc.robot.subsystems.Secondary;
 
@@ -26,6 +26,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 // import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -54,13 +55,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
-    private double kLdrP = 0.075, kLdrI = 0.0, kLdrD = 0.0; //start p = 0.0005
-    private double kFlwP = 0.125, kFlwI = 0.0, kFlwD = 0.0;
-    private double kLdrFF = 0.0005, kFlwFF = 0.0005;
-    private double kLdrOutputMin = -0.35, kFlwOutputMin = -0.35;
-    private double kLdrOutputMax = 0.35, kFlwOutputMax = 0.35;
-    private double kLdrMaxRPM = 2500, kFlwMaxRPM = 4500;
-    private double kLdrMaxAccel = 8000, kFlwMaxAccel = 5000;
+    private double kP = 0.075; //start p = 0.0005
+    private double kOutput = 1.0;
+    private double kMaxRPM = 2500;
+    private double kMaxAccel = 8000;
     public DigitalInput limitSwL;
     private boolean elevatorInitialized;
     // public DigitalInput limitSwR;
@@ -89,10 +87,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         ldrCfg
             .encoder
                 .positionConversionFactor(0.225); //confirm conversion factor
-        // ldrCfg
-        //     .softLimit
-        //         .forwardSoftLimit(16.5) 
-        //         .reverseSoftLimit(-0.5);
+        ldrCfg
+            .softLimit
+                .forwardSoftLimit(16.5) 
+                .reverseSoftLimit(-0.5)
+                .forwardSoftLimitEnabled(true)
+                .reverseSoftLimitEnabled(true);
         // ldrCfg
         //     .limitSwitch
         //     .reverseLimitSwitchType(Type.kNormallyClosed)
@@ -100,13 +100,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         ldrCfg
             .closedLoop
                 // .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
-                .p(kLdrP)
-                .outputRange(-1.0, 1.0)
+                .p(kP)
+                .outputRange(-kOutput, kOutput)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
-                    .maxAcceleration(kLdrMaxAccel)
-                    .maxVelocity(kLdrMaxRPM)
-                    .allowedClosedLoopError(0.5);
+                    .maxAcceleration(kMaxAccel)
+                    .maxVelocity(kMaxRPM)
+                    .allowedClosedLoopError(0.5)
+                    .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         elevMtrLdr.configure(ldrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
 

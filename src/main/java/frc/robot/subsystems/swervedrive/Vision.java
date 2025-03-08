@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Microseconds;
@@ -53,7 +54,7 @@ public class Vision
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout                     = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2025ReefscapeWelded);
+      AprilTagFields.k2025ReefscapeAndyMark);
   /**
    * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
    */
@@ -190,6 +191,7 @@ public class Vision
    * @param pose Estimated robot pose.
    * @return Could be empty if there isn't a good reading.
    */
+  @SuppressWarnings("unused")
   @Deprecated(since = "2024", forRemoval = true)
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose)
   {
@@ -338,7 +340,7 @@ public class Vision
     /**
      * Left Camera
      */
-    LEFT_CAM("Right",
+    LEFT_CAM("Left",
              new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(-30)),
              new Translation3d(Units.inchesToMeters(11.761),
                                Units.inchesToMeters(10.599),
@@ -347,7 +349,7 @@ public class Vision
     /**
      * Right Camera
      */
-    RIGHT_CAM("Left",
+    RIGHT_CAM("Right",
               new Rotation3d(0, Math.toRadians(-25.0), Math.toRadians(30)),
               new Translation3d(Units.inchesToMeters(11.761),
                                 Units.inchesToMeters(-10.599),
