@@ -26,6 +26,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 // import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -89,14 +90,14 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .positionConversionFactor(0.225); //confirm conversion factor
         ldrCfg
             .softLimit
-                .forwardSoftLimit(16.5) 
-                .reverseSoftLimit(-0.5)
+                .forwardSoftLimit(21.0) 
+                .reverseSoftLimit(0.0)
                 .forwardSoftLimitEnabled(true)
                 .reverseSoftLimitEnabled(true);
-        // ldrCfg
-        //     .limitSwitch
-        //     .reverseLimitSwitchType(Type.kNormallyClosed)
-        //     .reverseLimitSwitchEnabled(true);
+        ldrCfg
+            .limitSwitch
+            .reverseLimitSwitchType(Type.kNormallyOpen)
+            .reverseLimitSwitchEnabled(true);
         ldrCfg
             .closedLoop
                 // .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
@@ -109,7 +110,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                     .allowedClosedLoopError(0.5)
                     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         elevMtrLdr.configure(ldrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
 
         flwCfg
             .follow(elevMtrLdr, false)
@@ -163,7 +163,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             //     elevMtrLdr.set(0);
             // }
 
-            elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
+            // elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
         }
     }
 
