@@ -18,7 +18,6 @@ package frc.robot.subsystems.Secondary;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
-// import com.revrobotics.spark.SparkSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -28,13 +27,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
-// import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
-// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -56,20 +52,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
-    private double kP = 0.075; //start p = 0.0005
+    private double kP = 0.075;
     private double kOutput = 1.0;
     private double kMaxRPM = 2500;
     private double kMaxAccel = 8000;
-    public DigitalInput limitSwL;
+    public DigitalInput limitSw;
     private boolean elevatorInitialized;
-    // public DigitalInput limitSwR;
     
 
     public ElevatorSubsystem() {
         elevMtrLdr = new SparkFlex(ElevatorConstants.LEFT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
         elevMtrFlw = new SparkFlex(ElevatorConstants.RIGHT_ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
 
-        limitSwL = new DigitalInput(9);
+        limitSw = new DigitalInput(9);
 
         ldrCfg = new SparkFlexConfig();
         flwCfg = new SparkFlexConfig();
@@ -116,23 +111,6 @@ public class ElevatorSubsystem extends SubsystemBase {
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
             .idleMode(IdleMode.kBrake);
-        // flwCfg
-        //     .encoder
-        //         .positionConversionFactor(.2); //confirm conversion factor
-        // flwCfg
-        //     .softLimit
-        //         .forwardSoftLimit(16.5) 
-        //         .reverseSoftLimit(-0.5); // -0.05
-        // flwCfg
-        //     .closedLoop
-        //         // .pidf(kFlwP, kFlwI, kFlwD, kFlwFF)
-        //         .p(kFlwP)
-        //         .outputRange(-0.5, 0.5)
-        //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        //         .maxMotion
-        //             .maxAcceleration(kFlwMaxAccel)
-        //             .maxVelocity(kFlwMaxRPM)
-        //             .allowedClosedLoopError(0.125);
         elevMtrFlw.configure(flwCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Add motors to the simulation
@@ -145,32 +123,21 @@ public class ElevatorSubsystem extends SubsystemBase {
             elevMtrFlwSim.setPosition(0);
             elevEncLdrSim.setVelocity(0);
             elevEncFlwSim.setVelocity(0);
-
         }
     }
     
     // An accessor method to set the speed (technically the output percentage) of the launch wheel
     public void setElevatorHeight(double pos) {
-        // leaderElevatorL.set(speed);
         elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl);
-        if (Robot.isSimulation()) {
-            // leaderElevatorSim.setVelocity(speed);
-            // followerElevatorSim.setVelocity(speed);
-            // if (!limitSwL.get()) {
-            //     elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-            // }
-            // else {
-            //     elevMtrLdr.set(0);
-            // }
-
-            // elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
-        }
+        // if (Robot.isSimulation()){
+        //     elevMtrLdrSim.setPosition(pos);
+        // }
     }
 
     public Command INIT_POSE() {
         return this.run(
             () -> {
-                if (limitSwL.get()){
+                if (limitSw.get()){
                     elevMtrLdr.set(.125);
                 }
                 else{
@@ -189,39 +156,11 @@ public class ElevatorSubsystem extends SubsystemBase {
             this);
     }
 
-    // public Command START_POSE() {
-    //     return this.run(
-    //         () -> {
-    //             setElevatorHeight(ElevatorConstants.START_POSE);
-    //         });
-    // }
-
-    // public Command REEF_LOW_POSE() {
-    //     return this.run(
-    //         () -> {
-    //             setElevatorHeight(ElevatorConstants.REEF_LOW_POSE);
-    //         });
-    //     }
-
-    // public Command REEF_MIDDLE_POSE() {
-    //     return this.run(
-    //         () -> {
-    //             setElevatorHeight(ElevatorConstants.REEF_MIDDLE_POSE);
-    //         });
-    //     }
-
-    // public Command REEF_HIGH_POSE() {
-    //     return this.run(
-    //         () -> {
-    //             setElevatorHeight(ElevatorConstants.REEF_HIGH_POSE);
-    //         });
-    //     }
-
     public FunctionalCommand ElevatorInitCmd() {
         return new FunctionalCommand(() -> elevatorInitialized = false,
-                                        () -> {if(limitSwL.get()){
+                                        () -> {if(limitSw.get()){
                                                 elevMtrLdr.set(-.125);
-                                            } else if(!limitSwL.get()) {
+                                            } else if(!limitSw.get()) {
                                                 elevMtrLdr.set(0);
                                                 elevEncLdr.setPosition(0);
                                                 elevatorInitialized = true;
@@ -247,14 +186,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     if (Robot.isSimulation()) {
         SmartDashboard.putNumber("Elevator Position", elevEncLdrSim.getPosition());
-        // SmartDashboard.putNumber("Elevator Follower Speed (RPM)", elevEncFlwSim.getPosition());
     } else {
         SmartDashboard.putNumber("Elevator Position", elevEncLdr.getPosition());
-        // SmartDashboard.putNumber("Elevator Follower Position", elevEncFlw.getPosition());
-        SmartDashboard.putBoolean("Elevator Limit Switch", !limitSwL.get());
-
+        SmartDashboard.putBoolean("Elevator Limit Switch", !limitSw.get());
         SmartDashboard.putNumber("Elevator Current", elevMtrLdr.getOutputCurrent());
-
         SmartDashboard.putNumber("Elevator Speed", elevEncLdr.getVelocity());
        }
     }

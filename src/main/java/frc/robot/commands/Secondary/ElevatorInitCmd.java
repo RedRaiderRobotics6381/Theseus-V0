@@ -40,7 +40,7 @@ public void execute() {
   //   elevatorSubsystem.elevMtrLdr.set(0);
   // }
   
-  if (elevatorSubsystem.limitSwL.get()){
+  if (elevatorSubsystem.limitSw.get()){
     elevatorInitialized = true;
   }
 }

@@ -172,7 +172,7 @@ public class Robot extends TimedRobot
     // m_robotContainer.spencerButtons();
     // m_robotContainer.getSnappedAngleID();
 
-    if(!m_robotContainer.elevatorSubsystem.limitSwL.get()){
+    if(!m_robotContainer.elevatorSubsystem.limitSw.get()){
       m_robotContainer.elevatorSubsystem.elevEncFlw.setPosition(0);
       m_robotContainer.elevatorSubsystem.elevEncLdr.setPosition(0);
     }
