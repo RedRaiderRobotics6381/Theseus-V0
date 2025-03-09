@@ -98,10 +98,10 @@ public class RobotContainer
                                                                       () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis())
                                                                       .withControllerRotationAxis(() -> 0)
                                                                       .deadband(OperatorConstants.DEADBAND)
-                                                                      .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
+                                                                      .scaleTranslation(1)
                                                                       .cubeTranslationControllerAxis(true)
                                                                       .cubeRotationControllerAxis(true)
-                                                                      .headingWhile(false)
+                                                                      .headingWhile(true)
                                                                       .robotRelative(true)
                                                                       .allianceRelativeControl(false);
 
@@ -161,8 +161,7 @@ public class RobotContainer
                                                                             return Math.cos(Math.toRadians(Math.round((drivebase.getHeading().getDegrees() + 180) % 360)));
                                                                           }
                                                                         }})
-                                                                      .headingWhile(true)
-                                                                      .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier);
+                                                                      .headingWhile(true);
 
   // public double getSnappedAngle(double heading){
   //   // return Math.toRadians(Math.round((heading + 360) % 360));
@@ -284,13 +283,13 @@ public class RobotContainer
       //                         );
       
       // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
-      driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {
-                                                              DrivebaseConstants.Max_Speed_Multiplier = 1;
-                                                              drivebase.getCurrentCommand().schedule();}));
-      driverXbox.rightBumper().negate().and(driverXbox.leftBumper().negate()).onTrue(Commands.runOnce(() -> {DrivebaseConstants.Max_Speed_Multiplier = 0.75;
-                                                                                                             drivebase.getCurrentCommand().schedule();}));
-      driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {DrivebaseConstants.Max_Speed_Multiplier = 0.5;
-                                                             drivebase.getCurrentCommand().schedule();}));
+      driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);
+                                                              driveAngularVelocity.scaleTranslation(1);}));
+      driverXbox.rightBumper().negate().and(driverXbox.leftBumper().negate()).onTrue(Commands.runOnce(() -> {
+                                                              driveAngularVelocity.scaleTranslation(0.75);
+                                                              driveAngularVelocity.scaleTranslation(0.75);}));
+      driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);
+                                                             driveAngularVelocity.scaleTranslation(0.5);}));
 
       driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
