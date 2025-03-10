@@ -20,6 +20,7 @@ import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -55,7 +56,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double kP = 0.075;
     private double kOutput = 1.0;
     private double kMaxRPM = 2500;
-    private double kMaxAccel = 8000;
+    private double kMaxAccel = 4000;
     public DigitalInput limitSw;
     private boolean elevatorInitialized;
     
@@ -100,18 +101,18 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .outputRange(-kOutput, kOutput)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
-                    .maxAcceleration(kMaxAccel)
-                    .maxVelocity(kMaxRPM)
-                    .allowedClosedLoopError(0.5)
-                    .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
-        elevMtrLdr.configure(ldrCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                    .maxAcceleration(kMaxAccel, ClosedLoopSlot.kSlot0)
+                    .maxVelocity(kMaxRPM, ClosedLoopSlot.kSlot0)
+                    .allowedClosedLoopError(0.5, ClosedLoopSlot.kSlot0)
+                    .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot0);
+        elevMtrLdr.configure(ldrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         flwCfg
             .follow(elevMtrLdr, false)
             .voltageCompensation(12.0)
             .smartCurrentLimit(80)
             .idleMode(IdleMode.kBrake);
-        elevMtrFlw.configure(flwCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        elevMtrFlw.configure(flwCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Add motors to the simulation
         if (Robot.isSimulation()) {
@@ -128,7 +129,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     // An accessor method to set the speed (technically the output percentage) of the launch wheel
     public void setElevatorHeight(double pos) {
-        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl);
+        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
         // if (Robot.isSimulation()){
         //     elevMtrLdrSim.setPosition(pos);
         // }

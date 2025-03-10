@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 // import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -161,6 +163,15 @@ public class Robot extends TimedRobot
     //m_robotContainer.initCoralRotate();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     //m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
+    if (Robot.isSimulation()){
+      Optional<Alliance> allianceColor = DriverStation.getAlliance();
+      if (allianceColor.isPresent()) {
+        if (allianceColor.get() == Alliance.Red) {
+          m_robotContainer.drivebase.resetOdometry(new Pose2d(10, 2.5, new Rotation2d(0)));
+        }
+        else{
+          m_robotContainer.drivebase.resetOdometry(new Pose2d(7.5, 5.5, new Rotation2d(Math.PI)));
+        }}}
   }
 
   /**

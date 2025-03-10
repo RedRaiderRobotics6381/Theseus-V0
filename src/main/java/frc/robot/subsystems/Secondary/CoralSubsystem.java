@@ -78,7 +78,7 @@ public class CoralSubsystem extends SubsystemBase {
     
     private double angkP = 0.0175, angkI = 0.0, angkD = 0.0;//p was 0.0005
     // private double outtakekP = 0.125, outtakekI = 0.0, outtakekD = 0.0;//p was 0.0005
-    private double angkFF = 0.0;
+    // private double angkFF = 0.005;
     private double angOutputMin = -1.0;
     private double angOutputMax = 1.0;
     // private double outtakeOutputMin = -1.0;
@@ -130,7 +130,7 @@ public class CoralSubsystem extends SubsystemBase {
                 .reverseSoftLimitEnabled(true);
         armAngMtrCfg
             .closedLoop
-                .pidf(angkP, angkI, angkD, angkFF)
+                .pid(angkP, angkI, angkD)
                 .outputRange(angOutputMin, angOutputMax)
                 .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
                 // .maxMotion
@@ -201,11 +201,6 @@ public class CoralSubsystem extends SubsystemBase {
             .voltageCompensation(12.0)
             .smartCurrentLimit(40)
             .idleMode(IdleMode.kBrake);
-      //  coralIndexMtrCfg
-          //  .closedLoop
-          //      .pid(indexkP, indexkI, indexkD)
-      //          .outputRange(sldrkOutputMin, sldrkOutputMax)
-       //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         indexMtrLdr.configure(indexMtrLdrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         indexMtrFlwCfg
@@ -300,15 +295,6 @@ public class CoralSubsystem extends SubsystemBase {
             this);
     }
 
-    
-    // public FunctionalCommand rotateCMD() {
-    //     return new FunctionalCommand(() ->{},
-    //                                  () -> coralAngMtr.set(0.05),
-    //                                  interrupted -> coralAngMtr.set(0.05),
-    //                                  () -> !coralSensor.get(),
-    //                                  this);
-    // }
-
     // public FunctionalCommand setSliderPosition(double pos) {
     //     return new FunctionalCommand(() -> {},
     //         () -> coralSldrPID.setReference(pos, SparkMax.ControlType.kPosition),
@@ -320,6 +306,23 @@ public class CoralSubsystem extends SubsystemBase {
     
     public void setRotateAngle(double angle) {
         armAngPID.setReference(angle, SparkMax.ControlType.kPosition);
+        
+        // From Minibot
+        // This is an arbitrary feedforward value that is multiplied by the positon of the arm to account
+        // for the reduction in force needed to hold the arm vertical instead of hortizontal.  The .abs
+        // ensures the value is always positive.  The .cos function uses radians instead of degrees,
+        // so the .toRadians converts from degrees to radians.
+        // Use this to add a feed forward value to the arm to hold it horizontal - test test test!
+        // Increase angkFF with the arm horizontal until just before it starts to drift upward
+        // armAngPID.setReference(angle,
+        //                        SparkMax.ControlType.kPosition,
+        //                        ClosedLoopSlot.kSlot0,
+        //                        angkFF * (Math.abs
+        //                        (Math.cos
+        //                        ((Math.toRadians(angle)) -
+        //                        (Math.toRadians(90))))),
+        //                        ArbFFUnits.kPercentOut);
+
         // if (Robot.isSimulation()) {
         //     coralRotatePID.setReference(angle, SparkMax.ControlType.kPosition);
         // }
