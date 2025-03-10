@@ -372,8 +372,8 @@ public class RobotContainer
       //   .andThen(
       //       intakeSubsystem.RunIntakeCmd()));
 
-      engineerXbox.leftBumper().whileTrue(coralSubsystem.IntakeCmd());
-      engineerXbox.rightBumper().whileTrue(coralSubsystem.OuttakeCmd());
+      engineerXbox.leftBumper().onTrue(coralSubsystem.IntakeCmd());
+      engineerXbox.rightBumper().onTrue(coralSubsystem.OuttakeCmd());
 
       // engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
       //                                                                 coralSubsystem, 

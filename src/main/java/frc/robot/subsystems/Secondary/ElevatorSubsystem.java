@@ -57,6 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
     private double kP = 0.075; //start p = 0.0005
+    private double kD = 0.075;
     private double kOutput = 1.0;
     private double kMaxRPM = 2500;
     private double kMaxAccel = 8000;
@@ -102,6 +103,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .closedLoop
                 // .pidf(kLdrP, kLdrI, kLdrD, kLdrFF)
                 .p(kP)
+                .d(kD)
                 .outputRange(-kOutput, kOutput)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .maxMotion
