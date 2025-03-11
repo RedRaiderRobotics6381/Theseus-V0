@@ -86,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .positionConversionFactor(0.225); //confirm conversion factor
         ldrCfg
             .softLimit
-                .forwardSoftLimit(21.0) 
+                .forwardSoftLimit(23.0) 
                 .reverseSoftLimit(0.0)
                 .forwardSoftLimitEnabled(true)
                 .reverseSoftLimitEnabled(true);

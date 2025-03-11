@@ -263,8 +263,8 @@ public class RobotContainer
       //   .andThen(
       //       intakeSubsystem.RunIntakeCmd()));
 
-      engineerXbox.leftBumper().whileTrue(coralSubsystem.IntakeCmd());
-      engineerXbox.rightBumper().whileTrue(coralSubsystem.OuttakeCmd());
+      engineerXbox.leftBumper().onTrue(coralSubsystem.IntakeCmd());
+      engineerXbox.rightBumper().onTrue(coralSubsystem.OuttakeCmd());
 
       // engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
       //                                                                 coralSubsystem, 
@@ -341,7 +341,7 @@ public class RobotContainer
 
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)); 
 
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));

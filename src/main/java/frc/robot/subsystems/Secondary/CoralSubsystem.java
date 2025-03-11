@@ -38,12 +38,15 @@ import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
@@ -76,9 +79,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     // private boolean coralAngleInitialized;
     
-    private double angkP = 0.0175, angkI = 0.0, angkD = 0.0;//p was 0.0005
+    private double angkP = 0.005, angkI = 0.0, angkD = 0.0;//p was 0.0005
     // private double outtakekP = 0.125, outtakekI = 0.0, outtakekD = 0.0;//p was 0.0005
-    // private double angkFF = 0.005;
+    private double angkFF = 0.0075;
     private double angOutputMin = -1.0;
     private double angOutputMax = 1.0;
     // private double outtakeOutputMin = -1.0;
@@ -132,12 +135,12 @@ public class CoralSubsystem extends SubsystemBase {
             .closedLoop
                 .pid(angkP, angkI, angkD)
                 .outputRange(angOutputMin, angOutputMax)
-                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-                // .maxMotion
-                //     .allowedClosedLoopError(2.0);   
-                //     .maxAcceleration(kMaxAccel)
-                //     .maxVelocity(kMaxRPM)
-                //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+                .maxMotion
+                    .allowedClosedLoopError(1.0)   
+                    .maxAcceleration(40000)
+                    .maxVelocity(6000);
+                    // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         armAngMtr.configure(armAngMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
@@ -305,7 +308,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     
     public void setRotateAngle(double angle) {
-        armAngPID.setReference(angle, SparkMax.ControlType.kPosition);
+        armAngPID.setReference(angle, SparkMax.ControlType.kMAXMotionPositionControl);
         
         // From Minibot
         // This is an arbitrary feedforward value that is multiplied by the positon of the arm to account
@@ -314,14 +317,14 @@ public class CoralSubsystem extends SubsystemBase {
         // so the .toRadians converts from degrees to radians.
         // Use this to add a feed forward value to the arm to hold it horizontal - test test test!
         // Increase angkFF with the arm horizontal until just before it starts to drift upward
-        // armAngPID.setReference(angle,
-        //                        SparkMax.ControlType.kPosition,
-        //                        ClosedLoopSlot.kSlot0,
-        //                        angkFF * (Math.abs
-        //                        (Math.cos
-        //                        ((Math.toRadians(angle)) -
-        //                        (Math.toRadians(90))))),
-        //                        ArbFFUnits.kPercentOut);
+        armAngPID.setReference(angle,
+                               SparkMax.ControlType.kMAXMotionPositionControl,
+                               ClosedLoopSlot.kSlot0,
+                               angkFF * (Math.abs
+                               (Math.cos
+                               ((Math.toRadians(angle)) -
+                               (Math.toRadians(115))))),
+                               ArbFFUnits.kPercentOut);
 
         // if (Robot.isSimulation()) {
         //     coralRotatePID.setReference(angle, SparkMax.ControlType.kPosition);
