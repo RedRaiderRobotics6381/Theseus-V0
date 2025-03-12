@@ -320,10 +320,9 @@ public class CoralSubsystem extends SubsystemBase {
         armAngPID.setReference(angle,
                                SparkMax.ControlType.kMAXMotionPositionControl,
                                ClosedLoopSlot.kSlot0,
-                               angkFF * (Math.abs
+                               angkFF * Math.abs
                                (Math.cos
-                               ((Math.toRadians(angle)) -
-                               (Math.toRadians(115))))),
+                               (Math.toRadians(angle - 115))),
                                ArbFFUnits.kPercentOut);
 
         // if (Robot.isSimulation()) {

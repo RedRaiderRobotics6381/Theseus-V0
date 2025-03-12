@@ -423,7 +423,9 @@ public class RobotContainer
       }
 
     }
-    System.out.println("Snapped Angle: " + snappedAngle);
-    System.out.println("Reef Tag: " + AprilTagConstants.ReefTagID);
+    // System.out.println("Snapped Angle: " + snappedAngle);
+    // System.out.println("Reef Tag: " + AprilTagConstants.ReefTagID);
+    SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
+    SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
   }
 }

@@ -60,7 +60,7 @@ public final class Constants
     public static final double TROUGH_POSE = 1;
     public static final double REEF_LOW_POSE = 3.0;
     public static final double REEF_MIDDLE_POSE = 7.0;
-    public static final double REEF_HIGH_POSE = 23.5; //14.75
+    public static final double REEF_HIGH_POSE = 24.0; //14.75
     public static final double ALGAE_BARGE_POSE = 0;
     public static final double ALGAE_PROCESSOR_POSE = 0; 
     public static final double ALGAE_PICKUP_HIGH_POSE = 13.0;
@@ -101,7 +101,7 @@ public final class Constants
     // public static int CORAL_SLIDER_MOTOR_PORT = 18;
     // public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_HIGH_ANGLE = 130.0; // was 287.5
+    public static double CORAL_HIGH_ANGLE = 182.0; // was 287.5
     public static double CORAL_MID_ANGLE = 130.0;
     public static double CORAL_LOW_ANGLE = 140.0;
     public static double CORAL_OFF_ELEVATOR = 190.0;

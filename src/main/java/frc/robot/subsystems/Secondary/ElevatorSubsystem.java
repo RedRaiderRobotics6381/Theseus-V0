@@ -86,8 +86,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .positionConversionFactor(0.225); //confirm conversion factor
         ldrCfg
             .softLimit
-                .forwardSoftLimit(23.0) 
-                .reverseSoftLimit(0.0)
+                .forwardSoftLimit(23.5) 
+                .reverseSoftLimit(-1.0)
                 .forwardSoftLimitEnabled(true)
                 .reverseSoftLimitEnabled(true);
         ldrCfg
@@ -159,9 +159,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public FunctionalCommand ElevatorInitCmd() {
         return new FunctionalCommand(() -> elevatorInitialized = false,
-                                        () -> {if(limitSw.get()){
+                                        () -> {if(!limitSw.get()){
                                                 elevMtrLdr.set(-.125);
-                                            } else if(!limitSw.get()) {
+                                            } else if(limitSw.get()) {
                                                 elevMtrLdr.set(0);
                                                 elevEncLdr.setPosition(0);
                                                 elevatorInitialized = true;
