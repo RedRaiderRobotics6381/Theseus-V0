@@ -730,4 +730,52 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return swerveDrive;
   }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @param speedScaleFactor Speed scale factor for the pathfinding 0-1.
+   * @param linearAccelScaleFactor Linear acceleration scale factor for the pathfinding 0-1.
+   * @param rotationScaleFactor Rotation scale factor for the pathfinding 0-1.
+   * @param rotationAccelScaleFactor Rotation acceleration scale factor for the pathfinding 0-1.
+   * maximum speeds and accelerations are determined by getMaximumChassisVelocity() and getMaximumChassisAngularVelocity()
+   * @return PathFinding command
+   */
+  public Command driveToPoseScaledSpeeds(Pose2d pose, double speedScaleFactor, double linearAccelScaleFactor, double rotationScaleFactor, double rotationAccelScaleFactor)
+  {
+  // Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumChassisVelocity() * speedScaleFactor, 4.0 * linearAccelScaleFactor,
+        swerveDrive.getMaximumChassisAngularVelocity() * rotationScaleFactor, Units.degreesToRadians(720) * rotationAccelScaleFactor);
+        
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+      pose,
+      constraints,
+      edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                  );
+  }
+    /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @param speedScaleFactor Speed scale factor for the pathfinding 0-1.
+   * @param linearAccelScaleFactor Linear acceleration scale factor for the pathfinding 0-1.
+   * @param rotationScaleFactor Rotation scale factor for the pathfinding 0-1.
+   * @param rotationAccelScaleFactor Rotation acceleration scale factor for the pathfinding 0-1.
+   * maximum speeds and accelerations are determined by getMaximumChassisVelocity() and getMaximumChassisAngularVelocity()
+   * @return PathFinding command
+   */
+  public Command driveToPoseWithConstraints(Pose2d pose, PathConstraints constraints)
+  {
+       
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+      pose,
+      constraints,
+      edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                  );
+  }
+
 }

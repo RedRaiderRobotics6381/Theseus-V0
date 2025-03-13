@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -207,34 +209,97 @@ public class RobotContainer
       driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);
                                                              driveAngularVelocity.scaleTranslation(0.5);}));
 
+      
+      // driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
+    //                             // getSnappedAngleID();
+    //                             return drivebase.driveToPoseScaledSpeeds(
+    //                             Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
+    //                             new Transform2d(0.6604,   0.0,
+    //                             Rotation2d.fromDegrees(180.0))),
+    //                             .5,
+    //                             .5,
+    //                             .5,
+    //                             .5);
+    //                           }));
+      // driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
+      //                           getSnappedAngleID();
+      //                           return drivebase.driveToPoseScaledSpeeds(
+      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+      //                           new Transform2d(0.6604,   -.164338,
+      //                           Rotation2d.fromDegrees(180))),
+      //                           .5,
+      //                           .5,
+      //                           .5,
+      //                           .5);
+      //                         }));
+      // driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
+      //                           getSnappedAngleID();
+      //                           return drivebase.driveToPoseScaledSpeeds(
+      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+      //                           new Transform2d(0.6604,   .164338,
+      //                           Rotation2d.fromDegrees(180))),
+      //                           .5,
+      //                           .5,
+      //                           .5,
+      //                           .5);
+      //                         }));
+      // driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
+      //                           getSnappedAngleID();
+      //                           return drivebase.driveToPoseScaledSpeeds(
+      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+      //                           new Transform2d(0.6604,   0.0,
+      //                           Rotation2d.fromDegrees(180))),
+      //                           .5,
+      //                           .5,
+      //                           .5,
+      //                           .5);
+      //                         }));
+
+      driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
+                                // getSnappedAngleID();
+                                return drivebase.driveToPoseWithConstraints(
+                                Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
+                                new Transform2d(0.6604,   0.0,
+                                Rotation2d.fromDegrees(180.0))),
+                                new PathConstraints(2.0,
+                                              4.0,
+                                              Math.toRadians(720),
+                                              Math.toRadians(540)));
+                              }));
       driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
-                                return drivebase.driveToPose(
+                                return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
                                 new Transform2d(0.6604,   -.164338,
-                                Rotation2d.fromDegrees(180))));
+                                Rotation2d.fromDegrees(180))),
+                                new PathConstraints(2.0,
+                                              4.0,
+                                              Math.toRadians(720),
+                                              Math.toRadians(540)));
                               }));
       driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
-                                return drivebase.driveToPose(
+                                return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
                                 new Transform2d(0.6604,   .164338,
-                                Rotation2d.fromDegrees(180))));
+                                Rotation2d.fromDegrees(180))),
+                                new PathConstraints(2.0,
+                                              4.0,
+                                              Math.toRadians(720),
+                                              Math.toRadians(540)));
                               }));
       driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
-                                return drivebase.driveToPose(
+                                return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
                                 new Transform2d(0.6604,   0.0,
-                                Rotation2d.fromDegrees(180))));
+                                Rotation2d.fromDegrees(180))),
+                                new PathConstraints(2.0,
+                                              4.0,
+                                              Math.toRadians(720),
+                                              Math.toRadians(540)));
                               }));
-      driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
-                                // getSnappedAngleID();
-                                return drivebase.driveToPose(
-                                Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
-                                new Transform2d(0.6604,   0.0,
-                                Rotation2d.fromDegrees(180.0))));
-                              }));
+
 
       // driverXbox.pov(0).onTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
       //                       new Pose2d(1.0,  0.0,
