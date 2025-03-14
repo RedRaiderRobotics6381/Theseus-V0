@@ -99,7 +99,7 @@ public class ElevatorPPIDSubsystem extends SubsystemBase {
             .idleMode(IdleMode.kBrake);
         ldrCfg
             .encoder
-                .positionConversionFactor(0.225); //confirm conversion factor
+                .positionConversionFactor(0.225); //TODO confirm conversion factor
         ldrCfg
             .softLimit
                 .forwardSoftLimit(23.5) 

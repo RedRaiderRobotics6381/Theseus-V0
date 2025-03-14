@@ -114,13 +114,14 @@ public final class Constants
   }
 
   public static class OuttakeConstants {
-    public static int OUTTAKE_LDR_PORT = 21;
-    public static int OUTTAKE_FLW_PORT = 22;
+    public static int INDEX_LDR_PORT = 21;
+    public static int INDEX_FLW_PORT = 22;
   }
 
-  // public static class ClimbConstants {
-  //   public static int CLIMBER_MOTOR_PORT = 0;
-  // }
+  public static class ClimbConstants {
+    public static int CLIMBER_MOTOR_PORT = 0;//TODO: Update port
+    public static int CLIMBER_SERVO_PORT = 0;//TODO: Update port
+  }
 
   public static class AprilTagConstants {
     public static int HumanPlayerLeft = 0; // 1 red, 13 blue

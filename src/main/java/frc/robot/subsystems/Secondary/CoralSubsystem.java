@@ -100,8 +100,8 @@ public class CoralSubsystem extends SubsystemBase {
     public CoralSubsystem() {
         armAngMtr = new SparkFlex(CoralConstants.CORAL_ROTATE_MOTOR_PORT, MotorType.kBrushless);
         // coralSldrMtr = new SparkMax(CoralConstants.CORAL_SLIDER_MOTOR_PORT, MotorType.kBrushless);
-        indexMtrLdr = new SparkFlex(OuttakeConstants.OUTTAKE_LDR_PORT, MotorType.kBrushless);
-        indexMtrFlw = new SparkFlex(OuttakeConstants.OUTTAKE_FLW_PORT, MotorType.kBrushless);
+        indexMtrLdr = new SparkFlex(OuttakeConstants.INDEX_LDR_PORT, MotorType.kBrushless);
+        indexMtrFlw = new SparkFlex(OuttakeConstants.INDEX_FLW_PORT, MotorType.kBrushless);
         armAngMtrCfg = new SparkFlexConfig();
         //coralSldrMtrCfg = new SparkMaxConfig();
         indexMtrLdrCfg = new SparkFlexConfig();
