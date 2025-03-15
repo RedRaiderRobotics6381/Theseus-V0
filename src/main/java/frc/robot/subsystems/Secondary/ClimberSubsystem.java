@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.Secondary;
 
-// import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Servo;
@@ -16,21 +14,14 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.sim.SparkAbsoluteEncoderSim;
-import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.servohub.ServoChannel;
-import com.revrobotics.servohub.ServoChannel.ChannelId;
-import com.revrobotics.servohub.ServoHub;
 
 public class ClimberSubsystem extends SubsystemBase {
  
@@ -64,12 +55,13 @@ public class ClimberSubsystem extends SubsystemBase {
             .smartCurrentLimit(40)
             .idleMode(IdleMode.kBrake);
         climbMtrCfg
-            .encoder
-                .positionConversionFactor(360);
+            .absoluteEncoder
+                .positionConversionFactor(360.0)
+                .zeroOffset(0.7249160);
         climbMtrCfg
             .softLimit
-                .forwardSoftLimit(150.0) 
-                .reverseSoftLimit(290.0);
+                .forwardSoftLimit(320.0) 
+                .reverseSoftLimit(50.0);
         climbMtrCfg
             .closedLoop
                 .pidf(kP, kI, kD, kFF)

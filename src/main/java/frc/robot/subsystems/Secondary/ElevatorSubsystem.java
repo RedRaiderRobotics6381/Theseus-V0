@@ -53,7 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkFlexSim elevMtrFlwSim;
     private SparkRelativeEncoderSim elevEncLdrSim;
     private SparkRelativeEncoderSim elevEncFlwSim;
-    private double kP = 0.075; //start p = 0.0005
+    private double kP = 0.15; //start p = 0.0005
     private double kD = 0.075;
     private double kOutput = 1.0;
     private double kMaxRPM = 2500;
@@ -131,7 +131,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     // An accessor method to set the speed (technically the output percentage) of the launch wheel
     public void setElevatorHeight(double pos) {
-        elevPIDLdr.setReference(pos, SparkMax.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+        elevPIDLdr.setReference(pos, SparkMax.ControlType.kPosition);
         // if (Robot.isSimulation()){
         //     elevMtrLdrSim.setPosition(pos);
         // }
@@ -161,14 +161,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public FunctionalCommand ElevatorInitCmd() {
         return new FunctionalCommand(() -> elevatorInitialized = false,
-                                        () -> {if(!limitSw.get()){
+                                        () -> {if(limitSw.get()){
                                                 elevMtrLdr.set(-.125);
-                                            } else if(limitSw.get()) {
+                                            } else if(!limitSw.get()) {
                                                 elevMtrLdr.set(0);
                                                 elevEncLdr.setPosition(0);
                                                 elevatorInitialized = true;
                                             }},
-                                        interrupted ->   elevMtrLdr.set(0),
+                                        interrupted -> elevMtrLdr.set(0),
                                         () -> elevatorInitialized,
                                         this);
     }

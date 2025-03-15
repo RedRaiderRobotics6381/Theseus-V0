@@ -155,12 +155,9 @@ public class Robot extends TimedRobot
     }
 
     setAprilTag();
-    // m_robotContainer.initElevator();
-    // m_robotContainer.initSlider();
-    //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    m_robotContainer.coralSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
+    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
 
-    //m_robotContainer.initCoralRotate();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     //m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
     if (Robot.isSimulation()){

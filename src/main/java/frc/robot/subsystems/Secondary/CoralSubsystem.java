@@ -26,6 +26,7 @@
 package frc.robot.subsystems.Secondary;
 import frc.robot.Robot;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
@@ -46,21 +47,24 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class CoralSubsystem extends SubsystemBase {
 
     private SparkFlex armAngMtr;
     public AbsoluteEncoder armAngEnc;
     public SparkClosedLoopController  armAngPID;
-    // private SparkMax coralSldrMtr;
-    // public RelativeEncoder coralSldrEnc;
+    private SparkMax coralSldrMtr;
+    public RelativeEncoder coralSldrEnc;
     public SparkFlex indexMtrLdr;
     public SparkFlex indexMtrFlw;
     public RelativeEncoder indexMtrLdrEnc;
     public RelativeEncoder indexMtrFlwEnc;
-    // public SparkClosedLoopController coralSldrPID;
+    public SparkClosedLoopController coralSldrPID;
     private SparkFlexSim armAngMtrSim;
     //private SparkMaxSim coralSldrMtrSim;
     private SparkFlexSim indexMtrLdrSim;
@@ -70,17 +74,18 @@ public class CoralSubsystem extends SubsystemBase {
     private SparkRelativeEncoderSim indexMtrLdrEncSim;
     private SparkRelativeEncoderSim indexMtrFlwEncSim;
     private SparkFlexConfig armAngMtrCfg;
-    //private SparkMaxConfig coralSldrMtrCfg;
+    private SparkMaxConfig coralSldrMtrCfg;
     private SparkFlexConfig indexMtrLdrCfg;
     private SparkFlexConfig indexMtrFlwCfg;
     private DigitalInput coralSensor;
     public SparkLimitSwitch armSliderLimitSwitch;
+    private boolean sliderInitialized;
 
     // private boolean coralAngleInitialized;
     
-    private double angkP = 0.005, angkI = 0.0, angkD = 0.0;//p was 0.0005
+    private double angkP = 0.010, angkI = 0.0, angkD = 0.15;//p was 0.002
     // private double outtakekP = 0.125, outtakekI = 0.0, outtakekD = 0.0;//p was 0.0005
-    private double angkFF = 0.0075;
+    private double angkFF = 0.0; //0.0075
     private double angOutputMin = -1.0;
     private double angOutputMax = 1.0;
     // private double outtakeOutputMin = -1.0;
@@ -90,20 +95,20 @@ public class CoralSubsystem extends SubsystemBase {
     // public final CANrange canrange = new CANrange(29);
 
     
-    // private double sldrkP = 0.005, sldrkI = 0.0, sldrkD = 0.0;//p was 0.0005
-    // private double sldrkFF = 0.0;
-    // private double sldrkOutputMin = 0.0;
-    // private double sldrkOutputMax = 0.3;
+    private double sldrkP = 1.25, sldrkI = 0.0, sldrkD = 0.5;//p was 0.0005
+    private double sldrkFF = 0.0;
+    private double sldrkOutputMin = -0.75;
+    private double sldrkOutputMax = 0.75;
 
     // private boolean sliderInitialized;
 
     public CoralSubsystem() {
         armAngMtr = new SparkFlex(CoralConstants.CORAL_ROTATE_MOTOR_PORT, MotorType.kBrushless);
-        // coralSldrMtr = new SparkMax(CoralConstants.CORAL_SLIDER_MOTOR_PORT, MotorType.kBrushless);
+        coralSldrMtr = new SparkMax(CoralConstants.CORAL_SLIDER_MOTOR_PORT, MotorType.kBrushless);
         indexMtrLdr = new SparkFlex(OuttakeConstants.INDEX_LDR_PORT, MotorType.kBrushless);
         indexMtrFlw = new SparkFlex(OuttakeConstants.INDEX_FLW_PORT, MotorType.kBrushless);
         armAngMtrCfg = new SparkFlexConfig();
-        //coralSldrMtrCfg = new SparkMaxConfig();
+        coralSldrMtrCfg = new SparkMaxConfig();
         indexMtrLdrCfg = new SparkFlexConfig();
         indexMtrFlwCfg = new SparkFlexConfig();
 
@@ -113,17 +118,21 @@ public class CoralSubsystem extends SubsystemBase {
         armAngEnc = armAngMtr.getAbsoluteEncoder();
         indexMtrLdrEnc = indexMtrLdr.getEncoder();
         indexMtrFlwEnc = indexMtrFlw.getEncoder();
-        // coralSldrPID = coralSldrMtr.getClosedLoopController();
-        // coralSldrEnc = coralSldrMtr.getEncoder();
+        coralSldrPID = coralSldrMtr.getClosedLoopController();
+        coralSldrEnc = coralSldrMtr.getEncoder();
+
+        armSliderLimitSwitch = coralSldrMtr.getForwardLimitSwitch();
 
         armAngMtrCfg
             .inverted(false)
             .voltageCompensation(12.0)
-            .smartCurrentLimit(60)
-            .idleMode(IdleMode.kBrake);
+            .smartCurrentLimit(50)
+            .idleMode(IdleMode.kCoast);
         armAngMtrCfg
             .absoluteEncoder
-                .positionConversionFactor(360);
+                .positionConversionFactor(360)
+                .inverted(false)
+                .zeroOffset(125.0 / 360);
         armAngMtrCfg
             .softLimit
                 .forwardSoftLimit(200.0)
@@ -134,41 +143,44 @@ public class CoralSubsystem extends SubsystemBase {
             .closedLoop
                 .pid(angkP, angkI, angkD)
                 .outputRange(angOutputMin, angOutputMax)
-                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-                .maxMotion
-                    .allowedClosedLoopError(1.0)   
-                    .maxAcceleration(40000)
-                    .maxVelocity(6000);
-                    // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+                // .maxMotion
+                //     .allowedClosedLoopError(1.0)   
+                //     .maxAcceleration(52000)
+                //     .maxVelocity(6000);
+                //     // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         armAngMtr.configure(armAngMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
-        // coralSldrMtrCfg
-        //     .inverted(true)
-        //     .voltageCompensation(12.0)
-        //     .smartCurrentLimit(40)
-        //     .idleMode(IdleMode.kBrake);
-        // coralSldrMtrCfg
-        //     .encoder
-        //         .positionConversionFactor(360);//TO DO change to inches
-        // coralSldrMtrCfg
-        //     .softLimit
-        //         .forwardSoftLimit(150.0) 
-        //         .reverseSoftLimit(290.0);
-        // coralSldrMtrCfg
-        //     .limitSwitch
-        //         .forwardLimitSwitchEnabled(true);
-        // coralSldrMtrCfg
-        //     .closedLoop
-        //         .pidf(sldrkP, sldrkI, sldrkD, sldrkFF)
-        //         .outputRange(sldrkOutputMin, sldrkOutputMax)
-        //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        //         // .maxMotion
-        //         //     .allowedClosedLoopError(2.0);   
-        //         //     .maxAcceleration(kMaxAccel)
-        //         //     .maxVelocity(kMaxRPM)
-        //         //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
-        // coralSldrMtr.configure(coralSldrMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        coralSldrMtrCfg
+            .inverted(true)
+            .voltageCompensation(12.0)
+            .smartCurrentLimit(80)
+            .idleMode(IdleMode.kCoast);
+        coralSldrMtrCfg
+            .encoder
+                .positionConversionFactor(0.13352);
+        coralSldrMtrCfg
+            .softLimit
+                // .forwardSoftLimit(150.0) 
+                .reverseSoftLimit(-12.5)
+                .reverseSoftLimitEnabled(true);
+        coralSldrMtrCfg
+            .limitSwitch
+                .forwardLimitSwitchType(Type.kNormallyOpen)
+                .forwardLimitSwitchEnabled(true);
+        coralSldrMtrCfg
+            .closedLoop
+                // .pidf(sldrkP, sldrkI, sldrkD, sldrkFF)
+                .p(sldrkP)
+                .outputRange(sldrkOutputMin, sldrkOutputMax)
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .maxMotion
+                    .allowedClosedLoopError(2.0)   
+                    .maxAcceleration(5000)
+                    .maxVelocity(5000)
+                    .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+        coralSldrMtr.configure(coralSldrMtrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // coralSldrMtrCfg
         //     .inverted(true)
@@ -178,6 +190,7 @@ public class CoralSubsystem extends SubsystemBase {
         // coralSldrMtrCfg
         //     .encoder
         //         .positionConversionFactor(360);//TO DO change to inches
+                
         // coralSldrMtrCfg
         //     .softLimit
         //         .forwardSoftLimit(150.0) 
@@ -201,14 +214,14 @@ public class CoralSubsystem extends SubsystemBase {
         indexMtrLdrCfg
             .inverted(true)
             .voltageCompensation(12.0)
-            .smartCurrentLimit(40)
+            .smartCurrentLimit(60)
             .idleMode(IdleMode.kBrake);
         indexMtrLdr.configure(indexMtrLdrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         indexMtrFlwCfg
             .follow(indexMtrLdr, true)
             .voltageCompensation(12.0)
-            .smartCurrentLimit(40)
+            .smartCurrentLimit(60)
             .idleMode(IdleMode.kBrake);
 
         indexMtrFlw.configure(indexMtrFlwCfg,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -247,20 +260,19 @@ public class CoralSubsystem extends SubsystemBase {
      * 
      * @return A new FunctionalCommand instance for initializing the slider.
      */
-    // public FunctionalCommand SliderInitCmd() {
-    //     return new FunctionalCommand(() -> sliderInitialized = false,
-    //                                  () -> {if(!coralLimitSwitch.isPressed()) {
-    //                                             coralSldrMtr.set(-.125);
-    //                                             //I think this can just be an else statement
-    //                                         } else if(coralLimitSwitch.isPressed()) {
-    //                                             coralSldrMtr.set(0);
-    //                                             coralIndexEnc.setPosition(0);
-    //                                             sliderInitialized = true;
-    //                                         }},
-    //                                  interrupted ->   coralSldrMtr.set(0),
-    //                                  () -> sliderInitialized,
-    //                                  this);
-    // }
+    public FunctionalCommand SliderInitCmd() {
+        return new FunctionalCommand(() -> sliderInitialized = false,
+                                     () -> {if(!armSliderLimitSwitch.isPressed()){ 
+                                                coralSldrMtr.set(.175);}
+                                            else if(armSliderLimitSwitch.isPressed()) {
+                                                coralSldrMtr.set(0);
+                                                coralSldrEnc.setPosition(0);
+                                                sliderInitialized = true;
+                                            }},
+                                     interrupted ->   coralSldrMtr.set(0),
+                                     () -> sliderInitialized,
+                                     this);
+    }
 
     /**
      * Creates a new FunctionalCommand for the intake mechanism.
@@ -289,6 +301,36 @@ public class CoralSubsystem extends SubsystemBase {
                                      this);
     }
 
+    // public FunctionalCommand algaeOuttakeCmd() {
+    //     return new FunctionalCommand(() ->{},
+    //                                  () -> indexMtrLdr.set(-0.06),
+    //                                  interrupted -> indexMtrLdr.set(0),
+    //                                  () -> {},
+    //                                  this);
+    // }
+
+    public Command algaeOuttakeCmd() {
+        return this.runEnd(
+            () -> {
+                // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
+                indexMtrLdr.set(0.50);
+            }, ()-> {
+              indexMtrLdr.set(0.25);
+            }
+          );
+      }
+
+      public Command algaeIntakeCmd() {
+        return this.runEnd(
+            () -> {
+                // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
+                indexMtrLdr.set(-0.75);
+            }, ()-> {
+                indexMtrLdr.set(0.0);
+            }
+          );
+      }
+
     public FunctionalCommand setRotateAngleCmd(double pos) {
         return new FunctionalCommand(
             () -> {},
@@ -297,17 +339,29 @@ public class CoralSubsystem extends SubsystemBase {
             this);
     }
 
-    // public FunctionalCommand setSliderPosition(double pos) {
-    //     return new FunctionalCommand(() -> {},
-    //         () -> coralSldrPID.setReference(pos, SparkMax.ControlType.kPosition),
-    //         interrupted -> {},
-    //         () -> (Math.abs(pos - coralSldrEnc.getPosition()) <= 5.0) && (Math.abs(coralSldrEnc.getVelocity()) <= 60.0),
-    //         this);
-    // }
+    public FunctionalCommand setSliderPositionCmd(double pos) {
+        return new FunctionalCommand(() -> {},
+            () -> coralSldrPID.setReference(pos, SparkMax.ControlType.kPosition),
+            interrupted -> {},
+            () -> (Math.abs(pos - coralSldrEnc.getPosition()) <= 0.05),
+            this);
+    }
+
+    public void sliderManual(double speed) {
+        coralSldrMtr.set(speed);
+    }
+
+    public Command sliderManualCmd(double speed) {
+        return this.runEnd(() -> {
+            sliderManual(speed);
+        }, () -> {coralSldrMtr.set(0.0);
+        }
+        );    
+    }
 
     
     public void setRotateAngle(double angle) {
-        armAngPID.setReference(angle, SparkMax.ControlType.kMAXMotionPositionControl);
+        armAngPID.setReference(angle, SparkMax.ControlType.kPosition);
         
         // From Minibot
         // This is an arbitrary feedforward value that is multiplied by the positon of the arm to account
@@ -317,7 +371,7 @@ public class CoralSubsystem extends SubsystemBase {
         // Use this to add a feed forward value to the arm to hold it horizontal - test test test!
         // Increase angkFF with the arm horizontal until just before it starts to drift upward
         armAngPID.setReference(angle,
-                               SparkMax.ControlType.kMAXMotionPositionControl,
+                               SparkMax.ControlType.kPosition,
                                ClosedLoopSlot.kSlot0,
                                angkFF * Math.abs
                                (Math.cos
@@ -329,12 +383,12 @@ public class CoralSubsystem extends SubsystemBase {
         // }
     }
 
-    // public void setSliderPosition(double position) {
-    //     coralSldrPID.setReference(position, SparkMax.ControlType.kPosition);
-    //     // if (Robot.isSimulation()) {
-    //     //     coralSliderPID.setReference(position, SparkMax.ControlType.kPosition);
-    //     // }
-    // }
+    public void setSliderPosition(double position) {
+        coralSldrPID.setReference(position, SparkMax.ControlType.kPosition);
+        // if (Robot.isSimulation()) {
+        //     coralSliderPID.setReference(position, SparkMax.ControlType.kPosition);
+        // }
+    }
 
 
     // public void extend() {
@@ -370,6 +424,8 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Outtake Speed", indexMtrLdrEnc.getVelocity());
 
         SmartDashboard.putBoolean("CoralSensor", coralSensor.get());
+
+        SmartDashboard.putBoolean("Slider Switch", armSliderLimitSwitch.isPressed());
 
         // double distance = canrange.getDistance().getValueAsDouble();
         // close = distance < .43 && distance > .35;
