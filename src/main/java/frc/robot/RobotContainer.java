@@ -441,8 +441,8 @@ public class RobotContainer
 
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
         
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(270)).onTrue(climberSubsystem.deployClimber());
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(90)).onTrue(climberSubsystem.climbAndGetPaid());
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(270)).onTrue(climberSubsystem.climbAndGetPaid(0.0));
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(90)).onTrue(climberSubsystem.climbAndGetPaid(90.0));
 
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));

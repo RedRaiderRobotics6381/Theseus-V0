@@ -106,20 +106,12 @@ public class ClimberSubsystem extends SubsystemBase {
             climberServo.setAngle(90); //TODO: confirm angle
         }
     }
-    
-    public FunctionalCommand deployClimber() {
-        return new FunctionalCommand(() -> releaseClimber(true),
-        () -> setClimbPosition(90.0),
-        interrupted -> releaseClimber(false),
-        () -> (Math.abs(90.0 - climbEncoder.getPosition()) <= 2.0),
-        this);
-    }
 
-    public FunctionalCommand climbAndGetPaid() {
+    public FunctionalCommand climbAndGetPaid(double pos) {
         return new FunctionalCommand(() -> releaseClimber(true),
-        () -> setClimbPosition(0.0),
+        () -> setClimbPosition(pos),
         interrupted -> releaseClimber(false),
-        () -> (Math.abs(0.0 - climbEncoder.getPosition()) <= 2.0),
+        () -> (Math.abs(pos - climbEncoder.getPosition()) <= 2.0),
         this);
     }
 
