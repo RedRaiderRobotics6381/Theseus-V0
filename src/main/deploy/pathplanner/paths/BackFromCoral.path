@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 5.85,
-        "y": 4.03
+        "y": 4.15
       },
       "prevControl": null,
       "nextControl": {
         "x": 6.85,
-        "y": 4.03
+        "y": 4.15
       },
       "isLocked": false,
       "linkedName": "EndStartToReef"

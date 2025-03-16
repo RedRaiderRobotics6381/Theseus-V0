@@ -134,24 +134,20 @@ public class RobotContainer
   {
     // Configure the trigger bindings
     autoChooser = AutoBuilder.buildAutoChooser();
-    
-    // NamedCommands.registerCommand("AlgaeIntakeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_INTAKE_POS));
-    // NamedCommands.registerCommand("AlgaeBargeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_BARGE_POS));
-    // NamedCommands.registerCommand("AlgaeIntake", intakeSubsystem.RunIntakeCmd());
-    // NamedCommands.registerCommand("AlgaeHold", intakeSubsystem.RunHoldCmd());
-    // NamedCommands.registerCommand("AlgaeOuttake", intakeSubsystem.RunOuttakeCmd());
-    // NamedCommands.registerCommand("CoralIntakePos", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_START_ANGLE));
-    // NamedCommands.registerCommand("CoralHighOuttake", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
-    NamedCommands.registerCommand("ElevatorHigh", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants .REEF_HIGH_POSE));
-    // NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
-    // NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
-    // NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
-    // NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
-    // NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
-    NamedCommands.registerCommand("ElevatorDown", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-    NamedCommands.registerCommand("ElevatorBarge", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_HIGH_POSE));
-    NamedCommands.registerCommand("ElevatorHighAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_HIGH_POSE));
-    NamedCommands.registerCommand("ElevatorLowAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_LOW_POSE));
+  
+    NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
+    NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
+    NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
+    NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
+    NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
+    NamedCommands.registerCommand("CoralRotateL2", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
+    NamedCommands.registerCommand("CoralRotateL3", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
+    NamedCommands.registerCommand("CoralRotateL4", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4));
+    NamedCommands.registerCommand("CoralRotateStart", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
+    NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
+    NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
+    NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
+    NamedCommands.registerCommand("ElevatorL4", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L4_POSE));
     
     configureBindings();
     
