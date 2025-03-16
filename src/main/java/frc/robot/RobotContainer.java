@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
+import frc.robot.commands.Secondary.PositionIdentifierCmd;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.CoralSubsystem;
 import frc.robot.subsystems.Secondary.ClimberSubsystem;
@@ -259,19 +260,19 @@ public class RobotContainer
                                 // getSnappedAngleID();
                                 return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
-                                new Transform2d(0.6604,   0.0,
+                                new Transform2d(0.55,   0.0,
                                 Rotation2d.fromDegrees(180.0))),
                                 new PathConstraints(2.0,
-                                              4.0,
+                                              2.0,
                                               Math.toRadians(720),
-                                              Math.toRadians(540)));
+                                              Math.toRadians(360)));
                               }));
       driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
                                 right = true;
                                 return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.6604,   -.164338,
+                                new Transform2d(0.55,   .164338,
                                 Rotation2d.fromDegrees(180))),
                                 new PathConstraints(2.0,
                                               4.0,
@@ -283,23 +284,23 @@ public class RobotContainer
                                 right = false;
                                 return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.6604,   .164338,
+                                new Transform2d(0.55,   -.164338,
                                 Rotation2d.fromDegrees(180))),
                                 new PathConstraints(2.0,
-                                              4.0,
+                                              2.0,
                                               Math.toRadians(720),
-                                              Math.toRadians(540)));
+                                              Math.toRadians(360)));
                               }));
       driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
                                 getSnappedAngleID();
                                 return drivebase.driveToPoseWithConstraints(
                                 Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.6604,   0.0,
+                                new Transform2d(0.55,   0.0,
                                 Rotation2d.fromDegrees(180))),
                                 new PathConstraints(2.0,
-                                              4.0,
+                                              2.0,
                                               Math.toRadians(720),
-                                              Math.toRadians(540)));
+                                              Math.toRadians(360)));
                               }));
 
 
@@ -330,22 +331,26 @@ public class RobotContainer
       // //   .andThen(
       // //       intakeSubsystem.RunIntakeCmd()));
       
-      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
-      //   Commands.run(() -> coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.25)));
+      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
+        Commands.run(() -> coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.4)));
       
-      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
-      //   Commands.run(() -> coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.25)));
+      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
+        Commands.run(() -> coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.4)));
       
-      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
-      //   engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
-      //   Commands.runOnce(() -> coralSubsystem.sliderManual(0)));
+      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
+        engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
+        Commands.runOnce(() -> coralSubsystem.sliderManual(0)));
 
-      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
-        coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis() * 0.25).schedule();
-      }));
-      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
-        coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis() * 0.25).schedule();
-      }));
+      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
+      //   coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis() * 0.25);
+      // }));
+      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
+      //   coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis() * 0.25);
+      // }));
+
+      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).or(engineerXbox.leftTrigger(OperatorConstants.DEADBAND)).onFalse(Commands.run(() -> {
+      //   coralSubsystem.sliderManual(0.0);
+      // }));
       
       // engineerXbox.leftTrigger().whileTrue(coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis()*.25));
       // engineerXbox.rightTrigger().whileTrue(coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis()*.25));
@@ -358,10 +363,10 @@ public class RobotContainer
       engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(coralSubsystem.algaeOuttakeCmd());
       engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(coralSubsystem.algaeIntakeCmd()); 
 
-      // engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
-      //                                                                 coralSubsystem, 
-      //                                                                 () -> engineerXbox.getLeftX(),
-      //                                                                 () -> engineerXbox.getLeftY()));
+      engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
+                                                                      coralSubsystem, 
+                                                                      () -> engineerXbox.getLeftX(),
+                                                                      () -> engineerXbox.getLeftY()));
 
       // engineerXbox.b().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
 
@@ -393,56 +398,49 @@ public class RobotContainer
       //   .andThen(
       //     intakeSubsystem.RunIntakeCmd()));
 
-      // engineerXbox.povLeft().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //       elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
-      //       rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
-      //       intakeSubsystem.RunIntakeCmd()
-      //   )
-      //   ));
+      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
+            coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+        )
+        ));
 
-      // engineerXbox.povRight().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //       elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
-      //       rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS),
-      //       intakeSubsystem.RunIntakeCmd()
-      //   )
-      //   ));
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(Commands.sequence(
+        Commands.parallel(
+            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
+            coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+        )
+        ));
 
-      // engineerXbox.povUp().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //       elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-      //       rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS)
-      //   )
-      //   ));
-
-      // engineerXbox.povDown().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //       elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PROCESSOR_POSE), 
-      //       rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS)
-      //   )
-      //   ));
+        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povUp()).onTrue(Commands.sequence(
+        Commands.parallel(
+          elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_BARGE_POSE), 
+          coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE)
+        )
+        ));
       
 
         //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
 
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(90))).onTrue(coralSubsystem.setSliderPositionCmd(-0.5));
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(270))).onTrue(coralSubsystem.setSliderPositionCmd(-12.5));
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(270.0));
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(100.0));
+
         
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(270)).onTrue(climberSubsystem.climbAndGetPaid(0.0));
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(90)).onTrue(climberSubsystem.climbAndGetPaid(90.0));
 
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));

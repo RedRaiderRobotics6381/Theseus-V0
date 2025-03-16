@@ -23,7 +23,6 @@ public class PositionIdentifierCmd extends Command {
 
     private final ElevatorSubsystem elevatorSubsystem;
     private final CoralSubsystem coralSubsystem;
-    private final SwerveDrive drivebase;
     private final DoubleSupplier  oX, oY;
     private Pose2d goalPose;
     private double sliderOffset;
@@ -36,8 +35,7 @@ public class PositionIdentifierCmd extends Command {
      * @param oX A DoubleSupplier providing the X coordinate of the input stick which will be rounded to 45 degree increments.
      * @param oY A DoubleSupplier providing the Y coordinate of the input stick which will be rounded to 45 degree increments.
      */
-    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem, DoubleSupplier oX, DoubleSupplier oY, SwerveDrive drivebase) {
-        this.drivebase = drivebase;
+    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem, DoubleSupplier oX, DoubleSupplier oY) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.coralSubsystem = coralSubsystem;
         this.oX = oX;
@@ -120,11 +118,8 @@ public class PositionIdentifierCmd extends Command {
                 .schedule();
             } else if (snappedInputAngle == 180) {
                 Commands.sequence( 
-                    Commands.parallel(
-                        elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-                        coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_OFF_ELEVATOR)
-                    ),
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE),
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)
                     )
                     .schedule();
            

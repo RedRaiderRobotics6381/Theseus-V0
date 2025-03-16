@@ -123,7 +123,7 @@ public class CoralSubsystem extends SubsystemBase {
             .absoluteEncoder
                 .positionConversionFactor(360)
                 .inverted(false)
-                .zeroOffset(125.0 / 360);
+                .zeroOffset(0.34722222);
         armAngMtrCfg
             .softLimit
                 .forwardSoftLimit(200.0)
@@ -148,7 +148,7 @@ public class CoralSubsystem extends SubsystemBase {
                 .positionConversionFactor(0.13352);
         coralSldrMtrCfg
             .softLimit
-                .reverseSoftLimit(-12.5)
+                .reverseSoftLimit(-12.0)
                 .reverseSoftLimitEnabled(true);
         coralSldrMtrCfg
             .limitSwitch
@@ -245,7 +245,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     public FunctionalCommand OuttakeCmd() {
         return new FunctionalCommand(() ->{},
-                                     () -> indexMtrLdr.set(-0.15),
+                                     () -> indexMtrLdr.set(-0.075),
                                      interrupted -> indexMtrLdr.set(0),
                                      () -> coralSensor.get() == false,
                                      this);

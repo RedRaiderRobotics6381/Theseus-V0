@@ -58,13 +58,13 @@ public final class Constants
 
     public static final double START_POSE = 0;
     public static final double TROUGH_POSE = 1;
-    public static final double REEF_LOW_POSE = 3.0;
-    public static final double REEF_MIDDLE_POSE = 11.0;
+    public static final double REEF_LOW_POSE = 2.0; //3.0 before // 2.0 for laksehore
+    public static final double REEF_MIDDLE_POSE = 10.0; // 11.0 = coral //10. = lakeshore
     public static final double REEF_HIGH_POSE = 24.0; //14.75
-    public static final double ALGAE_BARGE_POSE = 0;
+    public static final double ALGAE_BARGE_POSE = 24.0;
     public static final double ALGAE_PROCESSOR_POSE = 0; 
-    public static final double ALGAE_PICKUP_HIGH_POSE = 13.0;
-    public static final double ALGAE_PICKUP_LOW_POSE = 7.5;
+    public static final double ALGAE_PICKUP_HIGH_POSE = 9.5;
+    public static final double ALGAE_PICKUP_LOW_POSE = 0.0;
     public static final double HUMAN_PLAYER_POSE = 0;
 
   }
@@ -105,8 +105,9 @@ public final class Constants
     public static double CORAL_MID_ANGLE = 155.0;
     public static double CORAL_LOW_ANGLE = 155.0;
     public static double CORAL_OFF_ELEVATOR = 190.0;
-    public static double CORAL_START_ANGLE = 190.0;
+    public static double CORAL_START_ANGLE = 197.0;
     public static double ALGAE_SCORE_ANGLE = 65.0;
+    public static double ALGAE_INTAKE_ANGLE = 135.0;
     // public static double CORAL_SLIDER_LEFT_POSITION = 0;
     // public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
     // public static double CORAL_SLIDER_RIGHT_POSITION = 0;
@@ -120,7 +121,7 @@ public final class Constants
   }
 
   public static class ClimbConstants {
-    public static int CLIMBER_MOTOR_PORT = 0;//TODO: Update port
+    public static int CLIMBER_MOTOR_PORT = 16;//TODO: Update port
     public static int CLIMBER_SERVO_PORT = 0;//TODO: Update port
   }
 

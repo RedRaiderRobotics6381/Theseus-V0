@@ -145,6 +145,7 @@ public class Robot extends TimedRobot
     m_robotContainer.coralSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
     m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    m_robotContainer.climberSubsystem.releaseClimber(true);
 
     if (Robot.isSimulation()){
       Optional<Alliance> allianceColor = DriverStation.getAlliance();
