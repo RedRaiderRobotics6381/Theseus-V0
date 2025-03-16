@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.844991438356164,
-        "y": 4.03
+        "x": 5.85,
+        "y": 4.15
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.7377749190481815,
-        "y": 3.9060565257665942
+        "x": 7.742783480692017,
+        "y": 4.026056525766594
       },
       "isLocked": false,
       "linkedName": "EndStartToReef"

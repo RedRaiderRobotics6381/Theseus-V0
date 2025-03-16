@@ -5,15 +5,40 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "StartToReef"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "StartToReef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorL4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoralRotateL4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoralIntake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElevatorHigh"
+            "name": "SliderMiddle"
           }
         },
         {
@@ -23,15 +48,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "BackFromCoral"
+            "name": "CoralRotateStart"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ElevatorDown"
+            "name": "ElevatorStart"
           }
         }
       ]

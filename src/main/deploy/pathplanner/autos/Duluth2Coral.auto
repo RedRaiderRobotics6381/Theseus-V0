@@ -21,13 +21,25 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "ElevatorHigh"
+                        "name": "ElevatorL4"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "CoralHighOuttake"
+                        "name": "CoralRotateL4"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SliderMiddle"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "CoralIntake"
                       }
                     }
                   ]

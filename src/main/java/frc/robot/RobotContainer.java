@@ -133,24 +133,20 @@ public class RobotContainer
   {
     // Configure the trigger bindings
     autoChooser = AutoBuilder.buildAutoChooser();
-    
-    // NamedCommands.registerCommand("AlgaeIntakeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_INTAKE_POS));
-    // NamedCommands.registerCommand("AlgaeBargeRotate", rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_BARGE_POS));
-    // NamedCommands.registerCommand("AlgaeIntake", intakeSubsystem.RunIntakeCmd());
-    // NamedCommands.registerCommand("AlgaeHold", intakeSubsystem.RunHoldCmd());
-    // NamedCommands.registerCommand("AlgaeOuttake", intakeSubsystem.RunOuttakeCmd());
-    // NamedCommands.registerCommand("CoralIntakePos", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_START_ANGLE));
-    // NamedCommands.registerCommand("CoralHighOuttake", rotateSubsystem.RotatePosCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
-    NamedCommands.registerCommand("ElevatorHigh", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants .REEF_HIGH_POSE));
-    // NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
-    // NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
-    // NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPosition(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
-    // NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
-    // NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
-    NamedCommands.registerCommand("ElevatorDown", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-    NamedCommands.registerCommand("ElevatorBarge", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_HIGH_POSE));
-    NamedCommands.registerCommand("ElevatorHighAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_HIGH_POSE));
-    NamedCommands.registerCommand("ElevatorLowAlgae", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_LOW_POSE));
+  
+    NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
+    NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
+    NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
+    NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
+    NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
+    NamedCommands.registerCommand("CoralRotateL2", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
+    NamedCommands.registerCommand("CoralRotateL3", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
+    NamedCommands.registerCommand("CoralRotateL4", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4));
+    NamedCommands.registerCommand("CoralRotateStart", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
+    NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
+    NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
+    NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
+    NamedCommands.registerCommand("ElevatorL4", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L4_POSE));
     
     configureBindings();
     
@@ -426,15 +422,15 @@ public class RobotContainer
 
         //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
+        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
 
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(90))).onTrue(coralSubsystem.setSliderPositionCmd(-0.5));
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(270))).onTrue(coralSubsystem.setSliderPositionCmd(-12.5));
