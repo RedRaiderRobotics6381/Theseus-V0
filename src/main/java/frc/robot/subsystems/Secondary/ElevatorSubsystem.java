@@ -20,14 +20,14 @@ import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
+// import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+// import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -56,8 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double kP = 0.15; //start p = 0.0005
     private double kD = 0.075;
     private double kOutput = 1.0;
-    private double kMaxRPM = 2500;
-    private double kMaxAccel = 4000;
+    // private double kMaxRPM = 2500;
+    // private double kMaxAccel = 4000;
     public DigitalInput limitSw;
     private boolean elevatorInitialized;
     
@@ -101,12 +101,12 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .p(kP)
                 .d(kD)
                 .outputRange(-kOutput, kOutput)
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .maxMotion
-                    .maxAcceleration(kMaxAccel, ClosedLoopSlot.kSlot0)
-                    .maxVelocity(kMaxRPM, ClosedLoopSlot.kSlot0)
-                    .allowedClosedLoopError(0.5, ClosedLoopSlot.kSlot0)
-                    .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot0);
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+                // .maxMotion
+                //     .maxAcceleration(kMaxAccel, ClosedLoopSlot.kSlot0)
+                //     .maxVelocity(kMaxRPM, ClosedLoopSlot.kSlot0)
+                //     .allowedClosedLoopError(0.5, ClosedLoopSlot.kSlot0)
+                //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot0);
         elevMtrLdr.configure(ldrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         flwCfg

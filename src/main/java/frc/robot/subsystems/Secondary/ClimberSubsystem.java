@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.Secondary;
 
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Servo;
@@ -106,6 +107,22 @@ public class ClimberSubsystem extends SubsystemBase {
         }
     }
     
+    public FunctionalCommand deployClimber() {
+        return new FunctionalCommand(() -> releaseClimber(true),
+        () -> setClimbPosition(90.0),
+        interrupted -> releaseClimber(false),
+        () -> (Math.abs(90.0 - climbEncoder.getPosition()) <= 2.0),
+        this);
+    }
+
+    public FunctionalCommand climbAndGetPaid() {
+        return new FunctionalCommand(() -> releaseClimber(true),
+        () -> setClimbPosition(0.0),
+        interrupted -> releaseClimber(false),
+        () -> (Math.abs(0.0 - climbEncoder.getPosition()) <= 2.0),
+        this);
+    }
+
 
     @Override
     public void simulationPeriodic() {

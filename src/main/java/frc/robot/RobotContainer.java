@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.CoralSubsystem;
+import frc.robot.subsystems.Secondary.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
@@ -47,7 +48,8 @@ public class RobotContainer
 
 
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  public final CoralSubsystem coralSubsystem = new CoralSubsystem();   
+  public final CoralSubsystem coralSubsystem = new CoralSubsystem();
+  public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
 
   public boolean hdgModePressed = false; // Flag to track button state
   private double headingX = 0;
@@ -202,13 +204,10 @@ public class RobotContainer
       // driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d()))));
       
       // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
-      driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);
-                                                              driveAngularVelocity.scaleTranslation(1);}));
+      driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
       driverXbox.rightBumper().negate().and(driverXbox.leftBumper().negate()).onTrue(Commands.runOnce(() -> {
-                                                              driveAngularVelocity.scaleTranslation(0.75);
-                                                              driveAngularVelocity.scaleTranslation(0.75);}));
-      driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);
-                                                             driveAngularVelocity.scaleTranslation(0.5);}));
+                                                            driveAngularVelocity.scaleTranslation(0.75);}));
+      driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);}));
 
       
       // driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
@@ -330,10 +329,26 @@ public class RobotContainer
       //   )
       // //   .andThen(
       // //       intakeSubsystem.RunIntakeCmd()));
-      // engineerXbox.leftTrigger().whileTrue(Commands.run(() -> coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.25)));
-      // engineerXbox.rightTrigger().whileTrue(Commands.run(() -> coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.25)));
-      engineerXbox.leftTrigger().whileTrue(coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis()*.25));
-      engineerXbox.rightTrigger().whileTrue(coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis()*.25));
+      
+      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
+      //   Commands.run(() -> coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.25)));
+      
+      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
+      //   Commands.run(() -> coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.25)));
+      
+      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
+      //   engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
+      //   Commands.runOnce(() -> coralSubsystem.sliderManual(0)));
+
+      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
+        coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis() * 0.25).schedule();
+      }));
+      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
+        coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis() * 0.25).schedule();
+      }));
+      
+      // engineerXbox.leftTrigger().whileTrue(coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis()*.25));
+      // engineerXbox.rightTrigger().whileTrue(coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis()*.25));
             // engineerXbox.x().onTrue(Commands.run(() -> rotateSubsystem.setArm(Constants.ArmConstants.ARM_OUT_POSE), rotateSubsystem));
       
 
@@ -426,6 +441,8 @@ public class RobotContainer
 
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
         
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(270)).onTrue(climberSubsystem.deployClimber());
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.pov(90)).onTrue(climberSubsystem.climbAndGetPaid());
 
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
         // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
@@ -449,20 +466,6 @@ public class RobotContainer
     // An example command will be run in autonomous
     return autoChooser.getSelected();
   }
-
-  // public void initSlider(){
-  //   // new SliderInitCmd(coralSubsystem).schedule();
-  //   coralSubsystem.SliderInitCmd().schedule();
-  // }
-
-  // public void initElevator(){
-  //   // new ElevatorInitCmd(elevatorSubsystem).schedule();
-  //   elevatorSubsystem.ElevatorInitCmd().schedule();
-  // }
-
-  // public void initCoralRotate() {
-  //   coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE).schedule();
-  // }
 
   public void setMotorBrake(boolean brake)
   {
@@ -506,8 +509,6 @@ public class RobotContainer
       }
 
     }
-    // System.out.println("Snapped Angle: " + snappedAngle);
-    // System.out.println("Reef Tag: " + AprilTagConstants.ReefTagID);
     SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
     SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
   }

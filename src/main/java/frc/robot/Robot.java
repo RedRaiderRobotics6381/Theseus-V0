@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -15,14 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AprilTagConstants;
-// import frc.robot.Constants.DrivebaseConstants;
-// import frc.robot.subsystems.Secondary.CoralSubsystem;
-// import frc.robot.subsystems.Secondary.ElevatorSubsystem;
-
 import java.util.Optional;
-
-// import com.ctre.phoenix6.hardware.CANrange;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -36,8 +28,6 @@ public class Robot extends TimedRobot
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Timer disabledTimer;
-
-  //public final DigitalInput rangeSnsr = new DigitalInput(8);
 
   public Robot()
   {
@@ -84,8 +74,6 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    // m_robotContainer.initSlider();
-    // m_robotContainer.initElevator();
   }
 
   /**
@@ -115,6 +103,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    setAprilTag();
     m_robotContainer.setMotorBrake(true);
     
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -124,10 +113,8 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.schedule();
     }
-    // m_robotContainer.initElevator();
-    // m_robotContainer.initSlider();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    // m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
 
   }
 
@@ -157,9 +144,8 @@ public class Robot extends TimedRobot
     setAprilTag();
     m_robotContainer.coralSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
     m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
-
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    //m_robotContainer.rotateSubsystem.RotateInitCmd().schedule();
+
     if (Robot.isSimulation()){
       Optional<Alliance> allianceColor = DriverStation.getAlliance();
       if (allianceColor.isPresent()) {
@@ -177,23 +163,16 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-    // m_robotContainer.spencerButtons();
-    // m_robotContainer.getSnappedAngleID();
+
+    if(m_robotContainer.coralSubsystem.armSliderLimitSwitch.isPressed()){
+      m_robotContainer.coralSubsystem.coralSldrEnc.setPosition(0);
+    }
 
     if(!m_robotContainer.elevatorSubsystem.limitSw.get()){
       m_robotContainer.elevatorSubsystem.elevEncFlw.setPosition(0);
       m_robotContainer.elevatorSubsystem.elevEncLdr.setPosition(0);
     }
-
-    // System.out.println("Speed" + DrivebaseConstants.Max_Speed_Multiplier);
-
-    // if(m_robotContainer.rotateSubsystem.algaeLimitSwitch.isPressed()){
-    //   m_robotContainer.rotateSubsystem.rotateEncoder.setPosition(0);
-    // }
-
-
-
-    
+       
   }
 
   @Override
