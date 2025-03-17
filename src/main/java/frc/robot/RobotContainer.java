@@ -88,7 +88,8 @@ public class RobotContainer
                                                                 .cubeTranslationControllerAxis(true)
                                                                 .cubeRotationControllerAxis(true)
                                                                 .headingWhile(false)
-                                                                .allianceRelativeControl(true);
+                                                                .allianceRelativeControl(true)
+                                                                .robotRelative(driverXbox.rightStick());
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -397,14 +398,14 @@ public class RobotContainer
       engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(Commands.sequence(
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
-            coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+            coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3)
         )
         ));
 
         engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(Commands.sequence(
         Commands.parallel(
             elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
-            coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+            coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L4)
         )
         ));
 

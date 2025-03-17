@@ -96,24 +96,24 @@ public class PositionIdentifierCmd extends Command {
         if (snappedInputAngle == 270) { //if the joystick is pushed up and to the left
             Commands.sequence(
                 Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L2_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3)
                 ))
                 .schedule();
             
         } else if (snappedInputAngle == 90) { 
             Commands.sequence(
                 Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE)
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L4_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L4)
                 ))
                 .schedule();
        
         } else if (snappedInputAngle == 0) { 
             Commands.sequence(
                 Commands.parallel(
-                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)
+                    elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L3_POSE), 
+                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3)
                 ))
                 .schedule();
             } else if (snappedInputAngle == 180) {
