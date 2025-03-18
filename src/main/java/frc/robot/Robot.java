@@ -114,7 +114,7 @@ public class Robot extends TimedRobot
       m_autonomousCommand.schedule();
     }
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
 
   }
 
@@ -142,8 +142,8 @@ public class Robot extends TimedRobot
     }
 
     setAprilTag();
-    m_robotContainer.coralSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
-    m_robotContainer.coralSubsystem.SliderInitCmd().schedule();
+    m_robotContainer.rotateSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
+    m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     m_robotContainer.climberSubsystem.releaseClimber(true);
 
@@ -165,8 +165,8 @@ public class Robot extends TimedRobot
   public void teleopPeriodic()
   {
 
-    if(m_robotContainer.coralSubsystem.armSliderLimitSwitch.isPressed()){
-      m_robotContainer.coralSubsystem.coralSldrEnc.setPosition(0);
+    if(m_robotContainer.sliderSubsystem.armSliderLimitSwitch.isPressed()){
+      m_robotContainer.sliderSubsystem.coralSldrEnc.setPosition(0);
     }
 
     if(!m_robotContainer.elevatorSubsystem.limitSw.get()){

@@ -17,12 +17,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveDrive;
-import frc.robot.subsystems.Secondary.CoralSubsystem;
+import frc.robot.subsystems.Secondary.RotateSubsystem;
 
 public class PositionIdentifierCmd extends Command {
 
     private final ElevatorSubsystem elevatorSubsystem;
-    private final CoralSubsystem coralSubsystem;
+    private final RotateSubsystem rotateSubsystem;
     private final DoubleSupplier  oX, oY;
     private Pose2d goalPose;
     private double sliderOffset;
@@ -35,12 +35,12 @@ public class PositionIdentifierCmd extends Command {
      * @param oX A DoubleSupplier providing the X coordinate of the input stick which will be rounded to 45 degree increments.
      * @param oY A DoubleSupplier providing the Y coordinate of the input stick which will be rounded to 45 degree increments.
      */
-    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, CoralSubsystem coralSubsystem, DoubleSupplier oX, DoubleSupplier oY) {
+    public PositionIdentifierCmd(ElevatorSubsystem elevatorSubsystem, RotateSubsystem rotateSubsystem, DoubleSupplier oX, DoubleSupplier oY) {
         this.elevatorSubsystem = elevatorSubsystem;
-        this.coralSubsystem = coralSubsystem;
+        this.rotateSubsystem = rotateSubsystem;
         this.oX = oX;
         this.oY = oY;
-        addRequirements(elevatorSubsystem, coralSubsystem);  
+        addRequirements(elevatorSubsystem, rotateSubsystem);  
     }
 
     // Called when the command is initially scheduled.
@@ -97,7 +97,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L2_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
+                    rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
                 ))
                 .schedule();
             
@@ -105,7 +105,7 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L4_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L4_ANGLE)
+                    rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L4_ANGLE)
                 ))
                 .schedule();
        
@@ -113,12 +113,12 @@ public class PositionIdentifierCmd extends Command {
             Commands.sequence(
                 Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L3_POSE), 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
+                    rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
                 ))
                 .schedule();
             } else if (snappedInputAngle == 180) {
                 Commands.sequence( 
-                    coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE),
+                    rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE),
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)
                     )
                     .schedule();
