@@ -133,25 +133,26 @@ public class RobotContainer
   public RobotContainer()
   {
     // Configure the trigger bindings
-    autoChooser = AutoBuilder.buildAutoChooser();
   
-    NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
-    NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
-    NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
-    NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
-    NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
-    NamedCommands.registerCommand("CoralRotateL2", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
-    NamedCommands.registerCommand("CoralRotateL3", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3));
-    NamedCommands.registerCommand("CoralRotateL4", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4));
-    NamedCommands.registerCommand("CoralRotateStart", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
-    NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-    NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
-    NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
-    NamedCommands.registerCommand("ElevatorL4", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L4_POSE));
+    // NamedCommands.registerCommand("SliderLeft", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
+    // NamedCommands.registerCommand("SliderMiddle", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
+    // NamedCommands.registerCommand("SliderRight", coralSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
+    // NamedCommands.registerCommand("CoralIntake", coralSubsystem.IntakeCmd());
+    // NamedCommands.registerCommand("CoralOuttake", coralSubsystem.OuttakeCmd());
+    // NamedCommands.registerCommand("CoralRotateL2", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3_ANGLE));
+    // NamedCommands.registerCommand("CoralRotateL3", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3_ANGLE));
+    // NamedCommands.registerCommand("CoralRotateL4", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4_ANGLE));
+    // NamedCommands.registerCommand("CoralRotateStart", coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
+    // NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
+    // NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
+    // NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
+    // NamedCommands.registerCommand("ElevatorL4", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L4_POSE));
     
     configureBindings();
     
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    autoChooser = AutoBuilder.buildAutoChooser();
     
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -433,8 +434,8 @@ public class RobotContainer
 
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
         // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(270.0));
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(100.0));
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(300.0));
+        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(90.0));
 
         
 

@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 6.0,
-        "y": 7.5
+        "y": 5.075
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.148028637012931,
-        "y": 6.925194396211724
+        "y": 4.500194396211724
       },
       "isLocked": false,
       "linkedName": "DriveInPID"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

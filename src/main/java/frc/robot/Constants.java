@@ -58,9 +58,9 @@ public final class Constants
 
     public static final double START_POSE = 0;
     public static final double TROUGH_POSE = 1;
-    public static final double REEF_LOW_POSE = 2.0; //3.0 before // 2.0 for laksehore
-    public static final double REEF_MIDDLE_POSE = 10.0; // 11.0 = coral //10. = lakeshore
-    public static final double REEF_HIGH_POSE = 24.0; //14.75
+    public static final double REEF_L2_POSE = 2.0; //3.0 before // 2.0 for laksehore
+    public static final double REEF_L3_POSE = 10.0; // 11.0 = coral //10. = lakeshore
+    public static final double REEF_L4_POSE = 24.0; //14.75
     public static final double ALGAE_BARGE_POSE = 24.0;
     public static final double ALGAE_PROCESSOR_POSE = 0; 
     public static final double ALGAE_PICKUP_HIGH_POSE = 9.5;
@@ -101,16 +101,16 @@ public final class Constants
     public static int CORAL_SLIDER_MOTOR_PORT = 18;
     // public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_HIGH_ANGLE = 165.0; // was 287.5
-    public static double CORAL_MID_ANGLE = 155.0;
-    public static double CORAL_LOW_ANGLE = 155.0;
+    public static double CORAL_L4_ANGLE = 170.0; // was 287.5
+    public static double CORAL_L2_L3_ANGLE = 155.0;
+    // public static double CORAL_LOW_ANGLE = 155.0;
     public static double CORAL_OFF_ELEVATOR = 190.0;
     public static double CORAL_START_ANGLE = 197.0;
     public static double ALGAE_SCORE_ANGLE = 65.0;
     public static double ALGAE_INTAKE_ANGLE = 135.0;
-    // public static double CORAL_SLIDER_LEFT_POSITION = 0;
-    // public static double CORAL_SLIDER_MIDDLE_POSITION = 0;
-    // public static double CORAL_SLIDER_RIGHT_POSITION = 0;
+    public static double CORAL_SLIDER_LEFT_POSITION = -10.5;
+    public static double CORAL_SLIDER_MIDDLE_POSITION = -6.0;
+    public static double CORAL_SLIDER_RIGHT_POSITION = -.5;
     public static int BEAM_BREAK_SENSOR_PORT = 0;
     // public static int LIMIT_SWITCH_PORT = 0;
   }

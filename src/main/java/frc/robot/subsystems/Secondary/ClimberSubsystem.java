@@ -62,7 +62,7 @@ public class ClimberSubsystem extends SubsystemBase {
             .absoluteEncoder
                 .positionConversionFactor(360.0)
                 .inverted(true)
-                .zeroOffset(0.7249160);
+                .zeroOffset(0.5);
         climbMtrCfg
             .softLimit
                 .forwardSoftLimit(320.0) 
@@ -115,7 +115,7 @@ public class ClimberSubsystem extends SubsystemBase {
         return new FunctionalCommand(() ->releaseClimber(true),
         () -> setClimbPosition(pos),
         interrupted -> {
-        if(Math.abs(100.0 - climbEncoder.getPosition()) <= 2.0){
+        if(Math.abs(90.0 - climbEncoder.getPosition()) <= 2.0){
             releaseClimber(false);}},
         () -> (Math.abs(pos - climbEncoder.getPosition()) <= 2.0),
         this);

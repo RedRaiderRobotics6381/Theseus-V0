@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartToReef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SliderMiddle"
+            "pathName": "DriveInPID"
           }
         }
       ]
