@@ -78,6 +78,29 @@ public final class Constants
 
   }
 
+  public static class AlgaeRotateConstants {
+    public static final int ALGAE_INTAKE_POS = -15;
+    public static final int ALGAE_START_POS = -0;
+    public static final int ALGAE_BARGE_POS = -28;
+    public static final int ALGAE_PROCESSOR_POS = 0;
+    public static final int ALGAE_ROTATE_MOTOR_PORT = 20;
+    // public static final int ALGAE_ADJUST_MOTOR_PORT = 0;
+    // public static final int ALGAE_Intake_MOTOR_PORT = 0;
+  }
+
+
+  public static class AlgaeIntakeConstants {
+    // public static int LAUNCHER_LEADER_MOTOR_PORT = 21;
+    // public static int LAUNCHER_FOLLOWER_MOTOR_PORT = 22;
+    public static int FEEDER_LEADER_MOTOR_PORT = 23;
+    // public static int FEEDER_FOLLOWER_MOTOR_PORT = 24;
+    
+    public static double INTAKE_SPEED = 600;
+    public static double OUTTAKE_SPEED = -500;
+    public static double STOP_SPEED = 0;
+    public static double HOLD_SPEED = 200;
+  }
+
   public static class CoralConstants {
     public static int CORAL_ROTATE_MOTOR_PORT = 17;
     public static int CORAL_SLIDER_MOTOR_PORT = 18;
@@ -103,7 +126,7 @@ public final class Constants
   }
 
   public static class ClimbConstants {
-    public static int CLIMBER_MOTOR_PORT = 16;
+    public static int CLIMBER_MOTOR_PORT = 16;//TODO: Update port
   }
 
   public static class AprilTagConstants {
