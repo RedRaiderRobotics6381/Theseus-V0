@@ -15,9 +15,11 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
+import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -26,13 +28,12 @@ import com.revrobotics.spark.SparkMax;
 
 public class ClimberSubsystem extends SubsystemBase {
  
-    private Servo climberServo;
-    private SparkMax climbMotor;
+    private SparkFlex climbMotor;
     public AbsoluteEncoder climbEncoder;
     public SparkClosedLoopController  climbPID;
-    private SparkMaxSim climbMotorSim;
+    private SparkFlexSim climbMotorSim;
     private SparkAbsoluteEncoderSim climbEncoderSim;                              
-    private SparkMaxConfig climbMtrCfg;
+    private SparkFlexConfig climbMtrCfg;
     
     private double kP = 0.025, kI = 0.0, kD = 0.0;//p was 0.0005
     private double kFF = 0.0;
@@ -40,9 +41,8 @@ public class ClimberSubsystem extends SubsystemBase {
     private double kOutputMax = 1.0;
 
     public ClimberSubsystem() {
-        climberServo = new Servo(Constants.ClimbConstants.CLIMBER_SERVO_PORT);
-        climbMotor = new SparkMax(Constants.ClimbConstants.CLIMBER_MOTOR_PORT, MotorType.kBrushless);
-        climbMtrCfg = new SparkMaxConfig();
+        climbMotor = new SparkFlex(Constants.ClimbConstants.CLIMBER_MOTOR_PORT, MotorType.kBrushless);
+        climbMtrCfg = new SparkFlexConfig();
         //encCfg = new AbsoluteEncoderConfig();
         // rotateMtrSftLmtCfg = new SoftLimitConfig();
 
@@ -62,8 +62,10 @@ public class ClimberSubsystem extends SubsystemBase {
                 .zeroOffset(0.5);
         climbMtrCfg
             .softLimit
-                .forwardSoftLimit(320.0) 
-                .reverseSoftLimit(50.0);
+                .forwardSoftLimit(300.0) 
+                .reverseSoftLimit(35.0)
+                .forwardSoftLimitEnabled(true)
+                .reverseSoftLimitEnabled(true);
         climbMtrCfg
             .closedLoop
                 .pidf(kP, kI, kD, kFF)
@@ -78,7 +80,7 @@ public class ClimberSubsystem extends SubsystemBase {
            
         // Add motors to the simulation
         if (Robot.isSimulation()) {
-            climbMotorSim = new SparkMaxSim(climbMotor, DCMotor.getNEO(1));
+            climbMotorSim = new SparkFlexSim(climbMotor, DCMotor.getNEO(1));
             climbEncoderSim = new SparkAbsoluteEncoderSim(climbMotor);
             climbMotorSim.setPosition(190);
             climbEncoderSim.setPosition(190);
@@ -95,27 +97,16 @@ public class ClimberSubsystem extends SubsystemBase {
             climbEncoderSim.setPosition(pos);
         }
     }
-    /**releases the climber
-     * 
-     * @param release true to release, false to lock
-     * 
-     */
-    public void releaseClimber(boolean release) {
-        if (release) {
-            climberServo.setAngle(0); //TODO: confirm angle
-        } else{
-            climberServo.setAngle(25); //TODO: confirm angle
-        }
-    }
+
 
     public FunctionalCommand climbAndGetPaid(double pos) {
-        return new FunctionalCommand(() ->releaseClimber(true),
-        () -> setClimbPosition(pos),
-        interrupted -> {
-        if(Math.abs(90.0 - climbEncoder.getPosition()) <= 2.0){
-            releaseClimber(false);}},
-        () -> (Math.abs(pos - climbEncoder.getPosition()) <= 2.0),
-        this);
+        return new FunctionalCommand(
+                () -> {
+                },
+                () -> setClimbPosition(pos), interrupted -> {
+                },
+                () -> (Math.abs(pos - climbEncoder.getPosition()) <= 5.0),
+                this);
     }
 
     
