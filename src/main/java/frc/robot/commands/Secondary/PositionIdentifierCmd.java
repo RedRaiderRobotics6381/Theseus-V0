@@ -5,18 +5,11 @@
 package frc.robot.commands.Secondary;
 
 import java.util.function.DoubleSupplier;
-
-import frc.robot.RobotContainer;
 import frc.robot.Constants.*;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
-import frc.robot.subsystems.swervedrive.Vision;
-import swervelib.SwerveDrive;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
 
 public class PositionIdentifierCmd extends Command {
@@ -24,7 +17,6 @@ public class PositionIdentifierCmd extends Command {
     private final ElevatorSubsystem elevatorSubsystem;
     private final RotateSubsystem rotateSubsystem;
     private final DoubleSupplier  oX, oY;
-    private Pose2d goalPose;
     private double sliderOffset;
 
     /**

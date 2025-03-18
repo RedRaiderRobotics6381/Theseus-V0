@@ -56,36 +56,17 @@ public class RobotContainer
   public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
   public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
 
-  public boolean hdgModePressed = false; // Flag to track button state
-  private double headingX = 0;
-  private double headingY = 0;
-  private Command currentDriveCmd = null;
   private final SendableChooser<Command> autoChooser;
   public double currentSnappedAngle = 0;
   public double snappedAngle = 0; 
   public boolean right;
 
   /**
-   * Converts driver input into a robot-centric ChassisSpeeds that is controlled by the left and right triggers.
-   */
-  SwerveInputStream driveRobotCentricSideShift = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                      () -> 0,
-                                                                      () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis())
-                                                                      .withControllerRotationAxis(() -> 0)
-                                                                      .deadband(OperatorConstants.DEADBAND)
-                                                                      .scaleTranslation(1)
-                                                                      .cubeTranslationControllerAxis(true)
-                                                                      .cubeRotationControllerAxis(true)
-                                                                      .headingWhile(true)
-                                                                      .robotRelative(true)
-                                                                      .allianceRelativeControl(false);
-
-  /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> -driverXbox.getLeftY(),
-                                                                () -> -driverXbox.getLeftX())
+                                                                () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis() + driverXbox.getLeftX())
                                                                 .withControllerRotationAxis(() -> -driverXbox.getRightX())
                                                                 .deadband(OperatorConstants.DEADBAND)
                                                                 .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
@@ -94,43 +75,6 @@ public class RobotContainer
                                                                 .headingWhile(false)
                                                                 .allianceRelativeControl(true)
                                                                 .robotRelative(driverXbox.rightStick());
-
-  /**
-   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
-   */
-  SwerveInputStream driveDirectAngleSnapped = driveAngularVelocity.copy().withControllerHeadingAxis(
-                                                                        () -> {
-                                                                          headingX = driverXbox.getRightX();
-                                                                          headingY = driverXbox.getRightY();
-                                                                          if (driverXbox.getHID().getPOV() != -1) {
-                                                                            return Math.sin(Math.toRadians(-driverXbox.getHID().getPOV()));
-                                                                          } else {
-                                                                            if (Math.sqrt(Math.pow(headingX, 2) + Math.pow(headingY, 2)) > 0.2) {
-                                                                            return Math.sin(Math.toRadians((Math.round(((Math.toDegrees(Math.atan2(-driverXbox.getRightX(), -driverXbox.getRightY())) + 360) % 360) / 60.0) * 60.0)));
-                                                                          }
-                                                                          if(DriverStation.getAlliance().get() == Alliance.Blue){
-                                                                            return Math.sin(Math.toRadians(Math.round((drivebase.getHeading().getDegrees() + 360) % 360)));
-                                                                          }
-                                                                          else{
-                                                                            return Math.sin(Math.toRadians(Math.round((drivebase.getHeading().getDegrees() + 180) % 360)));
-                                                                          }
-                                                                          }}
-                                                                        ,
-                                                                        () -> {
-                                                                          if (driverXbox.getHID().getPOV() != -1) {
-                                                                            return Math.cos(Math.toRadians(driverXbox.getHID().getPOV()));
-                                                                          } else {
-                                                                            if (Math.sqrt(Math.pow(headingX, 2) + Math.pow(headingY, 2)) > 0.2) {
-                                                                            return Math.cos(Math.toRadians((Math.round(((Math.toDegrees(Math.atan2(-driverXbox.getRightX(), -driverXbox.getRightY())) + 360) % 360) / 60.0) * 60.0)));
-                                                                          }
-                                                                          if(DriverStation.getAlliance().get() == Alliance.Blue){
-                                                                            return Math.cos(Math.toRadians(Math.round((drivebase.getHeading().getDegrees() + 360) % 360)));
-                                                                          }
-                                                                          else {
-                                                                            return Math.cos(Math.toRadians(Math.round((drivebase.getHeading().getDegrees() + 180) % 360)));
-                                                                          }
-                                                                        }})
-                                                                      .headingWhile(true);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -171,289 +115,179 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-    Command driveFieldOrientedAngleSnapped  = drivebase.driveFieldOriented(driveDirectAngleSnapped);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedSideShift = drivebase.driveFieldOriented(driveRobotCentricSideShift);
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
     driverXbox.back().whileTrue(drivebase.centerModulesCommand());
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
-    driverXbox.rightStick().onTrue(Commands.runOnce(() -> {
-        hdgModePressed = !hdgModePressed;
-        if (hdgModePressed){
-          //heading = drivebase.getHeading().getDegrees();
-          driveFieldOrientedAngleSnapped.schedule();
-        }
-        else{
-          driveFieldOrientedAnglularVelocity.schedule();
-        }
-      }));
+    driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(true);}));
+    driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);}));
+    
+    // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
+    driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
+    driverXbox.rightBumper().negate().and(driverXbox.leftBumper().negate()).onTrue(Commands.runOnce(() -> {
+                                                          driveAngularVelocity.scaleTranslation(0.75);}));
+    driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);}));
 
-      driverXbox.leftTrigger(OperatorConstants.DEADBAND).or(driverXbox.rightTrigger(OperatorConstants.DEADBAND)).onTrue(Commands.runOnce(() -> {
-        if(drivebase.getCurrentCommand() != driveRobotOrientedSideShift){
-        currentDriveCmd = drivebase.getCurrentCommand();
-        }
-        driveRobotOrientedSideShift.schedule();
-         }));
+
+    driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
+                              // getSnappedAngleID();
+                              return drivebase.driveToPoseWithConstraints(
+                              Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
+                              new Transform2d(0.55,   0.0,
+                              Rotation2d.fromDegrees(180.0))),
+                              new PathConstraints(AutonConstants.LINEAR_VELOCITY,
+                                                  AutonConstants.LINEAR_ACELERATION,
+                                                  Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
+                                                  Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
+                            }));
+    driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
+                              getSnappedAngleID();
+                              right = true;
+                              return drivebase.driveToPoseWithConstraints(
+                              Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                              new Transform2d(0.55,   .164338,
+                              Rotation2d.fromDegrees(180))),
+                              new PathConstraints(AutonConstants.LINEAR_VELOCITY,
+                                                  AutonConstants.LINEAR_ACELERATION,
+                                                  Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
+                                                  Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
+                            }));
+    driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
+                              getSnappedAngleID();
+                              right = false;
+                              return drivebase.driveToPoseWithConstraints(
+                              Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                              new Transform2d(0.55,   -.164338,
+                              Rotation2d.fromDegrees(180))),
+                              new PathConstraints(AutonConstants.LINEAR_VELOCITY,
+                                                  AutonConstants.LINEAR_ACELERATION,
+                                                  Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
+                                                  Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
+                            }));
+    driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
+                              getSnappedAngleID();
+                              return drivebase.driveToPoseWithConstraints(
+                              Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+                              new Transform2d(0.55,   0.0,
+                              Rotation2d.fromDegrees(180))),
+                              new PathConstraints(AutonConstants.LINEAR_VELOCITY,
+                                                  AutonConstants.LINEAR_ACELERATION,
+                                                  Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
+                                                  Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
+                            }));
+
       
-      driverXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(driverXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(Commands.runOnce(() -> {
-          // count = 0;
-          currentDriveCmd.schedule();
-          // driveFieldOrientedAnglularVelocity.schedule();
-      }));
-      
-      // driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d()))));
-      
-      // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
-      driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
-      driverXbox.rightBumper().negate().and(driverXbox.leftBumper().negate()).onTrue(Commands.runOnce(() -> {
-                                                            driveAngularVelocity.scaleTranslation(0.75);}));
-      driverXbox.leftBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(0.5);}));
+    engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
+      Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.4)));
+    
+    engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
+      Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.4)));
+    
+    engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
+      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
+      Commands.runOnce(() -> sliderSubsystem.sliderManual(0)));
 
-      
-      // driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
-    //                             // getSnappedAngleID();
-    //                             return drivebase.driveToPoseScaledSpeeds(
-    //                             Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
-    //                             new Transform2d(0.6604,   0.0,
-    //                             Rotation2d.fromDegrees(180.0))),
-    //                             .5,
-    //                             .5,
-    //                             .5,
-    //                             .5);
-    //                           }));
-      // driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
-      //                           getSnappedAngleID();
-      //                           return drivebase.driveToPoseScaledSpeeds(
-      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-      //                           new Transform2d(0.6604,   -.164338,
-      //                           Rotation2d.fromDegrees(180))),
-      //                           .5,
-      //                           .5,
-      //                           .5,
-      //                           .5);
-      //                         }));
-      // driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
-      //                           getSnappedAngleID();
-      //                           return drivebase.driveToPoseScaledSpeeds(
-      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-      //                           new Transform2d(0.6604,   .164338,
-      //                           Rotation2d.fromDegrees(180))),
-      //                           .5,
-      //                           .5,
-      //                           .5,
-      //                           .5);
-      //                         }));
-      // driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
-      //                           getSnappedAngleID();
-      //                           return drivebase.driveToPoseScaledSpeeds(
-      //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-      //                           new Transform2d(0.6604,   0.0,
-      //                           Rotation2d.fromDegrees(180))),
-      //                           .5,
-      //                           .5,
-      //                           .5,
-      //                           .5);
-      //                         }));
+    
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.leftBumper()).onTrue(indexerSubsystem.IntakeCmd());
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.rightBumper()).onTrue(indexerSubsystem.OuttakeCmd());
 
-      driverXbox.a().whileTrue(Commands.deferredProxy(() -> {
-                                // getSnappedAngleID();
-                                return drivebase.driveToPoseWithConstraints(
-                                Vision.getAprilTagPose(AprilTagConstants.HumanPlayerLeft,
-                                new Transform2d(0.55,   0.0,
-                                Rotation2d.fromDegrees(180.0))),
-                                new PathConstraints(2.0,
-                                              2.0,
-                                              Math.toRadians(720),
-                                              Math.toRadians(360)));
-                              }));
-      driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
-                                getSnappedAngleID();
-                                right = true;
-                                return drivebase.driveToPoseWithConstraints(
-                                Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.55,   .164338,
-                                Rotation2d.fromDegrees(180))),
-                                new PathConstraints(2.0,
-                                              4.0,
-                                              Math.toRadians(720),
-                                              Math.toRadians(540)));
-                              }));
-      driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
-                                getSnappedAngleID();
-                                right = false;
-                                return drivebase.driveToPoseWithConstraints(
-                                Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.55,   -.164338,
-                                Rotation2d.fromDegrees(180))),
-                                new PathConstraints(2.0,
-                                              2.0,
-                                              Math.toRadians(720),
-                                              Math.toRadians(360)));
-                              }));
-      driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
-                                getSnappedAngleID();
-                                return drivebase.driveToPoseWithConstraints(
-                                Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                                new Transform2d(0.55,   0.0,
-                                Rotation2d.fromDegrees(180))),
-                                new PathConstraints(2.0,
-                                              2.0,
-                                              Math.toRadians(720),
-                                              Math.toRadians(360)));
-                              }));
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(indexerSubsystem.algaeOuttakeCmd());
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(indexerSubsystem.algaeIntakeCmd()); 
+
+    // engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
+    //                                                                 rotateSubsystem, 
+    //                                                                 () -> engineerXbox.getLeftX(),
+    //                                                                 () -> engineerXbox.getLeftY()));
+
+    new PositionIdentifierCmd(elevatorSubsystem, rotateSubsystem, () -> engineerXbox.getLeftX(), () -> engineerXbox.getLeftY()).schedule();
+
+    // engineerXbox.b().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
+
+    // engineerXbox.x().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE)); // change to whiletrue
+
+    // engineerXbox.y().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_LOW_ANGLE));
+
+    // engineerXbox.x().onTrue(coralSubsystem.IntakeCmd());
+    // engineerXbox.b().onTrue(coralSubsystem.OuttakeCmd());
+    // engineerXbox.a().onTrue(Commands.sequence(
+    //   Commands.parallel(
+    //     coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE),
+    //     elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE)
+    // )));
+
+    // engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_MIDDLE_POSE));
+
+    // engineerXbox.y().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
+
+    // engineerXbox.x().onTrue(rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_START_POS));
+
+    // engineerXbox.b().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
 
 
-      // driverXbox.pov(0).onTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
-      //                       new Pose2d(1.0,  0.0,
-      //                       Rotation2d.fromDegrees(0.0)))));
+    // engineerXbox.a().onTrue(Commands.sequence(
+    //   Commands.parallel(
+    //     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
+    //     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
+    //   .andThen(
+    //     intakeSubsystem.RunIntakeCmd()));
 
-      // driverXbox.pov(180).onTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
-      //                       new Pose2d(-1.0,   0.0,
-      //                       Rotation2d.fromDegrees(0.0)))));
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(Commands.sequence(
+      Commands.parallel(
+          elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
+          rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+      )
+      ));
 
-      // driverXbox.pov(90).onTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
-      //                       new Pose2d(0.0,   0.0,
-      //                       Rotation2d.fromDegrees(0.0)))));
+      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(Commands.sequence(
+      Commands.parallel(
+          elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
+          rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
+      )
+      ));
 
-      // driverXbox.pov(270).onTrue(Commands.deferredProxy(() -> drivebase.driveToPose(
-      //                       new Pose2d(0.0,   0.0,
-      //                       Rotation2d.fromDegrees(180.0)))));
+      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povUp()).onTrue(Commands.sequence(
+      Commands.parallel(
+        elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_BARGE_POSE), 
+        rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE)
+      )
+      ));
+    
 
-      // engineerXbox.b().whileTrue(rotateSubsystem.RotateCmd());
+      //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
 
-      // engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE));
-      // engineerXbox.a().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //       elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-      //       coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE))
-      //   )
-      // //   .andThen(
-      // //       intakeSubsystem.RunIntakeCmd()));
-      
-      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
-        Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.4)));
-      
-      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
-        Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.4)));
-      
-      engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
-        engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
-        Commands.runOnce(() -> sliderSubsystem.sliderManual(0)));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
 
-      // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
-      //   coralSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis() * 0.25);
-      // }));
-      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(Commands.run(() -> {
-      //   coralSubsystem.sliderManual(engineerXbox.getRightTriggerAxis() * 0.25);
-      // }));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
 
-      // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).or(engineerXbox.leftTrigger(OperatorConstants.DEADBAND)).onFalse(Commands.run(() -> {
-      //   coralSubsystem.sliderManual(0.0);
-      // }));
-      
-      // engineerXbox.leftTrigger().whileTrue(coralSubsystem.sliderManualCmd(-engineerXbox.getLeftTriggerAxis()*.25));
-      // engineerXbox.rightTrigger().whileTrue(coralSubsystem.sliderManualCmd(engineerXbox.getRightTriggerAxis()*.25));
-            // engineerXbox.x().onTrue(Commands.run(() -> rotateSubsystem.setArm(Constants.ArmConstants.ARM_OUT_POSE), rotateSubsystem));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(90))).onTrue(coralSubsystem.setSliderPositionCmd(-0.5));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(270))).onTrue(coralSubsystem.setSliderPositionCmd(-12.5));
+
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(290.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(40.0));
+
       
 
-      engineerXbox.leftBumper().onTrue(indexerSubsystem.IntakeCmd());
-      engineerXbox.rightBumper().onTrue(indexerSubsystem.OuttakeCmd());
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.y())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS));
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.a())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS));
 
-      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(indexerSubsystem.algaeOuttakeCmd());
-      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(indexerSubsystem.algaeIntakeCmd()); 
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).onTrue(coralSubsystem.IntakeCmd());
+      // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).onTrue(coralSubsystem.OuttakeCmd()); 
 
-      engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
-                                                                      rotateSubsystem, 
-                                                                      () -> engineerXbox.getLeftX(),
-                                                                      () -> engineerXbox.getLeftY()));
-
-      // engineerXbox.b().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
-
-      // engineerXbox.x().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE)); // change to whiletrue
-
-      // engineerXbox.y().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_LOW_ANGLE));
-
-      // engineerXbox.x().onTrue(coralSubsystem.IntakeCmd());
-      // engineerXbox.b().onTrue(coralSubsystem.OuttakeCmd());
-      // engineerXbox.a().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //     coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE),
-      //     elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE)
-      // )));
-
-      // engineerXbox.a().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_MIDDLE_POSE));
-
-      // engineerXbox.y().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-
-      // engineerXbox.x().onTrue(rotateSubsystem.RotatePosCmd(Constants.AlgaeRotateConstants.ALGAE_START_POS));
-
-      // engineerXbox.b().onTrue(elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
-
-
-      // engineerXbox.a().onTrue(Commands.sequence(
-      //   Commands.parallel(
-      //     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE), 
-      //     coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE)))
-      //   .andThen(
-      //     intakeSubsystem.RunIntakeCmd()));
-
-      engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(Commands.sequence(
-        Commands.parallel(
-            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_LOW_POSE), 
-            rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
-        )
-        ));
-
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(Commands.sequence(
-        Commands.parallel(
-            elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
-            rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
-        )
-        ));
-
-        engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povUp()).onTrue(Commands.sequence(
-        Commands.parallel(
-          elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_BARGE_POSE), 
-          rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE)
-        )
-        ));
-      
-
-        //NOTHING IS WORKING, I AM SETTING TEMPORARY BUTTONS FOR DULUTH. 
-
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.a())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.START_POSE)); 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.x())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_LOW_POSE));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.y())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_MIDDLE_POSE));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.b())).onTrue(elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_HIGH_POSE)); 
-
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.b())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_HIGH_ANGLE));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.x())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_LOW_ANGLE)); 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.y())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_MID_ANGLE)); 
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.a())).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.CORAL_START_ANGLE));
-
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(90))).onTrue(coralSubsystem.setSliderPositionCmd(-0.5));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate().and(engineerXbox.pov(270))).onTrue(coralSubsystem.setSliderPositionCmd(-12.5));
-
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(290.0));
-        engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(40.0));
-
-        
-
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.x())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.y())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_BARGE_POS));
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.a())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_PROCESSOR_POS));
-
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).onTrue(coralSubsystem.IntakeCmd());
-        // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).onTrue(coralSubsystem.OuttakeCmd()); 
-
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.leftBumper())).whileTrue(intakeSubsystem.RunIntakeCmd());
-        // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.rightBumper())).whileTrue(intakeSubsystem.RunOuttakeCmd()); 
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.leftBumper())).whileTrue(intakeSubsystem.RunIntakeCmd());
+      // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.rightBumper())).whileTrue(intakeSubsystem.RunOuttakeCmd()); 
   }  
 
   /**
