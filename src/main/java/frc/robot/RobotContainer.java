@@ -92,7 +92,8 @@ public class RobotContainer
                                                                 .cubeTranslationControllerAxis(true)
                                                                 .cubeRotationControllerAxis(true)
                                                                 .headingWhile(false)
-                                                                .allianceRelativeControl(true);
+                                                                .allianceRelativeControl(true)
+                                                                .robotRelative(driverXbox.rightStick());
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
