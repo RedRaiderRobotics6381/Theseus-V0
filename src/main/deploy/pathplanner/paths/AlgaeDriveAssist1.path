@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 5.8,
-        "y": 4.15
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.692783480692017,
-        "y": 4.026056525766594
+        "x": 6.3148170458312345,
+        "y": 4.01366651656762
       },
       "isLocked": false,
       "linkedName": "EndStartToReef"
     },
     {
       "anchor": {
-        "x": 5.82,
-        "y": 4.03
+        "x": 6.3,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 5.573268047291309,
-        "y": 4.070290737304696
+        "x": 6.549684425086429,
+        "y": 3.987442616942235
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "EndRotate"
+      "linkedName": "EndAlgaeDriveAssist1"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,

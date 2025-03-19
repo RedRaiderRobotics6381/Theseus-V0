@@ -51,14 +51,14 @@ public class IndexerSubsystem extends SubsystemBase {
     indexMtrLdrCfg
         .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(60)
+        .smartCurrentLimit(65)
         .idleMode(IdleMode.kBrake);
     indexMtrLdr.configure(indexMtrLdrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     indexMtrFlwCfg
         .follow(indexMtrLdr, true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(60)
+        .smartCurrentLimit(65)
         .idleMode(IdleMode.kBrake);
     indexMtrFlw.configure(indexMtrFlwCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -102,7 +102,7 @@ public class IndexerSubsystem extends SubsystemBase {
     return this.runEnd(
         () -> {
           // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-          indexMtrLdr.set(-0.75);
+          indexMtrLdr.set(-1.0);
         }, () -> {
           indexMtrLdr.set(0.0);
         });

@@ -113,8 +113,8 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.schedule();
     }
-    m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
+    //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    //m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
 
   }
 

@@ -25,7 +25,7 @@ import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.IndexerSubsystem;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
 import frc.robot.subsystems.Secondary.SliderSubsystem;
-import frc.robot.subsystems.Secondary.ClimberSubsystem;
+// import frc.robot.subsystems.Secondary.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
@@ -54,7 +54,7 @@ public class RobotContainer
   public final RotateSubsystem rotateSubsystem = new RotateSubsystem();
   public final SliderSubsystem sliderSubsystem = new SliderSubsystem();
   public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
-  public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
+  // public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
 
   private final SendableChooser<Command> autoChooser;
   public double currentSnappedAngle = 0;
@@ -66,7 +66,7 @@ public class RobotContainer
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> -driverXbox.getLeftY(),
-                                                                () -> driverXbox.getLeftTriggerAxis() - driverXbox.getRightTriggerAxis() + driverXbox.getLeftX())
+                                                                () -> -driverXbox.getLeftX()) //- driverXbox.getLeftTriggerAxis() + driverXbox.getRightTriggerAxis())
                                                                 .withControllerRotationAxis(() -> -driverXbox.getRightX())
                                                                 .deadband(OperatorConstants.DEADBAND)
                                                                 .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
@@ -74,7 +74,7 @@ public class RobotContainer
                                                                 .cubeRotationControllerAxis(true)
                                                                 .headingWhile(false)
                                                                 .allianceRelativeControl(true)
-                                                                .robotRelative(driverXbox.rightStick());
+                                                                .robotRelative(false);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,6 +82,8 @@ public class RobotContainer
   public RobotContainer()
   {
     // Configure the trigger bindings
+
+    configureBindings();
   
     NamedCommands.registerCommand("SliderLeft", sliderSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_LEFT_POSITION));
     NamedCommands.registerCommand("SliderMiddle", sliderSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
@@ -92,12 +94,19 @@ public class RobotContainer
     NamedCommands.registerCommand("CoralRotateL3", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3_ANGLE));
     NamedCommands.registerCommand("CoralRotateL4", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4_ANGLE));
     NamedCommands.registerCommand("CoralRotateStart", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
+    NamedCommands.registerCommand("AlgaeRotateIntake", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.ALGAE_INTAKE_ANGLE));
     NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
     NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
     NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
     NamedCommands.registerCommand("ElevatorL4", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L4_POSE));
+    NamedCommands.registerCommand("ElevatorInit", elevatorSubsystem.ElevatorInitCmd());
+    NamedCommands.registerCommand("SliderInit", sliderSubsystem.SliderInitCmd());
+    NamedCommands.registerCommand("AlgaeIntake", indexerSubsystem.algaeIntakeCmd());
+    NamedCommands.registerCommand("AlgaeOuttake", indexerSubsystem.algaeOuttakeCmd());
+    NamedCommands.registerCommand("AlgaeIntakeLowElevator", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_LOW_POSE));
+    NamedCommands.registerCommand("AlgaeIntakeHighElevator", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.ALGAE_PICKUP_HIGH_POSE));
+
     
-    configureBindings();
     
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -122,8 +131,8 @@ public class RobotContainer
     driverXbox.back().whileTrue(drivebase.centerModulesCommand());
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
-    driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(true);}));
-    driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);}));
+    // driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(true);}));
+    // driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);}));
     
     // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
     driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
@@ -197,12 +206,11 @@ public class RobotContainer
     engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(indexerSubsystem.algaeOuttakeCmd());
     engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(indexerSubsystem.algaeIntakeCmd()); 
 
-    // engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
-    //                                                                 rotateSubsystem, 
-    //                                                                 () -> engineerXbox.getLeftX(),
-    //                                                                 () -> engineerXbox.getLeftY()));
+    engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
+                                                                    rotateSubsystem, 
+                                                                    () -> engineerXbox.getLeftX(),
+                                                                    () -> engineerXbox.getLeftY()));
 
-    new PositionIdentifierCmd(elevatorSubsystem, rotateSubsystem, () -> engineerXbox.getLeftX(), () -> engineerXbox.getLeftY()).schedule();
 
     // engineerXbox.b().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
 
@@ -242,7 +250,7 @@ public class RobotContainer
       ));
 
       engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(Commands.sequence(
-      Commands.parallel(
+      Commands.sequence(
           elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.ALGAE_PICKUP_HIGH_POSE), 
           rotateSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE)
       )
@@ -273,8 +281,8 @@ public class RobotContainer
 
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(290.0));
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(40.0));
+      // engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(280.0));
+      // engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(50.0));
 
       
 

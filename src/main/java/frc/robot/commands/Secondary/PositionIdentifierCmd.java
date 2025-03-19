@@ -68,12 +68,13 @@ public class PositionIdentifierCmd extends Command {
      */
     @Override
     public void execute() {
-        System.out.println("Slider Offset: " + sliderOffset);
+        //System.out.println("Slider Offset: " + sliderOffset);
         // boolean inputAngleBol = false; // flag to track if the joystick is pushed
         double snappedInputAngle = -1.0; // initialize snappedInputAngle variable
         double oXRaw = oX.getAsDouble(); // get the joystick X axis values
         double oYRaw = oY.getAsDouble(); // get the joystick Y axis values
     
+        
         // if (Math.abs(oXRaw) > 0.1 || Math.abs(oYRaw) > 0.1) {
         if(Math.sqrt(Math.pow(oXRaw,2) + Math.pow(oYRaw, 2)) > 0.1) {
             // inputAngleBol = true; // if the joystick is pushed

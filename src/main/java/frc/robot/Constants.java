@@ -72,8 +72,8 @@ public final class Constants
     public static final double REEF_L4_POSE = 24.0; //14.75
     public static final double ALGAE_BARGE_POSE = 24.0;
     public static final double ALGAE_PROCESSOR_POSE = 0; 
-    public static final double ALGAE_PICKUP_HIGH_POSE = 13.0;
-    public static final double ALGAE_PICKUP_LOW_POSE = 7.5;
+    public static final double ALGAE_PICKUP_HIGH_POSE = 10.0;
+    public static final double ALGAE_PICKUP_LOW_POSE = 2.5;
     public static final double HUMAN_PLAYER_POSE = 0;
 
   }
@@ -106,15 +106,15 @@ public final class Constants
     public static int CORAL_SLIDER_MOTOR_PORT = 18;
     // public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_L4_ANGLE = 170.0; // was 287.5
-    public static double CORAL_L2_L3_ANGLE = 155.0;
+    public static double CORAL_L4_ANGLE = 162.5; // was 287.5
+    public static double CORAL_L2_L3_ANGLE = 155.0; //was 155.0
     // public static double CORAL_LOW_ANGLE = 155.0;
     public static double CORAL_OFF_ELEVATOR = 190.0;
     public static double CORAL_START_ANGLE = 190.0;
     public static double ALGAE_SCORE_ANGLE = 65.0;
     public static double ALGAE_INTAKE_ANGLE = 135.0;
     public static double CORAL_SLIDER_LEFT_POSITION = -10.5;
-    public static double CORAL_SLIDER_MIDDLE_POSITION = -6.0;
+    public static double CORAL_SLIDER_MIDDLE_POSITION = -4.5;
     public static double CORAL_SLIDER_RIGHT_POSITION = -.5;
     public static int BEAM_BREAK_SENSOR_PORT = 0;
     // public static int LIMIT_SWITCH_PORT = 0;
@@ -126,7 +126,7 @@ public final class Constants
   }
 
   public static class ClimbConstants {
-    public static int CLIMBER_MOTOR_PORT = 16;//TODO: Update port
+    public static int CLIMBER_MOTOR_PORT = 16;
   }
 
   public static class AprilTagConstants {
