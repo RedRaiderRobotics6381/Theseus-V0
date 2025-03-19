@@ -112,9 +112,9 @@ public final class Constants
     public static double CORAL_OFF_ELEVATOR = 190.0;
     public static double CORAL_START_ANGLE = 190.0;
     public static double ALGAE_SCORE_ANGLE = 65.0;
-    public static double ALGAE_INTAKE_ANGLE = 135.0;
+    public static double ALGAE_INTAKE_ANGLE = 137.5;
     public static double CORAL_SLIDER_LEFT_POSITION = -10.5;
-    public static double CORAL_SLIDER_MIDDLE_POSITION = -4.5;
+    public static double CORAL_SLIDER_MIDDLE_POSITION = -4.0;
     public static double CORAL_SLIDER_RIGHT_POSITION = -.5;
     public static int BEAM_BREAK_SENSOR_PORT = 0;
     // public static int LIMIT_SWITCH_PORT = 0;

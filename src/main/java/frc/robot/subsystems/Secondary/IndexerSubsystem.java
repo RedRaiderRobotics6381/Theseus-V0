@@ -94,7 +94,7 @@ public class IndexerSubsystem extends SubsystemBase {
           // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
           indexMtrLdr.set(0.50);
         }, () -> {
-          indexMtrLdr.set(0.25);
+          indexMtrLdr.set(0.5);
         });
   }
 

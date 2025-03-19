@@ -25,7 +25,7 @@ import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.IndexerSubsystem;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
 import frc.robot.subsystems.Secondary.SliderSubsystem;
-// import frc.robot.subsystems.Secondary.ClimberSubsystem;
+import frc.robot.subsystems.Secondary.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
@@ -54,7 +54,7 @@ public class RobotContainer
   public final RotateSubsystem rotateSubsystem = new RotateSubsystem();
   public final SliderSubsystem sliderSubsystem = new SliderSubsystem();
   public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
-  // public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
+  public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();   
 
   private final SendableChooser<Command> autoChooser;
   public double currentSnappedAngle = 0;
@@ -95,6 +95,7 @@ public class RobotContainer
     NamedCommands.registerCommand("CoralRotateL4", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4_ANGLE));
     NamedCommands.registerCommand("CoralRotateStart", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE));
     NamedCommands.registerCommand("AlgaeRotateIntake", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.ALGAE_INTAKE_ANGLE));
+    NamedCommands.registerCommand("AlgaeRotateScore", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.ALGAE_SCORE_ANGLE));
     NamedCommands.registerCommand("ElevatorStart", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.START_POSE));
     NamedCommands.registerCommand("ElevatorL2", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L2_POSE));
     NamedCommands.registerCommand("ElevatorL3", elevatorSubsystem.ElevatorHeightCmd(Constants.ElevatorConstants.REEF_L3_POSE));
@@ -281,8 +282,8 @@ public class RobotContainer
 
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-      // engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(280.0));
-      // engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(50.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(295.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(30.0));
 
       
 
