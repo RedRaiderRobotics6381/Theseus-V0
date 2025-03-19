@@ -17,7 +17,6 @@ public class PositionIdentifierCmd extends Command {
     private final ElevatorSubsystem elevatorSubsystem;
     private final RotateSubsystem rotateSubsystem;
     private final DoubleSupplier  oX, oY;
-    private double sliderOffset;
 
     /**
      * Command to set the position of the elevator and rotate subsystems based on inputs a stick.

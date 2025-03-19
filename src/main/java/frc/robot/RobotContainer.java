@@ -66,7 +66,7 @@ public class RobotContainer
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> -driverXbox.getLeftY(),
-                                                                () -> -driverXbox.getLeftX()) //- driverXbox.getLeftTriggerAxis() + driverXbox.getRightTriggerAxis())
+                                                                () -> -driverXbox.getLeftX() - driverXbox.getRightTriggerAxis() + driverXbox.getLeftTriggerAxis())
                                                                 .withControllerRotationAxis(() -> -driverXbox.getRightX())
                                                                 .deadband(OperatorConstants.DEADBAND)
                                                                 .scaleTranslation(DrivebaseConstants.Max_Speed_Multiplier)
@@ -132,8 +132,10 @@ public class RobotContainer
     driverXbox.back().whileTrue(drivebase.centerModulesCommand());
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
-    // driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(true);}));
-    // driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);}));
+    driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.allianceRelativeControl(false);
+                                                              driveAngularVelocity.robotRelative(true);}));
+    driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);
+                                                            driveAngularVelocity.allianceRelativeControl(false);}));
     
     // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
     driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
