@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
+import frc.robot.commands.Secondary.ClimbCmd;
 import frc.robot.commands.Secondary.PositionIdentifierCmd;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.IndexerSubsystem;
@@ -132,10 +133,13 @@ public class RobotContainer
     driverXbox.back().whileTrue(drivebase.centerModulesCommand());
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
-    driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.allianceRelativeControl(false);
-                                                              driveAngularVelocity.robotRelative(true);}));
-    driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);
-                                                            driveAngularVelocity.allianceRelativeControl(false);}));
+    // driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.allianceRelativeControl(false);
+    //                                                            driveAngularVelocity.robotRelative(true);}));
+    // driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.robotRelative(false);
+    //                                                         driveAngularVelocity.allianceRelativeControl(true);}));
+
+    // driverXbox.rightStick().whileTrue(Commands.runOnce(() -> {driveAngularVelocity.cubeTranslationControllerAxis(false);})); //TODO: Check
+    // driverXbox.rightStick().onFalse(Commands.runOnce(() -> {driveAngularVelocity.cubeTranslationControllerAxis(true);})); //TODO: Check
     
     // Spencer Buttons Adjusts the maximum speed multiplier of the drivebase based on the state of the Xbox controller bumpers.
     driverXbox.rightBumper().onTrue(Commands.runOnce(() -> {driveAngularVelocity.scaleTranslation(1);}));
@@ -215,6 +219,10 @@ public class RobotContainer
                                                                     () -> engineerXbox.getLeftY()));
 
 
+
+                                                                    // engineerXbox.leftStick().onTrue(Commands.runOnce(() -> getSnappedAngleID()));
+
+
     // engineerXbox.b().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_HIGH_ANGLE));
 
     // engineerXbox.x().onTrue(coralSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_START_ANGLE)); // change to whiletrue
@@ -284,9 +292,11 @@ public class RobotContainer
 
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(295.0));
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(climberSubsystem.climbAndGetPaid(30.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(310.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(new ClimbCmd(climberSubsystem, rotateSubsystem, sliderSubsystem));
 
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.leftBumper()).whileTrue(indexerSubsystem.Retract());
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.rightBumper()).whileTrue(indexerSubsystem.AccurateOuttake());
       
 
       // engineerXbox.leftStick().negate().and(engineerXbox.rightStick().and(engineerXbox.b())).onTrue(rotateSubsystem.RotatePosCmd(AlgaeRotateConstants.ALGAE_INTAKE_POS));

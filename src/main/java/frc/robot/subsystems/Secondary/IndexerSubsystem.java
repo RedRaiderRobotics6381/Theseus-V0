@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.OuttakeConstants;
@@ -77,6 +78,19 @@ public class IndexerSubsystem extends SubsystemBase {
         interrupted -> indexMtrLdr.set(0),
         () -> coralSensor.get() == true,
         this);
+  }
+
+  public StartEndCommand AccurateOuttake(){
+    return new StartEndCommand(
+      () -> indexMtrLdr.set(-0.05), 
+      () -> indexMtrLdr.set(0), 
+      this);
+  }
+  public StartEndCommand Retract(){
+    return new StartEndCommand(
+      () -> indexMtrLdr.set(0.075), 
+      () -> indexMtrLdr.set(0), 
+      this);
   }
 
   public FunctionalCommand OuttakeCmd() {

@@ -70,32 +70,38 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "ReefToCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorStart"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoralIntake"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": "AlgaeDriveAssist1"
-                      }
-                    },
-                    {
-                      "type": "parallel",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "AlgaeIntakeLowElevator"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "SliderMiddle"
-                            }
-                          }
-                        ]
+                        "waitTime": 1.0
                       }
                     },
                     {
@@ -105,23 +111,29 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "AlgaeDriveAssist2"
+                              "pathName": "HumPlayertoSecondCoral"
                             }
                           },
                           {
-                            "type": "race",
+                            "type": "sequential",
                             "data": {
                               "commands": [
                                 {
                                   "type": "named",
                                   "data": {
-                                    "name": "AlgaeRotateIntake"
+                                    "name": "CoralRotateL2"
+                                  }
+                                },
+                                {
+                                  "type": "wait",
+                                  "data": {
+                                    "waitTime": 0.5
                                   }
                                 },
                                 {
                                   "type": "named",
                                   "data": {
-                                    "name": "AlgaeOuttake"
+                                    "name": "CoralRotateStart"
                                   }
                                 }
                               ]
@@ -137,79 +149,39 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ReefToBarge"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ElevatorL4"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AlgaeRotateScore"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "ElevatorL4"
           }
         },
         {
-          "type": "race",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlgaeIntake"
-                }
-              }
-            ]
+            "name": "CoralRotateL4"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ScoreToEnd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ElevatorStart"
-                }
-              }
-            ]
+            "name": "CoralOuttake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralRotateStart"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorStart"
           }
         }
       ]

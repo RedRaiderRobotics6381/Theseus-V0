@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.85,
-        "y": 4.0
+        "x": 1.174795081967213,
+        "y": 1.0280737704918033
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.89025,
-        "y": 4.0445
+        "x": 1.9370058677089546,
+        "y": 1.8942968413262433
       },
       "isLocked": false,
-      "linkedName": "EndStartToReef"
+      "linkedName": "HumanPlayerRight"
     },
     {
       "anchor": {
-        "x": 7.63425,
-        "y": 4.8245
+        "x": 3.78,
+        "y": 2.88
       },
       "prevControl": {
-        "x": 6.63425,
-        "y": 4.8245
+        "x": 1.9659373296267044,
+        "y": 2.228125652564731
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -125.83765295427865
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

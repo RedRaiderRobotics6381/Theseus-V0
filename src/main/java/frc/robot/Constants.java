@@ -106,7 +106,7 @@ public final class Constants
     public static int CORAL_SLIDER_MOTOR_PORT = 18;
     // public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_L4_ANGLE = 162.5; // was 287.5
+    public static double CORAL_L4_ANGLE = 165.0; // was 287.5
     public static double CORAL_L2_L3_ANGLE = 155.0; //was 155.0
     // public static double CORAL_LOW_ANGLE = 155.0;
     public static double CORAL_OFF_ELEVATOR = 190.0;
@@ -117,7 +117,8 @@ public final class Constants
     public static double CORAL_SLIDER_MIDDLE_POSITION = -4.0;
     public static double CORAL_SLIDER_RIGHT_POSITION = -.5;
     public static int BEAM_BREAK_SENSOR_PORT = 0;
-    // public static int LIMIT_SWITCH_PORT = 0;
+
+    public static double CLIMB_POS  = 140.0;
   }
 
   public static class OuttakeConstants {

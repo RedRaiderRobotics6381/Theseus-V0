@@ -116,6 +116,8 @@ public class Robot extends TimedRobot
     //m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     //m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
 
+    m_robotContainer.climberSubsystem.climbAndGetPaid(180.0).schedule();
+
   }
 
   /**
@@ -145,6 +147,7 @@ public class Robot extends TimedRobot
     m_robotContainer.rotateSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
     m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
+    m_robotContainer.climberSubsystem.climbAndGetPaid(180.0).schedule();
     // m_robotContainer.climberSubsystem.releaseClimber(true);
 
     if (Robot.isSimulation()){

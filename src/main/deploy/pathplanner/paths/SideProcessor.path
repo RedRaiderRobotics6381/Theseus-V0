@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.3,
-        "y": 4.0
+        "x": 8.0,
+        "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.826024590163935,
-        "y": 3.9890368852459024
+        "x": 8.291390760217826,
+        "y": 0.4820905049500166
       },
       "isLocked": false,
-      "linkedName": "EndAlgaeDriveAssist1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.85,
-        "y": 4.0
+        "x": 6.0,
+        "y": 0.5
       },
       "prevControl": {
-        "x": 6.317520491803278,
-        "y": 3.9890368852459024
+        "x": 5.750042363526248,
+        "y": 0.5046021699724753
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "EndStartToReef"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

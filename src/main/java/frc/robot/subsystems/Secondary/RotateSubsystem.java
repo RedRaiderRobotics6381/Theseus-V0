@@ -74,7 +74,7 @@ public class RotateSubsystem extends SubsystemBase {
                 .inverted(false)
                 .voltageCompensation(12.0)
                 .smartCurrentLimit(50)
-                .idleMode(IdleMode.kCoast);
+                .idleMode(IdleMode.kBrake);
         armAngMtrCfg.absoluteEncoder
                 .positionConversionFactor(360)
                 .inverted(false)
@@ -151,7 +151,7 @@ public class RotateSubsystem extends SubsystemBase {
                 },
                 () -> setRotateAngle(pos), interrupted -> {
                 },
-                () -> (Math.abs(pos - armAngEnc.getPosition()) <= 5.0),
+                () -> (Math.abs(pos - armAngEnc.getPosition()) <= 2.0 || (Math.abs(pos - armAngEnc.getPosition()) <= 4.0 && Math.abs(armAngEnc.getVelocity()) <= 5.0)),
                 this);
     }
 

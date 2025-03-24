@@ -6,17 +6,25 @@ package frc.robot.commands.Secondary;
 
 import java.util.function.DoubleSupplier;
 import frc.robot.Constants.*;
+import frc.robot.RobotContainer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Secondary.ElevatorSubsystem;
 import frc.robot.subsystems.Secondary.RotateSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 
 public class PositionIdentifierCmd extends Command {
 
     private final ElevatorSubsystem elevatorSubsystem;
     private final RotateSubsystem rotateSubsystem;
     private final DoubleSupplier  oX, oY;
+
+    // Pose2d goalPose;
+    // double sliderOffset;
 
     /**
      * Command to set the position of the elevator and rotate subsystems based on inputs a stick.
@@ -37,16 +45,16 @@ public class PositionIdentifierCmd extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // RobotContainer.getSnappedAngleID();
         // if(RobotContainer.right){
         //     goalPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.6604,   -.164338,
         //     Rotation2d.fromDegrees(180)));
         // } else{
         //     goalPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.6604,   .164338,
         //     Rotation2d.fromDegrees(180)));
+        //     Vision.getDistanceFromAprilTag(AprilTagConstants.ReefTagID);
         // }
         // sliderOffset = goalPose.getY();
-        //sliderOffset = Math.sqrt(Math.pow(goalPose.getX() - drivebase.getPose().getX(), 2) + Math.pow(goalPose.getY() - drivebase.getPose().getY(), 2));
+        // sliderOffset = Math.sqrt(Math.pow(goalPose.getX() - drivebase.getPose().getX(), 2) + Math.pow(goalPose.getY() - drivebase.getPose().getY(), 2));
     }
 
     /**
@@ -67,7 +75,7 @@ public class PositionIdentifierCmd extends Command {
      */
     @Override
     public void execute() {
-        //System.out.println("Slider Offset: " + sliderOffset);
+        // System.out.println("Slider Offset: " + sliderOffset);
         // boolean inputAngleBol = false; // flag to track if the joystick is pushed
         double snappedInputAngle = -1.0; // initialize snappedInputAngle variable
         double oXRaw = oX.getAsDouble(); // get the joystick X axis values
@@ -86,27 +94,24 @@ public class PositionIdentifierCmd extends Command {
         SmartDashboard.putNumber("Engineer Snapped Angle", snappedInputAngle); // display the snapped angle on the SmartDashboard
 
         if (snappedInputAngle == 270) { //if the joystick is pushed up and to the left
-            Commands.sequence(
-                Commands.parallel(
+                Commands.sequence(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L2_POSE), 
                     rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
-                ))
+                )
                 .schedule();
             
         } else if (snappedInputAngle == 90) { 
-            Commands.sequence(
-                Commands.parallel(
+                Commands.sequence(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L4_POSE), 
                     rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L4_ANGLE)
-                ))
+                )
                 .schedule();
        
         } else if (snappedInputAngle == 0) { 
             Commands.sequence(
-                Commands.parallel(
                     elevatorSubsystem.ElevatorHeightCmd(ElevatorConstants.REEF_L3_POSE), 
                     rotateSubsystem.setRotateAngleCmd(CoralConstants.CORAL_L2_L3_ANGLE)
-                ))
+                )
                 .schedule();
             } else if (snappedInputAngle == 180) {
                 Commands.sequence( 

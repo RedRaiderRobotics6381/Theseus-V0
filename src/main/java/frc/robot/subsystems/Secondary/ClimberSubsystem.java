@@ -31,10 +31,10 @@ public class ClimberSubsystem extends SubsystemBase {
     private SparkAbsoluteEncoderSim climbEncoderSim;                              
     private SparkFlexConfig climbMtrCfg;
     
-    private double kP = 0.01, kI = 0.0, kD = 0.0;//p was 0.0005
+    private double kP = 0.015, kI = 0.0, kD = 0.0;//p was 0.0005
     private double kFF = 0.0;
-    private double kOutputMin = -1.0;
-    private double kOutputMax = 1.0;
+    private double kOutputMin = -0.75;
+    private double kOutputMax = 0.75;
 
     public ClimberSubsystem() {
         climbMotor = new SparkFlex(Constants.ClimbConstants.CLIMBER_MOTOR_PORT, MotorType.kBrushless);
@@ -49,16 +49,16 @@ public class ClimberSubsystem extends SubsystemBase {
         climbMtrCfg
             .inverted(false)
             .voltageCompensation(12.0)
-            .smartCurrentLimit(100)
+            .smartCurrentLimit(80)
             .idleMode(IdleMode.kBrake);
         climbMtrCfg
             .absoluteEncoder
                 .positionConversionFactor(360.0)
-                .inverted(false)
-                .zeroOffset(0.4); // was0.5
+                .inverted(true)
+                .zeroOffset(0.5); // was 0.4
         climbMtrCfg
             .softLimit
-                .forwardSoftLimit(315.0) 
+                .forwardSoftLimit(340.0) 
                 .reverseSoftLimit(20.0)
                 .forwardSoftLimitEnabled(true)
                 .reverseSoftLimitEnabled(true);
@@ -130,9 +130,9 @@ public class ClimberSubsystem extends SubsystemBase {
     if (Robot.isSimulation()) {
         SmartDashboard.putNumber("Climber Position", climbEncoderSim.getPosition());
     } else {
+        SmartDashboard.putNumber("Climber Current", climbMotor.getOutputCurrent());
         SmartDashboard.putNumber("Climber Position", climbEncoder.getPosition());
-
-        // System.out.println("Climber Position " + climbEncoder.getPosition());
     }
     }
 }
+
