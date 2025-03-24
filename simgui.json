@@ -1,16 +1,6 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK Flex [17]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK Flex [17] ABSOLUTE ENCODER": {
-        "header": {
-          "open": true
-        }
-      },
       "SPARK MAX [18]": {
         "header": {
           "open": true
@@ -175,6 +165,17 @@
     }
   },
   "NetworkTables Info": {
+    "Elastic@1": {
+      "open": true
+    },
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      }
+    },
     "visible": true
   },
   "NetworkTables View": {

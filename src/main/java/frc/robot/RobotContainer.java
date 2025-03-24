@@ -8,8 +8,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -164,7 +166,7 @@ public class RobotContainer
                               right = true;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.55,   .164338,
+                              new Transform2d(0.55,   0.16430625,
                               Rotation2d.fromDegrees(180))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
@@ -176,7 +178,7 @@ public class RobotContainer
                               right = false;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.55,   -.164338,
+                              new Transform2d(0.55,   -0.16430625,
                               Rotation2d.fromDegrees(180))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
@@ -194,7 +196,14 @@ public class RobotContainer
                                                   Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
                                                   Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
                             }));
+    
+    engineerXbox.x().whileTrue(Commands.run(() -> {
+      sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875));
+    }));
 
+    engineerXbox.b().whileTrue(Commands.run(() -> {
+      sliderSubsystem.setSliderPosition(getSliderOffset(6.46875));
+    }));
       
     engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
       Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.4)));
@@ -366,5 +375,32 @@ public class RobotContainer
     }
     SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
     SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
+  }
+  double getSliderOffset(Double reefOffset){
+    getSnappedAngleID();
+    Pose2d robotPose = drivebase.getPose();
+    Pose2d tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.55, 0.0, Rotation2d.fromDegrees(180)));
+
+    double deltaX = robotPose.getTranslation().getX() - tagPose.getTranslation().getX();
+    // if (reefOffset < 0.0){
+    //   reefOffset = reefOffset * -1;
+    // }
+    double deltaY = robotPose.getTranslation().getY() - tagPose.getTranslation().getY() + Units.inchesToMeters(reefOffset);
+
+    // double robotHeading = robotPose.getRotation().getRadians();
+    double tagHeading = tagPose.getRotation().getRadians();
+
+    // double xOffset = deltaX * Math.cos(tagHeading) + deltaY * Math.sin(tagHeading);
+    double yOffset = -deltaX * Math.sin(tagHeading) + deltaY * Math.cos(tagHeading);
+    // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
+    yOffset = 6.00 - Units.metersToInches(yOffset);
+    // Clamp yOffset between minOffset and maxOffset
+    double minOffset = 0.0; // Set your minimum offset value here
+    double maxOffset = 12.0; // Set your maximum offset value here
+    yOffset = Math.max(minOffset, Math.min(yOffset, maxOffset));
+
+    // SmartDashboard.putNumber("X Offset To Tag", Units.metersToInches(xOffset));
+    SmartDashboard.putNumber("Slider Offset", -yOffset);
+    return -yOffset;
   }
 }
