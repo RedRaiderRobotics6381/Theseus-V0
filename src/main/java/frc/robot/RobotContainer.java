@@ -166,19 +166,20 @@ public class RobotContainer
                               right = true;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.55,   0.16430625,
+                              new Transform2d(0.5,   0.16430625,
                               Rotation2d.fromDegrees(180))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
                                                   Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
                                                   Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
                             }));
+
     driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
                               getSnappedAngleID();
                               right = false;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.55,   -0.16430625,
+                              new Transform2d(0.5,   -0.16430625,
                               Rotation2d.fromDegrees(180))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
@@ -189,7 +190,7 @@ public class RobotContainer
                               getSnappedAngleID();
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.55,   0.0,
+                              new Transform2d(0.5,   0.0,
                               Rotation2d.fromDegrees(180))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
@@ -198,18 +199,20 @@ public class RobotContainer
                             }));
     
     engineerXbox.x().whileTrue(Commands.run(() -> {
-      sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875));
+      // sliderSubsystem.setSliderPosition(getSliderOffset(false));
+      sliderSubsystem.setSliderPosition(getSliderOffset(6.46875, 8));
     }));
 
     engineerXbox.b().whileTrue(Commands.run(() -> {
-      sliderSubsystem.setSliderPosition(getSliderOffset(6.46875));
+      //sliderSubsystem.setSliderPosition(getSliderOffset(true));
+      sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875, 2));
     }));
       
     engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
-      Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getLeftTriggerAxis()*.4)));
+      Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getLeftTriggerAxis()*.4)));
     
     engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
-      Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getRightTriggerAxis()*.4)));
+      Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getRightTriggerAxis()*.4)));
     
     engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
       engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
@@ -370,16 +373,64 @@ public class RobotContainer
           if(snappedAngle == 120.0){AprilTagConstants.ReefTagID = 17;};
           if(snappedAngle == 0.0){AprilTagConstants.ReefTagID = 21;};
         }
+
+
       }
 
     }
     SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
     SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
   }
-  double getSliderOffset(Double reefOffset){
+  double getSliderOffset(double reefOffset, double controlOffset){
+    // getSnappedAngleID();
+    // Pose2d tagPose;
+    // Pose2d robotPose = drivebase.getPose();
+    // double tagX;
+    // double tagY;
+    // double robotX = robotPose.getTranslation().getX();
+    // double robotY = robotPose.getTranslation().getY();
+    // int alternator = 1;
+    // if(right){
+    // tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(-0.42, -0.16430, Rotation2d.fromDegrees(180)));
+
+
+    // } else {
+    //   tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(-0.42, 0.16430, Rotation2d.fromDegrees(180)));
+    // }
+    // tagX = tagPose.getTranslation().getX();
+    // tagY = tagPose.getTranslation().getY();
+  
+    // double deltaX = robotX - tagX;
+    // double deltaY = robotY - tagY;
+    
+    // double yOffset = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    // if (snappedAngle == 180 || snappedAngle == 120 || snappedAngle == 240){
+    //   if (tagY < robotY){
+    //       alternator = -1;
+    //   }
+    // } else {
+    //   if(tagY > robotY){
+    //     alternator = -1;
+    //   }
+    // }
+    // yOffset = alternator * yOffset;
+    // // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
+    // yOffset = 6 + Units.metersToInches(yOffset);
+    // // Clamp yOffset between minOffset and maxOffset
+    // double minOffset = 0.0; // Set your minimum offset value here
+    // double maxOffset = 12.0; // Set your maximum offset value here
+    // yOffset = Math.max(minOffset, Math.min(yOffset, maxOffset));
+
+    // // SmartDashboard.putNumber("X Offset To Tag", Units.metersToInches(xOffset));
+    // SmartDashboard.putNumber("Slider Offset", -yOffset);
+    // SmartDashboard.putNumber("deltaX", deltaX);
+    // SmartDashboard.putNumber("deltaY", deltaY);
+    // SmartDashboard.putNumber("Tag X", tagX);
+    // SmartDashboard.putNumber("Tag Y", tagY);
+    // return -yOffset;
     getSnappedAngleID();
     Pose2d robotPose = drivebase.getPose();
-    Pose2d tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.55, 0.0, Rotation2d.fromDegrees(180)));
+    Pose2d tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.435, 0.0, Rotation2d.fromDegrees(180)));
 
     double deltaX = robotPose.getTranslation().getX() - tagPose.getTranslation().getX();
     // if (reefOffset < 0.0){
@@ -393,7 +444,7 @@ public class RobotContainer
     // double xOffset = deltaX * Math.cos(tagHeading) + deltaY * Math.sin(tagHeading);
     double yOffset = -deltaX * Math.sin(tagHeading) + deltaY * Math.cos(tagHeading);
     // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
-    yOffset = 6.00 - Units.metersToInches(yOffset);
+    yOffset = controlOffset - Units.metersToInches(yOffset);
     // Clamp yOffset between minOffset and maxOffset
     double minOffset = 0.0; // Set your minimum offset value here
     double maxOffset = 12.0; // Set your maximum offset value here
@@ -401,6 +452,9 @@ public class RobotContainer
 
     // SmartDashboard.putNumber("X Offset To Tag", Units.metersToInches(xOffset));
     SmartDashboard.putNumber("Slider Offset", -yOffset);
+    SmartDashboard.putNumber("deltaX", deltaX);
+    SmartDashboard.putNumber("deltaY", deltaY);
     return -yOffset;
+    
   }
 }

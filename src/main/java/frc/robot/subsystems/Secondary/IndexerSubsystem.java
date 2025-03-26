@@ -106,7 +106,8 @@ public class IndexerSubsystem extends SubsystemBase {
     return this.runEnd(
         () -> {
           // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-          indexMtrLdr.set(0.50);
+            indexMtrLdr.set(0.50);
+          
         }, () -> {
           indexMtrLdr.set(0.5);
         });
@@ -116,7 +117,7 @@ public class IndexerSubsystem extends SubsystemBase {
     return this.runEnd(
         () -> {
           // runIntake(Constants.IntakeConstants.INTAKE_SPEED);
-          indexMtrLdr.set(-1.0);
+            indexMtrLdr.set(-1.0);
         }, () -> {
           indexMtrLdr.set(0.0);
         });

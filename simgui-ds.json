@@ -1,63 +1,62 @@
 {
-  "Keyboard 0 Settings": {
-    "window": {
-      "visible": true
-    }
-  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
         {
-          "decKey": 324,
-          "incKey": 326
+          "decKey": 65,
+          "incKey": 68
         },
         {
-          "decKey": 328,
-          "incKey": 322
+          "decKey": 87,
+          "incKey": 83
         },
         {
-          "incKey": 327
-        },
-        {
-          "incKey": 329
-        },
-        {
-          "decKey": 321,
-          "incKey": 323
+          "decKey": 69,
+          "decayRate": 0.0,
+          "incKey": 82,
+          "keyRate": 0.009999999776482582
         }
       ],
-      "axisCount": 5,
-      "buttonCount": 10,
+      "axisCount": 3,
+      "buttonCount": 4,
       "buttonKeys": [
         90,
         88,
         67,
-        86,
-        66,
-        78,
-        77,
-        44,
-        46,
-        47
+        86
+      ],
+      "povConfig": [
+        {
+          "key0": 328,
+          "key135": 323,
+          "key180": 322,
+          "key225": 321,
+          "key270": 324,
+          "key315": 327,
+          "key45": 329,
+          "key90": 326
+        }
       ],
       "povCount": 1
     },
     {
       "axisConfig": [
         {
-          "decKey": 74
+          "decKey": 74,
+          "incKey": 76
         },
         {
-          "decKey": 73
+          "decKey": 73,
+          "incKey": 75
         }
       ],
       "axisCount": 2,
       "buttonCount": 4,
       "buttonKeys": [
-        -1,
-        -1,
-        -1,
-        -1
+        77,
+        44,
+        46,
+        47
       ],
       "povCount": 0
     },
@@ -92,20 +91,11 @@
   ],
   "robotJoysticks": [
     {
-<<<<<<< Updated upstream
       "guid": "78696e70757401000000000000000000",
       "useGamepad": true
     },
     {
-=======
->>>>>>> Stashed changes
       "guid": "78696e70757401000000000000000000",
-      "useGamepad": true
-    },
-    {
-      "guid": "Keyboard0"
-    },
-    {
       "useGamepad": true
     }
   ]

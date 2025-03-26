@@ -145,17 +145,9 @@ public class Robot extends TimedRobot
 
     setAprilTag();
     m_robotContainer.rotateSubsystem.setRotateAngle(Constants.CoralConstants.CORAL_OFF_ELEVATOR);
-<<<<<<< Updated upstream
     m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
     m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
     m_robotContainer.climberSubsystem.climbAndGetPaid(180.0).schedule();
-=======
-    if(!Robot.isSimulation()){
-      m_robotContainer.sliderSubsystem.SliderInitCmd().schedule();
-      m_robotContainer.elevatorSubsystem.ElevatorInitCmd().schedule();
-    }
-
->>>>>>> Stashed changes
     // m_robotContainer.climberSubsystem.releaseClimber(true);
 
     if (Robot.isSimulation()){

@@ -56,7 +56,7 @@ public class SliderSubsystem extends SubsystemBase {
         .smartCurrentLimit(80)
         .idleMode(IdleMode.kCoast);
     coralSldrMtrCfg.encoder
-        .positionConversionFactor(0.13352);
+        .positionConversionFactor(0.1532142);
     coralSldrMtrCfg.softLimit
         .reverseSoftLimit(-12.0)
         .reverseSoftLimitEnabled(true);
