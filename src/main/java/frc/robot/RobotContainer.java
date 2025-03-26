@@ -61,8 +61,8 @@ public class RobotContainer
 
   private final SendableChooser<Command> autoChooser;
   public double currentSnappedAngle = 0;
-  public double snappedAngle = 0; 
-  public boolean right;
+  public double snappedAngle = 0;
+  public boolean snappedAngleStart = true; 
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -163,7 +163,7 @@ public class RobotContainer
                             }));
     driverXbox.b().whileTrue(Commands.deferredProxy(() -> {
                               getSnappedAngleID();
-                              right = true;
+                              // right = true;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
                               new Transform2d(0.5,   0.16430625,
@@ -176,7 +176,7 @@ public class RobotContainer
 
     driverXbox.x().whileTrue(Commands.deferredProxy(() -> {
                               getSnappedAngleID();
-                              right = false;
+                              // right = false;
                               return drivebase.driveToPoseWithConstraints(
                               Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
                               new Transform2d(0.5,   -0.16430625,
@@ -222,9 +222,12 @@ public class RobotContainer
     engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.leftBumper()).onTrue(indexerSubsystem.IntakeCmd());
     engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.rightBumper()).onTrue(indexerSubsystem.OuttakeCmd());
 
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(indexerSubsystem.algaeOuttakeCmd());
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(indexerSubsystem.algaeIntakeCmd()); 
-
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(Commands.run(() -> {
+                                                                                                              if (!indexerSubsystem.coralSensor.get()) {
+                                                                                                                  indexerSubsystem.algaeOuttakeCmd();}}));
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(Commands.run(() -> {
+                                                                                                              if (!indexerSubsystem.coralSensor.get()) {
+                                                                                                                  indexerSubsystem.algaeIntakeCmd();}}));
     engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
                                                                     rotateSubsystem, 
                                                                     () -> engineerXbox.getLeftX(),
@@ -347,8 +350,9 @@ public class RobotContainer
 
     // Snap to the nearest 60-degree increment
     snappedAngle = Math.round(angle / 60.0) * 60.0;
-    if (snappedAngle != currentSnappedAngle){
+    if (snappedAngle != currentSnappedAngle || snappedAngleStart){
       currentSnappedAngle = snappedAngle;
+      snappedAngleStart = false;
       
       // if (headingX != 0 || headingY != 0) {
       //   headingX = Math.sin(Math.toRadians(snappedAngle));

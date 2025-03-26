@@ -37,7 +37,7 @@ public class IndexerSubsystem extends SubsystemBase {
   private SparkRelativeEncoderSim indexMtrFlwEncSim;
   private SparkFlexConfig indexMtrLdrCfg;
   private SparkFlexConfig indexMtrFlwCfg;
-  private DigitalInput coralSensor;
+  public DigitalInput coralSensor;
 
   public IndexerSubsystem() {
 
