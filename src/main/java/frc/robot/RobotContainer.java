@@ -211,6 +211,7 @@ public class RobotContainer
                                                   Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
                             }));
     
+<<<<<<< HEAD
 //     engineerXbox.x().whileTrue(Commands.run(() -> {
 // getSliderOffset(false);
 //       // sliderSubsystem.setSliderPosition(getSliderOffset(6.46875, 8));
@@ -225,6 +226,17 @@ public class RobotContainer
       // sliderSubsystem.setSliderPosition(getSliderOffset(false));
       indexerSubsystem.Retract()
     );
+=======
+    engineerXbox.x().whileTrue(Commands.run(() -> {
+      sliderSubsystem.setSliderPosition(getSliderOffset(false));
+      // sliderSubsystem.setSliderPosition(getSliderOffset(6.46875, 8));
+    }));
+
+    engineerXbox.b().whileTrue(Commands.run(() -> {
+      sliderSubsystem.setSliderPosition(getSliderOffset(true));
+      // sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875, 2));
+    }));
+>>>>>>> 8891b39fa92c36428710e0ce6e971b53aa082a63
       
     // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
     //   Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getLeftTriggerAxis()*.4)));
@@ -365,7 +377,6 @@ public class RobotContainer
     // Snap to the nearest 60-degree increment
     snappedAngle = Math.round(angle / 60.0) * 60.0;
     if (snappedAngle != currentSnappedAngle || snappedAngleStart){
-      currentSnappedAngle = snappedAngle;
       snappedAngleStart = false;
       
       // if (headingX != 0 || headingY != 0) {
@@ -392,9 +403,8 @@ public class RobotContainer
           if(snappedAngle == 0.0){AprilTagConstants.ReefTagID = 21;};
         }
 
-
       }
-
+      currentSnappedAngle = snappedAngle;
     }
     SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
     SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
@@ -406,6 +416,7 @@ public class RobotContainer
     Pose2d robotPose = drivebase.getPose();
     double tagX;
     double tagY;
+<<<<<<< HEAD
     double robotX = robotPose.getX();
     double robotY = robotPose.getY();
     int alternator = 1;
@@ -418,6 +429,20 @@ public class RobotContainer
     }
     tagX = tagPose.getX();
     tagY = tagPose.getY();
+=======
+    double robotX = robotPose.getTranslation().getX();
+    double robotY = robotPose.getTranslation().getY();
+    int alternator = 1;
+    if(right){
+    tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.43, 0.16430, Rotation2d.fromDegrees(180)));
+
+
+    } else {
+      tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.43, -0.16430, Rotation2d.fromDegrees(180)));
+    }
+    tagX = tagPose.getTranslation().getX();
+    tagY = tagPose.getTranslation().getY();
+>>>>>>> 8891b39fa92c36428710e0ce6e971b53aa082a63
   
     double deltaX = robotX - tagX;
     double deltaY = robotY - tagY;
@@ -432,6 +457,11 @@ public class RobotContainer
         alternator = -1;
       }
     }
+<<<<<<< HEAD
+=======
+     
+
+>>>>>>> 8891b39fa92c36428710e0ce6e971b53aa082a63
     yOffset = alternator * yOffset;
     // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
     yOffset = 6 + Units.metersToInches(yOffset);
