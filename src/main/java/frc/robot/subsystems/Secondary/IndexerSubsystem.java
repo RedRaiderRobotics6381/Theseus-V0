@@ -52,14 +52,14 @@ public class IndexerSubsystem extends SubsystemBase {
     indexMtrLdrCfg
         .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(65)
+        .smartCurrentLimit(80)
         .idleMode(IdleMode.kBrake);
     indexMtrLdr.configure(indexMtrLdrCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     indexMtrFlwCfg
         .follow(indexMtrLdr, true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(65)
+        .smartCurrentLimit(80)
         .idleMode(IdleMode.kBrake);
     indexMtrFlw.configure(indexMtrFlwCfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -97,6 +97,15 @@ public class IndexerSubsystem extends SubsystemBase {
     return new FunctionalCommand(() -> {
     },
         () -> indexMtrLdr.set(-0.075),
+        interrupted -> indexMtrLdr.set(0),
+        () -> coralSensor.get() == false,
+        this);
+  }
+
+  public FunctionalCommand AutoOuttakeCmd() {
+    return new FunctionalCommand(() -> {
+    },
+        () -> indexMtrLdr.set(-0.1),
         interrupted -> indexMtrLdr.set(0),
         () -> coralSensor.get() == false,
         this);

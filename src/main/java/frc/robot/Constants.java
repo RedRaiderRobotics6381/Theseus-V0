@@ -69,7 +69,7 @@ public final class Constants
     public static final double TROUGH_POSE = 1;
     public static final double REEF_L2_POSE = 2.0; //3.0 before // 2.0 for laksehore
     public static final double REEF_L3_POSE = 10.0; // 11.0 = coral //10. = lakeshore
-    public static final double REEF_L4_POSE = 24.0; //14.75
+    public static final double REEF_L4_POSE = 23.5; //14.75
     public static final double ALGAE_BARGE_POSE = 24.0;
     public static final double ALGAE_PROCESSOR_POSE = 0; 
     public static final double ALGAE_PICKUP_HIGH_POSE = 10.0;
@@ -106,11 +106,11 @@ public final class Constants
     public static int CORAL_SLIDER_MOTOR_PORT = 18;
     // public static int CORAL_HOLD_MOTOR_PORT = 19;
     // public static int SERVO_PORT = 0;
-    public static double CORAL_L4_ANGLE = 165.0; // was 287.5
+    public static double CORAL_L4_ANGLE = 160; // was 287.5
     public static double CORAL_L2_L3_ANGLE = 155.0; //was 155.0
     // public static double CORAL_LOW_ANGLE = 155.0;
-    public static double CORAL_OFF_ELEVATOR = 190.0;
-    public static double CORAL_START_ANGLE = 190.0;
+    public static double CORAL_OFF_ELEVATOR = 185.0; //was 195 changed to avoid breaking
+    public static double CORAL_START_ANGLE = 185.0; //was 195 changed to avoid breaking
     public static double ALGAE_SCORE_ANGLE = 65.0;
     public static double ALGAE_INTAKE_ANGLE = 137.5;
     public static double CORAL_SLIDER_LEFT_POSITION = -10.5;

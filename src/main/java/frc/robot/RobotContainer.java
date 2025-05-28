@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.*;
@@ -47,7 +48,8 @@ public class RobotContainer
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
-  final         CommandXboxController engineerXbox = new CommandXboxController(1);
+  final         CommandGenericHID buttonBoardRed = new CommandGenericHID(1);
+  final         CommandGenericHID buttonBoardBlue = new CommandGenericHID(2);
   // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
@@ -92,7 +94,7 @@ public class RobotContainer
     NamedCommands.registerCommand("SliderMiddle", sliderSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_MIDDLE_POSITION));
     NamedCommands.registerCommand("SliderRight", sliderSubsystem.setSliderPositionCmd(Constants.CoralConstants.CORAL_SLIDER_RIGHT_POSITION));
     NamedCommands.registerCommand("CoralIntake", indexerSubsystem.IntakeCmd());
-    NamedCommands.registerCommand("CoralOuttake", indexerSubsystem.OuttakeCmd());
+    NamedCommands.registerCommand("CoralOuttake", indexerSubsystem.AutoOuttakeCmd());
     NamedCommands.registerCommand("CoralRotateL2", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3_ANGLE));
     NamedCommands.registerCommand("CoralRotateL3", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L2_L3_ANGLE));
     NamedCommands.registerCommand("CoralRotateL4", rotateSubsystem.setRotateAngleCmd(Constants.CoralConstants.CORAL_L4_ANGLE));
@@ -186,48 +188,60 @@ public class RobotContainer
                                                   Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
                                                   Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
                             }));
+    // driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
+    //                           getSnappedAngleID();
+    //                           return drivebase.driveToPoseWithConstraints(
+    //                           Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
+    //                           new Transform2d(0.5,   0.0,
+    //                           Rotation2d.fromDegrees(180))),
+    //                           new PathConstraints(AutonConstants.LINEAR_VELOCITY,
+    //                                               AutonConstants.LINEAR_ACELERATION,
+    //                                               Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
+    //                                               Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
+    //                         }));
     driverXbox.y().whileTrue(Commands.deferredProxy(() -> {
-                              getSnappedAngleID();
+                              // getSnappedAngleID();
                               return drivebase.driveToPoseWithConstraints(
-                              Vision.getAprilTagPose(AprilTagConstants.ReefTagID,
-                              new Transform2d(0.5,   0.0,
-                              Rotation2d.fromDegrees(180))),
+                              Vision.getAprilTagPose(AprilTagConstants.HumanPlayerRight,
+                              new Transform2d(0.55,   0.0,
+                              Rotation2d.fromDegrees(180.0))),
                               new PathConstraints(AutonConstants.LINEAR_VELOCITY,
                                                   AutonConstants.LINEAR_ACELERATION,
                                                   Math.toRadians(AutonConstants.ANGULAR_VELOCITY),
                                                   Math.toRadians(AutonConstants.ANGULAR_ACCELERATION)));
                             }));
     
-    engineerXbox.x().whileTrue(Commands.run(() -> {
+//     engineerXbox.x().whileTrue(Commands.run(() -> {
+// getSliderOffset(false);
+//       // sliderSubsystem.setSliderPosition(getSliderOffset(6.46875, 8));
+//     }));
+
+//     engineerXbox.b().whileTrue(Commands.run(() -> {
+// getSliderOffset(true);
+//       // sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875, 2));
+//     }));
+
+    engineerXbox.a().whileTrue(
       // sliderSubsystem.setSliderPosition(getSliderOffset(false));
-      sliderSubsystem.setSliderPosition(getSliderOffset(6.46875, 8));
-    }));
-
-    engineerXbox.b().whileTrue(Commands.run(() -> {
-      //sliderSubsystem.setSliderPosition(getSliderOffset(true));
-      sliderSubsystem.setSliderPosition(getSliderOffset(-6.46875, 2));
-    }));
+      indexerSubsystem.Retract()
+    );
       
-    engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
-      Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getLeftTriggerAxis()*.4)));
+    // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).whileTrue(
+    //   Commands.run(() -> sliderSubsystem.sliderManual(engineerXbox.getLeftTriggerAxis()*.4)));
     
-    engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
-      Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getRightTriggerAxis()*.4)));
+    // engineerXbox.rightTrigger(OperatorConstants.DEADBAND).whileTrue(
+    //   Commands.run(() -> sliderSubsystem.sliderManual(-engineerXbox.getRightTriggerAxis()*.4)));
     
-    engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
-      engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
-      Commands.runOnce(() -> sliderSubsystem.sliderManual(0)));
+    // engineerXbox.leftTrigger(OperatorConstants.DEADBAND).negate().and(
+    //   engineerXbox.rightTrigger(OperatorConstants.DEADBAND).negate()).onTrue(
+    //   Commands.runOnce(() -> sliderSubsystem.sliderManual(0)));
 
     
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.leftBumper()).onTrue(indexerSubsystem.IntakeCmd());
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().negate()).and(engineerXbox.rightBumper()).onTrue(indexerSubsystem.OuttakeCmd());
+    engineerXbox.rightStick().onTrue(indexerSubsystem.IntakeCmd());
+    engineerXbox.rightStick().onTrue(indexerSubsystem.OuttakeCmd());
 
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(Commands.run(() -> {
-                                                                                                              if (!indexerSubsystem.coralSensor.get()) {
-                                                                                                                  indexerSubsystem.algaeOuttakeCmd();}}));
-    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(Commands.run(() -> {
-                                                                                                              if (!indexerSubsystem.coralSensor.get()) {
-                                                                                                                  indexerSubsystem.algaeIntakeCmd();}}));
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.leftBumper())).whileTrue(indexerSubsystem.algaeOuttakeCmd());
+    engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.rightBumper())).whileTrue(indexerSubsystem.algaeIntakeCmd());
     engineerXbox.leftStick().whileTrue(new PositionIdentifierCmd(   elevatorSubsystem,
                                                                     rotateSubsystem, 
                                                                     () -> engineerXbox.getLeftX(),
@@ -307,10 +321,10 @@ public class RobotContainer
 
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(0))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_SCORE_ANGLE));
       // engineerXbox.rightStick().negate().and(engineerXbox.leftStick().and(engineerXbox.pov(180))).onTrue(coralSubsystem.setRotateAngleCmd(CoralConstants.ALGAE_INTAKE_ANGLE));
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(310.0));
+      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povRight()).onTrue(climberSubsystem.climbAndGetPaid(340.0));
       engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.povLeft()).onTrue(new ClimbCmd(climberSubsystem, rotateSubsystem, sliderSubsystem));
 
-      engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.leftBumper()).whileTrue(indexerSubsystem.Retract());
+      // engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.a()).whileTrue(indexerSubsystem.Retract());
       engineerXbox.rightStick().and(engineerXbox.leftStick().negate()).and(engineerXbox.rightBumper()).whileTrue(indexerSubsystem.AccurateOuttake());
       
 
@@ -385,70 +399,42 @@ public class RobotContainer
     SmartDashboard.putNumber("Snapped Angle: ", snappedAngle);
     SmartDashboard.putNumber("Reef Tag ID: ", AprilTagConstants.ReefTagID);
   }
-  double getSliderOffset(double reefOffset, double controlOffset){
-    // getSnappedAngleID();
-    // Pose2d tagPose;
-    // Pose2d robotPose = drivebase.getPose();
-    // double tagX;
-    // double tagY;
-    // double robotX = robotPose.getTranslation().getX();
-    // double robotY = robotPose.getTranslation().getY();
-    // int alternator = 1;
-    // if(right){
-    // tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(-0.42, -0.16430, Rotation2d.fromDegrees(180)));
-
-
-    // } else {
-    //   tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(-0.42, 0.16430, Rotation2d.fromDegrees(180)));
-    // }
-    // tagX = tagPose.getTranslation().getX();
-    // tagY = tagPose.getTranslation().getY();
-  
-    // double deltaX = robotX - tagX;
-    // double deltaY = robotY - tagY;
-    
-    // double yOffset = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-    // if (snappedAngle == 180 || snappedAngle == 120 || snappedAngle == 240){
-    //   if (tagY < robotY){
-    //       alternator = -1;
-    //   }
-    // } else {
-    //   if(tagY > robotY){
-    //     alternator = -1;
-    //   }
-    // }
-    // yOffset = alternator * yOffset;
-    // // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
-    // yOffset = 6 + Units.metersToInches(yOffset);
-    // // Clamp yOffset between minOffset and maxOffset
-    // double minOffset = 0.0; // Set your minimum offset value here
-    // double maxOffset = 12.0; // Set your maximum offset value here
-    // yOffset = Math.max(minOffset, Math.min(yOffset, maxOffset));
-
-    // // SmartDashboard.putNumber("X Offset To Tag", Units.metersToInches(xOffset));
-    // SmartDashboard.putNumber("Slider Offset", -yOffset);
-    // SmartDashboard.putNumber("deltaX", deltaX);
-    // SmartDashboard.putNumber("deltaY", deltaY);
-    // SmartDashboard.putNumber("Tag X", tagX);
-    // SmartDashboard.putNumber("Tag Y", tagY);
-    // return -yOffset;
+  // double getSliderOffset(double reefOffset, double controlOffset){
+    double getSliderOffset(boolean right){
     getSnappedAngleID();
+    Pose2d tagPose;
     Pose2d robotPose = drivebase.getPose();
-    Pose2d tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.435, 0.0, Rotation2d.fromDegrees(180)));
+    double tagX;
+    double tagY;
+    double robotX = robotPose.getX();
+    double robotY = robotPose.getY();
+    int alternator = 1;
+    if(right){
+    tagPose = Vision.getAprilTagPose(21, new Transform2d(0.435, -0.16430, Rotation2d.fromDegrees(0)));
 
-    double deltaX = robotPose.getTranslation().getX() - tagPose.getTranslation().getX();
-    // if (reefOffset < 0.0){
-    //   reefOffset = reefOffset * -1;
-    // }
-    double deltaY = robotPose.getTranslation().getY() - tagPose.getTranslation().getY() + Units.inchesToMeters(reefOffset);
 
-    // double robotHeading = robotPose.getRotation().getRadians();
-    double tagHeading = tagPose.getRotation().getRadians();
-
-    // double xOffset = deltaX * Math.cos(tagHeading) + deltaY * Math.sin(tagHeading);
-    double yOffset = -deltaX * Math.sin(tagHeading) + deltaY * Math.cos(tagHeading);
+    } else {
+      tagPose = Vision.getAprilTagPose(21, new Transform2d(0.435, 0.16430, Rotation2d.fromDegrees(0)));
+    }
+    tagX = tagPose.getX();
+    tagY = tagPose.getY();
+  
+    double deltaX = robotX - tagX;
+    double deltaY = robotY - tagY;
+    
+    double yOffset = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    if (snappedAngle == 180 || snappedAngle == 120 || snappedAngle == 240){
+      if (tagY < robotY){
+          alternator = -1;
+      }
+    } else {
+      if(tagY > robotY){
+        alternator = -1;
+      }
+    }
+    yOffset = alternator * yOffset;
     // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
-    yOffset = controlOffset - Units.metersToInches(yOffset);
+    yOffset = 6 + Units.metersToInches(yOffset);
     // Clamp yOffset between minOffset and maxOffset
     double minOffset = 0.0; // Set your minimum offset value here
     double maxOffset = 12.0; // Set your maximum offset value here
@@ -458,7 +444,36 @@ public class RobotContainer
     SmartDashboard.putNumber("Slider Offset", -yOffset);
     SmartDashboard.putNumber("deltaX", deltaX);
     SmartDashboard.putNumber("deltaY", deltaY);
+    SmartDashboard.putNumber("Tag X", tagX);
+    SmartDashboard.putNumber("Tag Y", tagY);
     return -yOffset;
+    // getSnappedAngleID();
+    // Pose2d robotPose = drivebase.getPose();
+    // Pose2d tagPose = Vision.getAprilTagPose(AprilTagConstants.ReefTagID, new Transform2d(0.435, 0.0, Rotation2d.fromDegrees(180)));
+
+    // double deltaX = robotPose.getTranslation().getX() - tagPose.getTranslation().getX();
+    // // if (reefOffset < 0.0){
+    // //   reefOffset = reefOffset * -1;
+    // // }
+    // double deltaY = robotPose.getTranslation().getY() - tagPose.getTranslation().getY() + Units.inchesToMeters(reefOffset);
+
+    // // double robotHeading = robotPose.getRotation().getRadians();
+    // double tagHeading = tagPose.getRotation().getRadians();
+
+    // // double xOffset = deltaX * Math.cos(tagHeading) + deltaY * Math.sin(tagHeading);
+    // double yOffset = -deltaX * Math.sin(tagHeading) + deltaY * Math.cos(tagHeading);
+    // // 6.46875 is the distance from the center of the robot to the center of the coral slider 6 is the center of the slider
+    // yOffset = controlOffset - Units.metersToInches(yOffset);
+    // // Clamp yOffset between minOffset and maxOffset
+    // double minOffset = 0.0; // Set your minimum offset value here
+    // double maxOffset = 12.0; // Set your maximum offset value here
+    // yOffset = Math.max(minOffset, Math.min(yOffset, maxOffset));
+
+    // // SmartDashboard.putNumber("X Offset To Tag", Units.metersToInches(xOffset));
+    // SmartDashboard.putNumber("Slider Offset", -yOffset);
+    // SmartDashboard.putNumber("deltaX", deltaX);
+    // SmartDashboard.putNumber("deltaY", deltaY);
+    // return -yOffset;
     
   }
 }

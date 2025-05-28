@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "CoralRotateStart"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -74,12 +80,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "AlgaeDriveAssist1"
-                      }
-                    },
-                    {
                       "type": "parallel",
                       "data": {
                         "commands": [
@@ -102,12 +102,6 @@
                       "type": "parallel",
                       "data": {
                         "commands": [
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "AlgaeDriveAssist2"
-                            }
-                          },
                           {
                             "type": "race",
                             "data": {
@@ -159,12 +153,6 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "ElevatorL4"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
                         "name": "AlgaeRotateScore"
                       }
                     }
@@ -172,6 +160,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorL4"
           }
         },
         {

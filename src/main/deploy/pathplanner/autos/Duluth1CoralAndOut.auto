@@ -38,13 +38,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorL4"
+            "name": "ElevatorL3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "CoralRotateL4"
+            "name": "CoralRotateL3"
           }
         },
         {

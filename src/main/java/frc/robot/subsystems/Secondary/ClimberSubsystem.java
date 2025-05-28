@@ -58,7 +58,7 @@ public class ClimberSubsystem extends SubsystemBase {
                 .zeroOffset(0.5); // was 0.4
         climbMtrCfg
             .softLimit
-                .forwardSoftLimit(340.0) 
+                .forwardSoftLimit(350.0) 
                 .reverseSoftLimit(20.0)
                 .forwardSoftLimitEnabled(true)
                 .reverseSoftLimitEnabled(true);

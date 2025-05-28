@@ -57,7 +57,7 @@ public class RotateSubsystem extends SubsystemBase {
 
     private double angkP = 0.010, angkI = 0.0, angkD = 0.15;// p was 0.002
     private double angkFF = 0.0; // 0.0075
-    private double angOutputMin = -1.0;
+    private double angOutputMin = -0.5;
     private double angOutputMax = 1.0;
     public boolean close;
 
