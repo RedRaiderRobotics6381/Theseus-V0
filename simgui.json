@@ -78,6 +78,7 @@
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
@@ -141,10 +142,7 @@
         "left": 534,
         "right": 3466,
         "top": 291,
-        "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
+        "width": 17.54825210571289
       }
     }
   },
